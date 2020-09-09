@@ -1,0 +1,96 @@
+name: reader_mmsr
+description: Reader
+
+version: 1.0.0+1
+dependencies:
+  flutter_swiper: ^1.1.6
+  rubber: ^0.3.2
+  flutter:
+    sdk: flutter
+  flutter_tts:
+  sqflite: any
+  path_provider: any
+  cupertino_icons: ^0.1.2
+  http: any
+  flutter_cupertino_date_picker: ^1.0.12
+  shared_preferences: ^0.5.2
+  flushbar: 1.9.1
+  intl: 0.15.7
+  flutter_rating_bar: ^1.1.0
+  flutter_spinkit: ^3.1.0
+  flutter_launcher_icons: "^0.7.0"
+  google_sign_in: ^4.0.14
+  super_tooltip:
+  url_launcher:
+  provider: ^3.2.0
+  flappy_search_bar: ^1.7.2
+    
+
+flutter_icons:
+  image_path: "assets/img/ic_launcher_reader_square.png"
+  android: "ic_launcher_reader_square"
+  ios: true
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  font_awesome_flutter: ^8.0.1
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/img/mmsr_reader_logo.png
+    - assets/img/bear.png
+    - assets/img/cat.png
+    - assets/img/fox.png
+    - assets/img/frog.png
+    - assets/img/koala.png
+    - assets/img/monkey.png
+    - assets/img/panda.png
+    - assets/img/pig.png
+    - assets/img/tiger.png
+    - assets/img/ic_launcher_reader_square.png
+    - assets/img/rabbit.png
+    - assets/img/empty.png
+    - assets/img/sorry.png
+    - assets/img/error.png
+    - assets/img/parents.png
+    - assets/img/downloads.png
+    - assets/img/gallery.png
+    - assets/img/following.png
+    - assets/img/stats.png
+
+  fonts:
+    - family: WorkSansSemiBold
+      fonts:
+        - asset: assets/fonts/Work_Sans/WorkSans-SemiBold.ttf
+
+    - family: WorkSansBold
+      fonts:
+        - asset: assets/fonts/Work_Sans/WorkSans-Bold.ttf
+
+    - family: WorkSansMedium
+      fonts:
+        - asset: assets/fonts/Work_Sans/WorkSans-Medium.ttf
+
+    - family: SourceSansLight
+      fonts:
+        - asset: assets/fonts/SourceSansPro/SourceSansPro-Light.ttf
+
+    - family: SourceSansRegular
+      fonts:
+        - asset: assets/fonts/SourceSansPro/SourceSansPro-Regular.ttf
+
+    - family: SourceSansBold
+      fonts:
+        - asset: assets/fonts/SourceSansPro/SourceSansPro-Bold.ttf
+
+    - family: SourceSansLightItalic
+      fonts:
+        - asset: assets/fonts/SourceSansPro/SourceSansPro-LightItalic.ttf
+
+    - family: IconicIcons
+      fonts:
+        - asset: assets/fonts/IconicIcons.ttf
