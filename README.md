@@ -3,6 +3,7 @@
 A MMSR Reader mobile app developed with Flutter.
 
 ## Developer
+1. Chong Zi Yi (2019)
 1. Kor Eu Chien (2020)
 
 ## Note
