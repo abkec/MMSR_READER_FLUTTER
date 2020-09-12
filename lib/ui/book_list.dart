@@ -360,7 +360,9 @@ class Book_list_state extends State<Book_list>
   Widget build(BuildContext context) {
     createBookList();
     return Scaffold(
+      
       appBar: AppBar(
+        elevation: 0,
         leading: IconButton(
           padding: EdgeInsets.all(0),
           icon: Icon(IconicIcons.cancel),
@@ -491,22 +493,12 @@ class Book_list_state extends State<Book_list>
               )
             : SingleChildScrollView(
                 child: Container(
+                  color: Color(0xFF2196F3),
                   width: MediaQuery.of(context).size.width,
-                  decoration: new BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Theme.Colors.loginGradientStart,
-                          Colors.purple
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
+                  
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(height: 15),
                       Padding(
                         padding: EdgeInsets.only(left: 15, right: 15),
                         child: Column(
@@ -568,7 +560,7 @@ class Book_list_state extends State<Book_list>
                                             letterSpacing: -1.5,
                                             fontFamily: 'SourceSansBold',
                                             color: const Color(0xffffffff),
-                                            fontSize: 33),
+                                            fontSize: 26),
                                       ),
                                       IconButton(
                                           // refresh Button
@@ -849,7 +841,7 @@ class Book_list_state extends State<Book_list>
                                       letterSpacing: -1.5,
                                       fontFamily: 'SourceSansBold',
                                       color: const Color(0xffffffff),
-                                      fontSize: 30),
+                                      fontSize: 26),
                                 ),
                                 IconButton(
                                     // refresh Button
@@ -1096,7 +1088,7 @@ class Book_list_state extends State<Book_list>
                                       letterSpacing: -1.5,
                                       fontFamily: 'SourceSansBold',
                                       color: const Color(0xffffffff),
-                                      fontSize: 30),
+                                      fontSize: 26),
                                 ),
                                 IconButton(
                                     // refresh Button
@@ -1348,7 +1340,7 @@ class Book_list_state extends State<Book_list>
     return storycollection.length == 0
         ? Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset(
@@ -2033,29 +2025,7 @@ class _SearchDownloadState extends State<SearchDownload> {
           minimumChars: 1,
           hintText: 'Enter the book title',
           onItemFound: (Storybook storybook, int index) {
-            List<Widget> list = new List<Widget>();
-            for (int j = 0; j < widget.languageAvailable.length; j++) {
-              //languageAvailable has stored all the story id and languages.
-              if (widget.languageAvailable[j].story_id ==
-                  widget.storyData[index]
-                      .story_id) //to find out all available languages of the story.
-              {
-                //add language description into a list for display purpose.
-                list.add(
-                  Container(
-                    margin: EdgeInsets.all(5),
-                    padding: EdgeInsets.all(8),
-                    color: Colors.black12,
-                    child: Text(
-                      widget.languageAvailable[j].languageDesc,
-                      style: TextStyle(
-                          fontSize: 14, fontFamily: 'SourceSansRegular'),
-                    ),
-                  ),
-                );
-              }
-            }
-
+          
             return ListTile(
               title: Text(storybook.story_title),
               subtitle: Column(

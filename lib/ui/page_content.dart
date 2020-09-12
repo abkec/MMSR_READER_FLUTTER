@@ -177,6 +177,27 @@ class _PageContent_State extends State<PageContent>
   bool _appBarVisible;
   bool connection;
   List<Uint8List> Contentimage = [];
+  TextEditingController rateController;
+  List review = [];
+
+  void getReview() async {
+    final response = await http.post(
+      url + "getRating3.php",
+      body: {
+        "storybookID": widget.storyID,
+        "language": widget.storyLanguage,
+        "children_id": widget.childrenID
+      },
+    );
+
+    var rating = json.decode(response.body);
+    
+    if (rating.length != 0) {
+      review = rating;
+      rateController.text = review[0]['comments'];
+    }
+    
+  }
 
   void checkconnection() async {
     //function used to check connection
@@ -184,6 +205,7 @@ class _PageContent_State extends State<PageContent>
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         connection = true;
+        getReview();
       }
     } on SocketException catch (_) {
       connection = false;
@@ -248,7 +270,9 @@ class _PageContent_State extends State<PageContent>
     checkconnection();
     createValue();
     changeLanguage();
+  
     _appBarVisible = true;
+    rateController = TextEditingController();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 700),
       value: 1.0,
@@ -286,9 +310,23 @@ class _PageContent_State extends State<PageContent>
     }
   }
 
+  Future<bool> _onWillPop() async {
+    var difference = DateTime.now().difference(start_time).inMinutes;
+    if (OngoingDuration != null) {
+      //if previous reading duration has data, then add current duration with previous and store.
+      difference += OngoingDuration;
+    }
+    var onGoing =
+        OnGoing(widget.childrenID, widget.storyID, saveNumber, difference);
+    //update ongoing reading details in local database
+    db.updateOngoing(onGoing);
+    Navigator.pop(context);
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController rateController = new TextEditingController();
     //to show or hide app bar and page number
     Animation<Offset> offsetAnimation =
         new Tween<Offset>(begin: Offset(0, -1.0), end: Offset(0.0, 0))
@@ -303,180 +341,124 @@ class _PageContent_State extends State<PageContent>
     contentController =
         new PageController(initialPage: currentPage, keepPage: false);
 
-    return new Scaffold(
-      key: _scaffoldKey,
-      body: Stack(
-        children: <Widget>[
-          GestureDetector(
-            onTap: () => setState(() {
-              _toggleAppBarVisibility();
-            }),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height >= 650.0
-                  ? MediaQuery.of(context).size.height
-                  : 1000.0,
-              decoration: new BoxDecoration(
-                gradient: new LinearGradient(
-                    colors: [
-                      Theme.Colors.loginGradientStart,
-                      Theme.Colors.loginGradientEnd
-                    ],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp),
-              ),
-              child: SingleChildScrollView(
+    return new WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          key: _scaffoldKey,
+          body: Stack(
+            children: <Widget>[
+              GestureDetector(
+                onTap: () => setState(() {
+                  _toggleAppBarVisibility();
+                }),
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  padding: EdgeInsets.only(top: 40),
-                  child: _buildPage(context),
+                  height: MediaQuery.of(context).size.height >= 650.0
+                      ? MediaQuery.of(context).size.height
+                      : 1000.0,
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [
+                          Theme.Colors.loginGradientStart,
+                          Theme.Colors.loginGradientEnd
+                        ],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      padding: EdgeInsets.only(top: 40),
+                      child: _buildPage(context),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          SlideTransition(
-            position: offsetAnimation,
-            child: Container(
-              height: 75,
-              child: AppBar(
-                  centerTitle: true,
-                  backgroundColor: Colors.lightBlue,
-                  elevation: 0,
-                  title: Text(widget.storyTitle),
-                  leading: saveNumber + 1 ==
-                          (widget.pageText.length / widget.pageLanguage.length)
-                      ? IconButton(
-                          icon: Icon(Icons.done),
-                          onPressed: () {
-                            if (connection == true) {
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => Center(
-                                          // Aligns the container to center
-                                          child: SingleChildScrollView(
-                                        // A simplified version of dialog.
-                                        child: Container(
-                                            child: AlertDialog(
-                                          title: Text('Rate this story!'),
-                                          content: Form(
-                                              child: Column(
-                                            children: <Widget>[
-                                              Container(
-                                                width: 300,
-                                                alignment: Alignment.center,
-                                                child: FlutterRatingBar(
-                                                  initialRating: 0,
-                                                  fillColor: Colors.amber,
-                                                  borderColor: Colors.amber
-                                                      .withAlpha(50),
-                                                  allowHalfRating: true,
-                                                  onRatingUpdate: (rating) {
-                                                    rate = rating;
-                                                  },
-                                                ),
-                                              ),
-                                              SizedBox(height:15),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                  
-                                                  border: Border.all(
-                                                    color: Colors.grey,
-                                                    width: 1,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                ),
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(10.0),
-                                                  child: TextField(
-                                                    controller: rateController,
-                                                    maxLines: 8,
-                                                    maxLength: 150,
-                                                    decoration: InputDecoration
-                                                        .collapsed(
-                                                            hintText:
-                                                                "Describe your experience (Optional)"),
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                child: ButtonBar(
-                                                  children: <Widget>[
-                                                    FlatButton(
-                                                      onPressed: () async {
-                                                        saveHistory();
-                                                        Navigator.of(context).pushAndRemoveUntil(
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    LoadBook(
-                                                                        childrenID:
-                                                                            widget
-                                                                                .childrenID)),
-                                                            (Route<dynamic>
-                                                                    route) =>
-                                                                false);
+              SlideTransition(
+                position: offsetAnimation,
+                child: Container(
+                  height: 75,
+                  child: AppBar(
+                      centerTitle: true,
+                      backgroundColor: Colors.lightBlue,
+                      elevation: 0,
+                      title: Text(widget.storyTitle),
+                      leading: saveNumber + 1 ==
+                              (widget.pageText.length /
+                                  widget.pageLanguage.length)
+                          ? IconButton(
+                              icon: Icon(Icons.done),
+                              onPressed: () {
+                                if (connection == true) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => Center(
+                                              // Aligns the container to center
+                                              child: SingleChildScrollView(
+                                            // A simplified version of dialog.
+                                            child: Container(
+                                                child: AlertDialog(
+                                              title: review.length != 0
+                                                  ? Text(
+                                                      'You have rated this story before!')
+                                                  : Text('Rate this story!'),
+                                              content: Form(
+                                                  child: Column(
+                                                children: <Widget>[
+                                                  Container(
+                                                    width: 300,
+                                                    alignment: Alignment.center,
+                                                    child: FlutterRatingBar(
+                                                      initialRating:
+                                                          review.length != 0
+                                                              ? double.parse(
+                                                                  review[0]
+                                                                      ['value'])
+                                                              : 0,
+                                                      fillColor: Colors.amber,
+                                                      borderColor: Colors.amber
+                                                          .withAlpha(50),
+                                                      allowHalfRating: true,
+                                                      onRatingUpdate: (rating) {
+                                                        rate = rating;
                                                       },
-                                                      child: Text(
-                                                        'Next time',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 15),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: Colors.grey,
+                                                        width: 1,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(10.0),
+                                                      child: TextField(
+                                                        controller:
+                                                            rateController,
+                                                        maxLines: 8,
+                                                        maxLength: 150,
+                                                        decoration: InputDecoration
+                                                            .collapsed(
+                                                                hintText:
+                                                                    "Describe your experience (Optional)"),
                                                       ),
                                                     ),
-                                                    FlatButton(
-                                                        color: Colors.amber,
-                                                        onPressed: () async {
-                                                          saveHistory();
-                                                          rating(
-                                                              rateController.text,
-                                                              rate,
-                                                              widget
-                                                                  .pageLanguage[
-                                                                      languageRate]
-                                                                  .languageCode);
-                                                          showDialog(
-                                                            context: context,
-                                                            barrierDismissible:
-                                                                false,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return Dialog(
-                                                                  child:
-                                                                      Container(
-                                                                height: 200,
-                                                                width: 50,
-                                                                child: Center(
-                                                                  child: SpinKitThreeBounce(
-                                                                      color: Colors
-                                                                          .blue),
-                                                                ),
-                                                              ));
-                                                            },
-                                                          );
-                                                          new Future.delayed(
-                                                              new Duration(
-                                                                  seconds: 2),
-                                                              () {
-                                                            print(widget
-                                                                .pageLanguage[
-                                                                    languageRate]
-                                                                .languageCode);
-                                                            http.post(
-                                                                url +
-                                                                    "ratingRoutine.php",
-                                                                body: {
-                                                                  'storybookID':
-                                                                      widget
-                                                                          .storyID,
-                                                                  'languageCode': widget
-                                                                      .pageLanguage[
-                                                                          languageRate]
-                                                                      .languageCode,
-                                                                });
+                                                  ),
+                                                  Container(
+                                                    child: ButtonBar(
+                                                      children: <Widget>[
+                                                        FlatButton(
+                                                          onPressed: () async {
+                                                            saveHistory();
                                                             Navigator.of(context).pushAndRemoveUntil(
                                                                 MaterialPageRoute(
                                                                     builder: (context) => LoadBook(
@@ -486,71 +468,158 @@ class _PageContent_State extends State<PageContent>
                                                                 (Route<dynamic>
                                                                         route) =>
                                                                     false);
-                                                          });
-                                                        },
-                                                        child: Text(
-                                                          'Rate',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ))
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          )),
-                                        )),
-                                      )));
-                            } else {
-                              saveHistory();
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) => LoadBook(
-                                          childrenID: widget.childrenID)),
-                                  (Route<dynamic> route) => false);
-                            }
-                          })
-                      : IconButton(
-                          icon: Icon(Icons.arrow_back),
-                          onPressed: () {
-                            var difference =
-                                DateTime.now().difference(start_time).inMinutes;
-                            if (OngoingDuration != null) {
-                              //if previous reading duration has data, then add current duration with previous and store.
-                              difference += OngoingDuration;
-                            }
-                            var onGoing = OnGoing(widget.childrenID,
-                                widget.storyID, saveNumber, difference);
-                            //update ongoing reading details in local database
-                            db.updateOngoing(onGoing);
-                            Navigator.pop(context);
-                          })),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SlideTransition(
-              position:
-                  MediaQuery.of(context).orientation == Orientation.portrait
-                      ? numberAnimation
-                      : lanscapenumberAnimation,
-              child: Padding(
-                padding: EdgeInsets.all(50.0),
-                child: Container(
-                  color: Colors.lightBlue,
-                  padding: EdgeInsets.all(5),
-                  child: Text(
-                    "Page: ${saveNumber + 1} of ${pageList.length}",
-                    style: TextStyle(
-                        fontFamily: 'WorkSansSemiBold', color: Colors.white),
+                                                          },
+                                                          child: Text(
+                                                            review.length != 0
+                                                                ? 'Cancel'
+                                                                : 'Next time',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                        ),
+                                                        FlatButton(
+                                                            color: Colors.amber,
+                                                            onPressed:
+                                                                () async {
+                                                              saveHistory();
+                                                              print(review.length);
+                                                              if (review.length == 0) 
+                                                               rating(
+                                                                      rateController
+                                                                          .text,
+                                                                      rate,
+                                                                      widget
+                                                                          .pageLanguage[
+                                                                              languageRate]
+                                                                          .languageCode);
+                                                                else updateRating(
+                                                                      rateController
+                                                                          .text,
+                                                                      rate,
+                                                                      review[0]['rating_id']);
+
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                barrierDismissible:
+                                                                    false,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return Dialog(
+                                                                      child:
+                                                                          Container(
+                                                                    height: 200,
+                                                                    width: 50,
+                                                                    child:
+                                                                        Center(
+                                                                      child: SpinKitThreeBounce(
+                                                                          color:
+                                                                              Colors.blue),
+                                                                    ),
+                                                                  ));
+                                                                },
+                                                              );
+                                                              new Future
+                                                                      .delayed(
+                                                                  new Duration(
+                                                                      seconds:
+                                                                          2),
+                                                                  () {
+                                                                print(widget
+                                                                    .pageLanguage[
+                                                                        languageRate]
+                                                                    .languageCode);
+                                                                http.post(
+                                                                    url +
+                                                                        "ratingRoutine.php",
+                                                                    body: {
+                                                                      'storybookID':
+                                                                          widget
+                                                                              .storyID,
+                                                                      'languageCode': widget
+                                                                          .pageLanguage[
+                                                                              languageRate]
+                                                                          .languageCode,
+                                                                    });
+                                                                Navigator.of(context).pushAndRemoveUntil(
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => LoadBook(
+                                                                            childrenID: widget
+                                                                                .childrenID)),
+                                                                    (Route<dynamic>
+                                                                            route) =>
+                                                                        false);
+                                                              });
+                                                            },
+                                                            child: Text(
+                                                              review.length != 0
+                                                                  ? 'Change Rating'
+                                                                  : 'Rate',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ))
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              )),
+                                            )),
+                                          )));
+                                } else {
+                                  saveHistory();
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => LoadBook(
+                                              childrenID: widget.childrenID)),
+                                      (Route<dynamic> route) => false);
+                                }
+                              })
+                          : IconButton(
+                              icon: Icon(Icons.arrow_back),
+                              onPressed: () {
+                                var difference = DateTime.now()
+                                    .difference(start_time)
+                                    .inMinutes;
+                                if (OngoingDuration != null) {
+                                  //if previous reading duration has data, then add current duration with previous and store.
+                                  difference += OngoingDuration;
+                                }
+                                var onGoing = OnGoing(widget.childrenID,
+                                    widget.storyID, saveNumber, difference);
+                                //update ongoing reading details in local database
+                                db.updateOngoing(onGoing);
+                                Navigator.pop(context);
+                              })),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SlideTransition(
+                  position:
+                      MediaQuery.of(context).orientation == Orientation.portrait
+                          ? numberAnimation
+                          : lanscapenumberAnimation,
+                  child: Padding(
+                    padding: EdgeInsets.all(50.0),
+                    child: Container(
+                      color: Colors.lightBlue,
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        "Page: ${saveNumber + 1} of ${pageList.length}",
+                        style: TextStyle(
+                            fontFamily: 'WorkSansSemiBold',
+                            color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _buildPage(BuildContext context) {
@@ -828,16 +897,24 @@ class _PageContent_State extends State<PageContent>
     db.updateOngoing(onGoing);
   }
 
-  void rating(String rateText,double rating, String languageCode) {
+  void rating(String rateText, double rating, String languageCode) {
     //user rate the story book from 0 to 5
     //post data to php file
-    
     http.post(url + "rating(Reader).php", body: {
       'storybookID': widget.storyID,
       'children_id': widget.childrenID,
       'rating': rating.toString(),
       'languageCode': languageCode,
-      'comments':rateText,
+      'comments': rateText,
+    });
+  }
+
+  void updateRating(String rateText, double rating, String rateID) {
+    //post data to php file
+    http.post(url + "updateRating(Reader).php", body: {
+      'rateID': rateID,
+      'rating': rating.toString(),
+      'comments': rateText,
     });
   }
 
