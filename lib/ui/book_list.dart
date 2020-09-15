@@ -9,6 +9,7 @@ import 'package:reader_mmsr/Model/Storybook.dart';
 import 'package:reader_mmsr/localdatabase/Database.dart';
 import 'package:reader_mmsr/style/theme.dart' as Theme;
 import 'package:reader_mmsr/parent_ui/parental_gate.dart';
+import 'package:reader_mmsr/ui/writer_detail.dart';
 import 'package:reader_mmsr/utils/transparent_image.dart';
 import 'package:reader_mmsr/utils/bubble_indication_painter.dart';
 import 'detail.dart';
@@ -40,12 +41,23 @@ class _LoadBookState extends State<LoadBook> {
       contributor,
       collection,
       languageData,
-      review;
+      review,
+      following;
   String url = 'http://10.0.2.2/mmsr/';
 
   var db = DBHelper();
   List bookList = [], bookList2 = [], bookList3 = [];
   var languageList;
+
+  Future<List> getFollowing() async //retrieve all following from server
+  {
+    final response = await http.post(
+      url + "getFollowing.php",
+      body: {"childrenID": widget.childrenID},
+    );
+    var datauser = json.decode(response.body);
+    return datauser;
+  }
 
   //all functions retrieve data from server database
   Future<List> getStories() async //retrieve all stories from server
@@ -147,116 +159,137 @@ class _LoadBookState extends State<LoadBook> {
                               bookDataL.add(bookData[i]);
                             }
                           }
+
                           return new FutureBuilder<List>(
-                              future: getReview(),
-                              builder: (context, snapshot6) {
-                                if (snapshot6.hasData) review = snapshot6.data;
+                              future: getFollowing(),
+                              builder: (context, snapshot8) {
+                                if (snapshot8.hasData)
+                                  following = snapshot8.data;
 
                                 return new FutureBuilder<List>(
-                                  future: getWriter(),
-                                  builder: (context, snapshot2) {
-                                    if (snapshot2.hasData) {
-                                      contributor = snapshot2.data;
+                                    future: getReview(),
+                                    builder: (context, snapshot6) {
+                                      if (snapshot6.hasData)
+                                        review = snapshot6.data;
+
                                       return new FutureBuilder<List>(
-                                          future: db.getLanguage(widget
-                                              .childrenID), //start by "db." means retrieve data from local database
-                                          //retrieve children's selected languages from languagePreferred table
-                                          builder: (context, snapshot3) {
-                                            languageList = snapshot3.data;
+                                        future: getWriter(),
+                                        builder: (context, snapshot2) {
+                                          if (snapshot2.hasData) {
+                                            contributor = snapshot2.data;
+                                            return new FutureBuilder<List>(
+                                                future: db.getLanguage(widget
+                                                    .childrenID), //start by "db." means retrieve data from local database
+                                                //retrieve children's selected languages from languagePreferred table
+                                                builder: (context, snapshot3) {
+                                                  languageList = snapshot3.data;
 
-                                            if (snapshot3.hasData) {
-                                              bookList = [];
-                                              for (int i = 0;
-                                                  i < languageList.length;
-                                                  i++) {
-                                                //children selected languages.
-                                                //filtering stories based on languages
-                                                for (int j = 0;
-                                                    j < bookData.length;
-                                                    j++) {
-                                                  //if match children's preferred languages
+                                                  if (snapshot3.hasData) {
+                                                    bookList = [];
+                                                    for (int i = 0;
+                                                        i < languageList.length;
+                                                        i++) {
+                                                      //children selected languages.
+                                                      //filtering stories based on languages
+                                                      for (int j = 0;
+                                                          j < bookData.length;
+                                                          j++) {
+                                                        //if match children's preferred languages
 
-                                                  if (languageList[i]
-                                                          .languageCode ==
-                                                      bookData[j]
-                                                          ['languageCode']) {
-                                                    bookList.add(bookData[j]);
-                                                  }
-                                                }
-                                              }
-                                              bookList2 = [];
-                                              for (int i = 0;
-                                                  i < languageList.length;
-                                                  i++) {
-                                                //children selected languages.
-                                                //filtering stories based on languages
-                                                for (int j = 0;
-                                                    j < bookDataR.length;
-                                                    j++) {
-                                                  //if match children's preferred languages
+                                                        if (languageList[i]
+                                                                .languageCode ==
+                                                            bookData[j][
+                                                                'languageCode']) {
+                                                          bookList
+                                                              .add(bookData[j]);
+                                                        }
+                                                      }
+                                                    }
+                                                    bookList2 = [];
+                                                    for (int i = 0;
+                                                        i < languageList.length;
+                                                        i++) {
+                                                      //children selected languages.
+                                                      //filtering stories based on languages
+                                                      for (int j = 0;
+                                                          j < bookDataR.length;
+                                                          j++) {
+                                                        //if match children's preferred languages
 
-                                                  if (languageList[i]
-                                                          .languageCode ==
-                                                      bookDataR[j]
-                                                          ['languageCode']) {
-                                                    bookList2.add(bookDataR[j]);
-                                                  }
-                                                }
-                                              }
-                                              bookList3 = [];
-                                              for (int i = 0;
-                                                  i < languageList.length;
-                                                  i++) {
-                                                //children selected languages.
-                                                //filtering stories based on languages
-                                                for (int j = 0;
-                                                    j < bookDataL.length;
-                                                    j++) {
-                                                  //if match children's preferred languages
+                                                        if (languageList[i]
+                                                                .languageCode ==
+                                                            bookDataR[j][
+                                                                'languageCode']) {
+                                                          bookList2.add(
+                                                              bookDataR[j]);
+                                                        }
+                                                      }
+                                                    }
+                                                    bookList3 = [];
+                                                    for (int i = 0;
+                                                        i < languageList.length;
+                                                        i++) {
+                                                      //children selected languages.
+                                                      //filtering stories based on languages
+                                                      for (int j = 0;
+                                                          j < bookDataL.length;
+                                                          j++) {
+                                                        //if match children's preferred languages
 
-                                                  if (languageList[i]
-                                                          .languageCode ==
-                                                      bookDataL[j]
-                                                          ['languageCode']) {
-                                                    bookList3.add(bookDataL[j]);
-                                                  }
-                                                }
-                                              }
+                                                        if (languageList[i]
+                                                                .languageCode ==
+                                                            bookDataL[j][
+                                                                'languageCode']) {
+                                                          bookList3.add(
+                                                              bookDataL[j]);
+                                                        }
+                                                      }
+                                                    }
 
-                                              return new FutureBuilder<List>(
-                                                future: getLanguage(),
-                                                builder: (context, snapshot4) {
-                                                  if (snapshot4.hasData) {
-                                                    languageData =
-                                                        snapshot4.data;
-                                                    return new Book_list(
-                                                        bookData: bookList,
-                                                        bookDataR: bookList2,
-                                                        bookDataL: bookList3,
-                                                        review: review,
-                                                        contributor:
-                                                            contributor,
-                                                        childrenID:
-                                                            widget.childrenID,
-                                                        collection: collection,
-                                                        languageData:
-                                                            languageData,
-                                                        page: widget.page,
-                                                        bookData1: bookData1);
+                                                    return new FutureBuilder<
+                                                        List>(
+                                                      future: getLanguage(),
+                                                      builder:
+                                                          (context, snapshot4) {
+                                                        if (snapshot4.hasData) {
+                                                          languageData =
+                                                              snapshot4.data;
+                                                          return new Book_list(
+                                                              bookData:
+                                                                  bookList,
+                                                              bookDataR:
+                                                                  bookList2,
+                                                              bookDataL:
+                                                                  bookList3,
+                                                              review: review,
+                                                              following:
+                                                                  following,
+                                                              contributor:
+                                                                  contributor,
+                                                              childrenID: widget
+                                                                  .childrenID,
+                                                              collection:
+                                                                  collection,
+                                                              languageData:
+                                                                  languageData,
+                                                              page: widget.page,
+                                                              bookData1:
+                                                                  bookData1);
+                                                        }
+                                                        return SpinKitThreeBounce(
+                                                            color: Colors.blue);
+                                                      },
+                                                    );
                                                   }
                                                   return SpinKitThreeBounce(
                                                       color: Colors.blue);
-                                                },
-                                              );
-                                            }
-                                            return SpinKitThreeBounce(
-                                                color: Colors.blue);
-                                          });
-                                    }
-                                    return SpinKitThreeBounce(
-                                        color: Colors.blue);
-                                  },
-                                );
+                                                });
+                                          }
+                                          return SpinKitThreeBounce(
+                                              color: Colors.blue);
+                                        },
+                                      );
+                                    });
                               });
                         }
                         return SpinKitThreeBounce(color: Colors.blue);
@@ -282,6 +315,7 @@ class Book_list extends StatefulWidget {
       collection,
       languageData,
       bookDataL,
+      following,
       review;
   String childrenID;
   int page;
@@ -290,6 +324,7 @@ class Book_list extends StatefulWidget {
   @override
   Book_list(
       {Key key,
+      this.following,
       this.childrenID,
       this.collection,
       this.page,
@@ -351,6 +386,20 @@ class Book_list_state extends State<Book_list>
     setState(() {});
   }
 
+  void checkconnection2() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        connection = true;
+        showInSnackBar();
+      }
+    } on SocketException catch (_) {
+      connection = false;
+      showInSnackBar();
+    }
+    setState(() {});
+  }
+
   void dispose() {
     _pageController?.dispose();
     super.dispose();
@@ -360,7 +409,6 @@ class Book_list_state extends State<Book_list>
   Widget build(BuildContext context) {
     createBookList();
     return Scaffold(
-      
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
@@ -374,7 +422,9 @@ class Book_list_state extends State<Book_list>
             //navigate back to homepage and remove all route history
           },
         ),
+        
         actions: <Widget>[
+          _selectedIndex == 0 ?
           IconButton(
             // refresh Button
             icon: const Icon(IconicIcons.loop),
@@ -382,8 +432,7 @@ class Book_list_state extends State<Book_list>
             onPressed: () {
               setState(
                 () {
-                  checkconnection();
-                  showInSnackBar();
+                  checkconnection2();
                   var db = DBHelper();
                   connection == true //advance if else statement
                       //'?' if the statement is true
@@ -395,7 +444,7 @@ class Book_list_state extends State<Book_list>
                 },
               );
             },
-          ),
+          ) : SizedBox(),
         ],
       ),
       key: _scaffoldKey,
@@ -431,7 +480,7 @@ class Book_list_state extends State<Book_list>
             index: _selectedIndex,
             children: _widgetOptions = <Widget>[
               _buildLibrary(context),
-              _buildCollection(context),
+              _buildFollow(context),
               _buildCollection(context),
             ]),
       ),
@@ -457,45 +506,117 @@ class Book_list_state extends State<Book_list>
 
   Widget _buildLibrary(BuildContext context) {
     return connection == false
-        ? Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  "assets/img/error.png",
-                  fit: BoxFit.cover,
-                ),
-                Text(
-                  "No Internet Collection!",
-                  style: TextStyle(fontFamily: "WorkSansBold", fontSize: 20),
-                ),
-              ],
+        ? SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 15),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "Gallery",
+                              style: TextStyle(
+                                  letterSpacing: -1.5,
+                                  fontFamily: 'SourceSansBold',
+                                  fontSize: 40),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 8),
+                              Image.asset(
+                                "assets/img/error.png",
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                "No Internet Collection!",
+                                style: TextStyle(
+                                    fontFamily: "WorkSansBold", fontSize: 20),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         : widget.bookData.length == 0 // else if
-            ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset(
-                      "assets/img/sorry.png",
-                      fit: BoxFit.cover,
-                    ),
-                    Text(
-                      "Ops! No storybooks found.",
-                      style:
-                          TextStyle(fontFamily: "WorkSansBold", fontSize: 20),
-                    ),
-                  ],
+            ? SingleChildScrollView(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 15),
+                      Padding(
+                        padding: EdgeInsets.only(left: 15, right: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Gallery",
+                                  style: TextStyle(
+                                      letterSpacing: -1.5,
+                                      fontFamily: 'SourceSansBold',
+                                      fontSize: 40),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              8),
+                                  Image.asset(
+                                    "assets/img/sorry.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Text(
+                                    "Ops! No storybooks found.",
+                                    style: TextStyle(
+                                        fontFamily: "WorkSansBold",
+                                        fontSize: 20),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               )
             : SingleChildScrollView(
                 child: Container(
                   color: Color(0xFF2196F3),
                   width: MediaQuery.of(context).size.width,
-                  
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -524,6 +645,7 @@ class Book_list_state extends State<Book_list>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SearchPage(
+                                          review: widget.review,
                                               bookData: widget.bookData,
                                               contributor: widget.contributor,
                                               languageData: widget.languageData,
@@ -625,6 +747,7 @@ class Book_list_state extends State<Book_list>
                                           }
                                         }
                                         String name = '';
+                                        String id = '';
                                         //To check who is the writer for the story.
                                         for (int j = 0;
                                             j < widget.contributor.length;
@@ -633,6 +756,8 @@ class Book_list_state extends State<Book_list>
                                                   ['ContributorID'] ==
                                               widget.contributor[j]
                                                   ['ContributorID']) {
+                                            id = widget.contributor[j]
+                                                ['ContributorID'];
                                             name =
                                                 widget.contributor[j]['Name'];
                                           }
@@ -682,10 +807,15 @@ class Book_list_state extends State<Book_list>
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         LoadDetail(
+
+                                                          reviewAll: widget.review,
+                                                          languageData: widget.languageData,
+                                                          contributorList: widget.contributor,
                                                             bookData:
                                                                 widget.bookData,
                                                             index: bookIndex,
                                                             contributor: name,
+                                                            contributorID: id,
                                                             childrenID: widget
                                                                 .childrenID,
                                                             language:
@@ -831,254 +961,278 @@ class Book_list_state extends State<Book_list>
                                 ? SizedBox(height: 10)
                                 : Container(),
                             widget.bookDataL.length != 0
-                            ?
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  "What's New",
-                                  style: TextStyle(
-                                      letterSpacing: -1.5,
-                                      fontFamily: 'SourceSansBold',
-                                      color: const Color(0xffffffff),
-                                      fontSize: 26),
-                                ),
-                                IconButton(
-                                    // refresh Button
-                                    icon: const Icon(IconicIcons.article_alt),
-                                    iconSize: 20,
-                                    tooltip: 'View more',
-                                    color: Colors.white,
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => BookTab(
-                                                  appBarTitle: "What's New",
-                                                  bookData: widget.bookData,
-                                                  review: widget.review,
-                                                  childrenID: widget.childrenID,
-                                                  bookDataRoL: widget.bookDataL,
-                                                  contributor:
-                                                      widget.contributor,
-                                                  languageData:
-                                                      widget.languageData,
-                                                )),
-                                      );
-                                    }),
-                              ],
-                            )
-                            : Container(),
-                            widget.bookDataL.length != 0
-                            ?
-                            SizedBox(height: 10)
-                            : Container(),
-                            widget.bookDataL.length != 0
-                            ?
-                            Container(
-                              height: 220,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: widget.bookDataL == null
-                                    ? 0
-                                    : widget.bookDataL.length,
-                                itemBuilder: (context, i) {
-                                  String language;
-                                  //To check what is the language of the story.
-                                  for (int j = 0;
-                                      j < widget.languageData.length;
-                                      j++) {
-                                    if (widget.bookDataL[i]['languageCode'] ==
-                                        widget.languageData[j]
-                                            ['languageCode']) {
-                                      language = widget.languageData[j]
-                                          ['languageDesc'];
-                                    }
-                                  }
-                                  String name = '';
-                                  //To check who is the writer for the story.
-                                  for (int j = 0;
-                                      j < widget.contributor.length;
-                                      j++) {
-                                    if (widget.bookDataL[i]['ContributorID'] ==
-                                        widget.contributor[j]
-                                            ['ContributorID']) {
-                                      name = widget.contributor[j]['Name'];
-                                    }
-                                  }
-
-                                  Uint8List bytes = base64Decode(
-                                      widget.bookDataL[i]['storybookCover']);
-
-                                  int bookIndex;
-                                  for (int j = 0;
-                                      j < widget.bookData.length;
-                                      j++) {
-                                    if (widget.bookData[j]['storybookID'] ==
-                                            widget.bookDataL[i]
-                                                ['storybookID'] &&
-                                        widget.bookDataL[i]['languageCode'] ==
-                                            widget.bookData[j]
-                                                ['languageCode']) {
-                                      bookIndex = j;
-                                      break;
-                                    }
-                                  }
-
-                                  bool rating = false;
-                                  for (int j = 0;
-                                      j < widget.review.length;
-                                      j++) {
-                                    if (widget.review[j]['storybookID'] ==
-                                            widget.bookDataL[i]
-                                                ['storybookID'] &&
-                                        widget.review[j]['languageCode'] ==
-                                            widget.bookDataL[i]
-                                                ['languageCode']) {
-                                      rating = true;
-                                      break;
-                                    }
-                                  }
-                                  return Container(
-                                    padding: EdgeInsets.all(5),
-                                    width: 120,
-                                    //color: Color(0xFFF1F1F1),
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    LoadDetail(
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        "What's New",
+                                        style: TextStyle(
+                                            letterSpacing: -1.5,
+                                            fontFamily: 'SourceSansBold',
+                                            color: const Color(0xffffffff),
+                                            fontSize: 26),
+                                      ),
+                                      IconButton(
+                                          // refresh Button
+                                          icon: const Icon(
+                                              IconicIcons.article_alt),
+                                          iconSize: 20,
+                                          tooltip: 'View more',
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => BookTab(
+                                                        appBarTitle:
+                                                            "What's New",
                                                         bookData:
                                                             widget.bookData,
-                                                        index: bookIndex,
-                                                        contributor: name,
+                                                        review: widget.review,
                                                         childrenID:
                                                             widget.childrenID,
-                                                        language: language)),
-                                          );
-                                        },
-                                        child: Card(
-                                          color: Colors.transparent,
-                                          elevation: 0,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                  color: Colors.grey,
-                                                )),
-                                                child: FadeInImage(
-                                                  //Fade animation
-                                                  fit: BoxFit.cover,
-                                                  height: 100,
-                                                  width: 100,
-                                                  image: MemoryImage(bytes),
-                                                  placeholder: MemoryImage(
-                                                      kTransparentImage),
-                                                ),
-                                              ),
-                                              Container(
-                                                // padding: EdgeInsets.all(left: 20),
-                                                alignment: Alignment.topLeft,
+                                                        bookDataRoL:
+                                                            widget.bookDataL,
+                                                        contributor:
+                                                            widget.contributor,
+                                                        languageData:
+                                                            widget.languageData,
+                                                      )),
+                                            );
+                                          }),
+                                    ],
+                                  )
+                                : Container(),
+                            widget.bookDataL.length != 0
+                                ? SizedBox(height: 10)
+                                : Container(),
+                            widget.bookDataL.length != 0
+                                ? Container(
+                                    height: 220,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: widget.bookDataL == null
+                                          ? 0
+                                          : widget.bookDataL.length,
+                                      itemBuilder: (context, i) {
+                                        String language;
+                                        //To check what is the language of the story.
+                                        for (int j = 0;
+                                            j < widget.languageData.length;
+                                            j++) {
+                                          if (widget.bookDataL[i]
+                                                  ['languageCode'] ==
+                                              widget.languageData[j]
+                                                  ['languageCode']) {
+                                            language = widget.languageData[j]
+                                                ['languageDesc'];
+                                          }
+                                        }
+                                        String name = '';
+                                        String id = '';
+                                        //To check who is the writer for the story.
+                                        for (int j = 0;
+                                            j < widget.contributor.length;
+                                            j++) {
+                                          if (widget.bookDataL[i]
+                                                  ['ContributorID'] ==
+                                              widget.contributor[j]
+                                                  ['ContributorID']) {
+                                            id = widget.contributor[j]
+                                                ['ContributorID'];
+                                            name =
+                                                widget.contributor[j]['Name'];
+                                          }
+                                        }
+
+                                        Uint8List bytes = base64Decode(widget
+                                            .bookDataL[i]['storybookCover']);
+
+                                        int bookIndex;
+                                        for (int j = 0;
+                                            j < widget.bookData.length;
+                                            j++) {
+                                          if (widget.bookData[j]
+                                                      ['storybookID'] ==
+                                                  widget.bookDataL[i]
+                                                      ['storybookID'] &&
+                                              widget.bookDataL[i]
+                                                      ['languageCode'] ==
+                                                  widget.bookData[j]
+                                                      ['languageCode']) {
+                                            bookIndex = j;
+                                            break;
+                                          }
+                                        }
+
+                                        bool rating = false;
+                                        for (int j = 0;
+                                            j < widget.review.length;
+                                            j++) {
+                                          if (widget.review[j]['storybookID'] ==
+                                                  widget.bookDataL[i]
+                                                      ['storybookID'] &&
+                                              widget.review[j]
+                                                      ['languageCode'] ==
+                                                  widget.bookDataL[i]
+                                                      ['languageCode']) {
+                                            rating = true;
+                                            break;
+                                          }
+                                        }
+                                        return Container(
+                                          padding: EdgeInsets.all(5),
+                                          width: 120,
+                                          //color: Color(0xFFF1F1F1),
+                                          child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          LoadDetail(
+                                                            reviewAll: widget.review,
+                                                          languageData: widget.languageData,
+                                                          contributorList: widget.contributor,
+                                                              bookData: widget
+                                                                  .bookData,
+                                                              index: bookIndex,
+                                                              contributor: name,
+                                                              childrenID: widget
+                                                                  .childrenID,
+                                                              contributorID: id,
+                                                              language:
+                                                                  language)),
+                                                );
+                                              },
+                                              child: Card(
+                                                color: Colors.transparent,
+                                                elevation: 0,
                                                 child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
                                                   children: <Widget>[
-                                                    SizedBox(height: 3),
                                                     Container(
-                                                      height: 42,
-                                                      child: Text(
-                                                        '${widget.bookDataL[i]['storybookTitle']}',
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors.white,
-                                                            fontFamily:
-                                                                'SourceSansRegular'),
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        maxLines: 2,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                        color: Colors.grey,
+                                                      )),
+                                                      child: FadeInImage(
+                                                        //Fade animation
+                                                        fit: BoxFit.cover,
+                                                        height: 100,
+                                                        width: 100,
+                                                        image:
+                                                            MemoryImage(bytes),
+                                                        placeholder: MemoryImage(
+                                                            kTransparentImage),
                                                       ),
                                                     ),
-                                                    Text(
-                                                      'by $name',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontFamily:
-                                                            'SourceSansLight',
-                                                        color: Colors.white,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                    ),
-                                                    SizedBox(height: 3),
-                                                    rating == true
-                                                        ? Container(
-                                                            child:
-                                                                FlutterRatingBarIndicator(
-                                                              itemPadding:
-                                                                  EdgeInsets
-                                                                      .only(
-                                                                          right:
-                                                                              1),
-                                                              rating: double.parse(
-                                                                          widget.bookData[i]
-                                                                              [
-                                                                              'rating']) ==
-                                                                      null
-                                                                  ? 0
-                                                                  : double.parse(
-                                                                      widget.bookDataL[
-                                                                              i]
-                                                                          [
-                                                                          'rating']),
-                                                              itemCount: 5,
-                                                              itemSize: 15.0,
-                                                              emptyColor: Color(
-                                                                  0xFF000000),
+                                                    Container(
+                                                      // padding: EdgeInsets.all(left: 20),
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: <Widget>[
+                                                          SizedBox(height: 3),
+                                                          Container(
+                                                            height: 42,
+                                                            child: Text(
+                                                              '${widget.bookDataL[i]['storybookTitle']}',
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily:
+                                                                      'SourceSansRegular'),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .clip,
+                                                              maxLines: 2,
                                                             ),
-                                                          )
-                                                        : Text(
-                                                            "(No rating yet)",
+                                                          ),
+                                                          Text(
+                                                            'by $name',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                                  'SourceSansLight',
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .clip,
+                                                          ),
+                                                          SizedBox(height: 3),
+                                                          rating == true
+                                                              ? Container(
+                                                                  child:
+                                                                      FlutterRatingBarIndicator(
+                                                                    itemPadding:
+                                                                        EdgeInsets.only(
+                                                                            right:
+                                                                                1),
+                                                                    rating: double.parse(widget.bookData[i]['rating']) ==
+                                                                            null
+                                                                        ? 0
+                                                                        : double.parse(widget.bookDataL[i]
+                                                                            [
+                                                                            'rating']),
+                                                                    itemCount:
+                                                                        5,
+                                                                    itemSize:
+                                                                        15.0,
+                                                                    emptyColor:
+                                                                        Color(
+                                                                            0xFF000000),
+                                                                  ),
+                                                                )
+                                                              : Text(
+                                                                  "(No rating yet)",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontFamily:
+                                                                          'SourceSansRegular'),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .clip,
+                                                                  softWrap:
+                                                                      false,
+                                                                ),
+                                                          SizedBox(height: 3),
+                                                          Text(
+                                                            language,
                                                             style: TextStyle(
                                                                 fontSize: 12,
                                                                 color: Colors
                                                                     .white,
                                                                 fontFamily:
-                                                                    'SourceSansRegular'),
+                                                                    'SourceSansLight'),
                                                             overflow:
                                                                 TextOverflow
                                                                     .clip,
                                                             softWrap: false,
-                                                          ),
-                                                    SizedBox(height: 3),
-                                                    Text(
-                                                      language,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: Colors.white,
-                                                          fontFamily:
-                                                              'SourceSansLight'),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      softWrap: false,
+                                                          )
+                                                        ],
+                                                      ),
                                                     )
                                                   ],
                                                 ),
-                                              )
-                                            ],
-                                          ),
-                                        )),
-                                  );
-                                },
-                              ),
-                            )
-                            : Container(),
+                                              )),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Container(),
                             widget.bookDataL.length != 0
-                            ?
-                            SizedBox(height: 10)
-                            : Container(),
+                                ? SizedBox(height: 10)
+                                : Container(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
@@ -1137,6 +1291,7 @@ class Book_list_state extends State<Book_list>
                                     }
                                   }
                                   String name = '';
+                                  String id = '';
                                   //To check who is the writer for the story.
                                   for (int j = 0;
                                       j < widget.contributor.length;
@@ -1144,6 +1299,8 @@ class Book_list_state extends State<Book_list>
                                     if (widget.bookData[i]['ContributorID'] ==
                                         widget.contributor[j]
                                             ['ContributorID']) {
+                                      id = widget.contributor[j]
+                                          ['ContributorID'];
                                       name = widget.contributor[j]['Name'];
                                     }
                                   }
@@ -1174,10 +1331,14 @@ class Book_list_state extends State<Book_list>
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     LoadDetail(
+                                                      reviewAll: widget.review,
+                                                          languageData: widget.languageData,
+                                                          contributorList: widget.contributor,
                                                         bookData:
                                                             widget.bookData,
                                                         index: i,
                                                         contributor: name,
+                                                        contributorID: id,
                                                         childrenID:
                                                             widget.childrenID,
                                                         language: language)),
@@ -1337,295 +1498,636 @@ class Book_list_state extends State<Book_list>
   }
 
   Widget _buildCollection(BuildContext context) {
-    return storycollection.length == 0
-        ? Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  "assets/img/empty.png",
-                  fit: BoxFit.cover,
-                ),
-                Text(
-                  "Empty! Download now at Gallery",
-                  style: TextStyle(fontFamily: "WorkSansBold", fontSize: 20),
-                ),
-              ],
-            ),
-          )
-        : SingleChildScrollView(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
+    return SingleChildScrollView(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 15),
+            Padding(
+              padding: EdgeInsets.only(left: 15, right: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 15),
-                  Padding(
-                    padding: EdgeInsets.only(left: 15, right: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Downloads",
-                              style: TextStyle(
-                                  letterSpacing: -1.5,
-                                  fontFamily: 'SourceSansBold',
-                                  fontSize: 40),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        GestureDetector(
-                            onTap: ()
-
-                                /* {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchPage(
-                                          bookData: widget.bookData,
-                                          contributor: widget.contributor,
-                                          languageData: widget.languageData,
-                                          childrenID: widget.childrenID,
-                                        )),
-                              );
-                            }, */
-
-                                {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchDownload(
-                                          storyData: storycollection,
-                                          languageAvailable: languageAvailable,
-                                          childrenID: widget.childrenID,
-                                        )),
-                              );
-                            },
-                            child: new Container(
-                              padding: EdgeInsets.only(left: 15, right: 15),
-                              height: 60,
-                              color: Color(0xFFF1F1F1),
-                              child: new Row(children: [
-                                Icon(IconicIcons.search),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Downloads",
+                        style: TextStyle(
+                            letterSpacing: -1.5,
+                            fontFamily: 'SourceSansBold',
+                            fontSize: 40),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  storycollection.length == 0
+                      ? Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 8),
+                              Image.asset(
+                                "assets/img/empty.png",
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                "Empty! Download now at Gallery",
+                                style: TextStyle(
+                                    fontFamily: "WorkSansBold", fontSize: 20),
+                              ),
+                            ],
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SearchDownload(
+                                        storyData: storycollection,
+                                        languageAvailable: languageAvailable,
+                                        childrenID: widget.childrenID,
+                                      )),
+                            );
+                          },
+                          child: new Container(
+                            padding: EdgeInsets.only(left: 15, right: 15),
+                            height: 60,
+                            color: Color(0xFFF1F1F1),
+                            child: new Row(children: [
+                              Icon(IconicIcons.search),
+                              Container(
+                                margin: EdgeInsets.only(left: 30),
+                                child: Text(
+                                  "Search",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'SourceSansRegular'),
+                                ),
+                              ),
+                            ]),
+                          )),
+                  SizedBox(height: 10),
+                  Container(
+                    color: Color(0xFFF1F1F1),
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: storycollection.length,
+                        itemBuilder: (context, i) {
+                          List<Widget> list = new List<Widget>();
+                          for (int j = 0; j < languageAvailable.length; j++) {
+                            //languageAvailable has stored all the story id and languages.
+                            if (languageAvailable[j].story_id ==
+                                storycollection[i]
+                                    .story_id) //to find out all available languages of the story.
+                            {
+                              //add language description into a list for display purpose.
+                              list.add(
                                 Container(
-                                  margin: EdgeInsets.only(left: 30),
+                                  margin: EdgeInsets.all(5),
+                                  padding: EdgeInsets.all(8),
+                                  color: Colors.black12,
                                   child: Text(
-                                    "Search",
+                                    languageAvailable[j].languageDesc,
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 14,
                                         fontFamily: 'SourceSansRegular'),
                                   ),
                                 ),
-                              ]),
-                            )),
-                        SizedBox(height: 10),
-                        Container(
-                          color: Color(0xFFF1F1F1),
-                          child: MediaQuery.removePadding(
-                            context: context,
-                            removeTop: true,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: storycollection.length,
-                              itemBuilder: (context, i) {
-                                List<Widget> list = new List<Widget>();
-                                for (int j = 0;
-                                    j < languageAvailable.length;
-                                    j++) {
-                                  //languageAvailable has stored all the story id and languages.
-                                  if (languageAvailable[j].story_id ==
-                                      storycollection[i]
-                                          .story_id) //to find out all available languages of the story.
-                                  {
-                                    //add language description into a list for display purpose.
-                                    list.add(
-                                      Container(
-                                        margin: EdgeInsets.all(5),
-                                        padding: EdgeInsets.all(8),
-                                        color: Colors.black12,
-                                        child: Text(
-                                          languageAvailable[j].languageDesc,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'SourceSansRegular'),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-                                Uint8List bytes = base64Decode(
-                                    storycollection[i].story_cover);
+                              );
+                            }
+                          }
+                          Uint8List bytes =
+                              base64Decode(storycollection[i].story_cover);
 
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: 15),
-                                  padding: EdgeInsets.only(
-                                      top: 5, right: 5, left: 5),
-                                  child: Stack(
-                                    overflow: Overflow.visible,
-                                    children: <Widget>[
-                                      Container(
-                                        child: GestureDetector(
-                                          child: Card(
-                                            elevation: 0,
-                                            color: Colors.transparent,
-                                            child: Row(
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 15),
+                            padding: EdgeInsets.only(top: 5, right: 5, left: 5),
+                            child: Stack(
+                              overflow: Overflow.visible,
+                              children: <Widget>[
+                                Container(
+                                  child: GestureDetector(
+                                    child: Card(
+                                      elevation: 0,
+                                      color: Colors.transparent,
+                                      child: Row(
+                                        children: <Widget>[
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                              color: Colors.grey,
+                                            )),
+                                            alignment: Alignment.center,
+                                            child: Container(
+                                              child: FadeInImage(
+                                                fit: BoxFit.cover,
+                                                height: 100,
+                                                width: 100,
+                                                image: MemoryImage(bytes),
+                                                placeholder: MemoryImage(
+                                                    kTransparentImage),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
                                               children: <Widget>[
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                    color: Colors.grey,
-                                                  )),
-                                                  alignment: Alignment.center,
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 20, right: 20),
                                                   child: Container(
-                                                    child: FadeInImage(
-                                                      fit: BoxFit.cover,
-                                                      height: 100,
-                                                      width: 100,
-                                                      image: MemoryImage(bytes),
-                                                      placeholder: MemoryImage(
-                                                          kTransparentImage),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.7,
+                                                    alignment:
+                                                        Alignment.topLeft,
+                                                    child: Text(
+                                                      storycollection[i]
+                                                          .story_title,
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              'SourceSansBold',
+                                                          fontSize: 20),
+                                                      overflow:
+                                                          TextOverflow.clip,
+                                                      maxLines: 2,
                                                     ),
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  child: Column(
-                                                    children: <Widget>[
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 20,
-                                                                right: 20),
-                                                        child: Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.7,
-                                                          alignment:
-                                                              Alignment.topLeft,
-                                                          child: Text(
-                                                            storycollection[i]
-                                                                .story_title,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            style: TextStyle(
-                                                                fontFamily:
-                                                                    'SourceSansBold',
-                                                                fontSize: 20),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .clip,
-                                                            maxLines: 2,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 12,
-                                                                  right: 12),
-                                                          child: Container(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child: Wrap(
-                                                                  alignment:
-                                                                      WrapAlignment
-                                                                          .start,
-                                                                  children:
-                                                                      list))),
-                                                    ],
-                                                  ),
+                                                SizedBox(
+                                                  height: 10,
                                                 ),
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 12, right: 12),
+                                                    child: Container(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: Wrap(
+                                                            alignment:
+                                                                WrapAlignment
+                                                                    .start,
+                                                            children: list))),
                                               ],
                                             ),
                                           ),
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LoadContent(
-                                                        storyID:
-                                                            storycollection[i]
-                                                                .story_id,
-                                                        childrenID:
-                                                            widget.childrenID,
-                                                        storyTitle:
-                                                            storycollection[i]
-                                                                .story_title,
-                                                        storyLanguage:
-                                                            storycollection[i]
-                                                                .languageCode,
-                                                      )),
-                                            );
-                                          },
-                                        ),
+                                        ],
                                       ),
-                                      Positioned(
-                                        right: 0,
-                                        top: 0,
-                                        child: Container(
-                                          width: 30.0,
-                                          child: PopupMenuButton<int>(
-                                            onSelected: (value) {
-                                              choiceAction(value, i);
-                                            },
-                                            icon: Icon(
-                                              Icons.more_vert,
-                                            ),
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                value: 1,
-                                                child: Text(
-                                                  "Delete",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontFamily:
-                                                          'WorkSansBold'),
-                                                ),
-                                              ),
-                                            ],
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoadContent(
+                                                  storyID: storycollection[i]
+                                                      .story_id,
+                                                  childrenID: widget.childrenID,
+                                                  storyTitle: storycollection[i]
+                                                      .story_title,
+                                                  storyLanguage:
+                                                      storycollection[i]
+                                                          .languageCode,
+                                                )),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    width: 30.0,
+                                    child: PopupMenuButton<int>(
+                                      onSelected: (value) {
+                                        choiceAction(value, i);
+                                      },
+                                      icon: Icon(
+                                        Icons.more_vert,
+                                      ),
+                                      itemBuilder: (context) => [
+                                        PopupMenuItem(
+                                          value: 1,
+                                          child: Text(
+                                            "Delete",
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontFamily: 'WorkSansBold'),
                                           ),
                                         ),
-                                      ),
-                                      i != storycollection.length - 1
-                                          ? Positioned(
-                                              bottom: -10,
-                                              left: 5,
-                                              child: Container(
-                                                height: 1.0,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width -
-                                                    50,
-                                                color: Color(0xFFB5B5B5),
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                );
-                              },
+                                ),
+                                i != storycollection.length - 1
+                                    ? Positioned(
+                                        bottom: -10,
+                                        left: 5,
+                                        child: Container(
+                                          height: 1.0,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              50,
+                                          color: Color(0xFFB5B5B5),
+                                        ),
+                                      )
+                                    : Container()
+                              ],
                             ),
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-          );
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFollow(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 15),
+            Padding(
+              padding: EdgeInsets.only(left: 15, right: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Followers",
+                        style: TextStyle(
+                            letterSpacing: -1.5,
+                            fontFamily: 'SourceSansBold',
+                            fontSize: 40),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  connection == false
+                      ? Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 8),
+                              Image.asset(
+                                "assets/img/error.png",
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                "No Internet Collection!",
+                                style: TextStyle(
+                                    fontFamily: "WorkSansBold", fontSize: 20),
+                              ),
+                            ],
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SearchFollow(
+                                        contributor: widget.contributor,
+                                        review: widget.review,
+                                        languageData: widget.languageData,
+                                        childrenID: widget.childrenID,
+                                      )),
+                            );
+                          },
+                          child: new Container(
+                            padding: EdgeInsets.only(left: 15, right: 15),
+                            height: 60,
+                            color: Color(0xFFF1F1F1),
+                            child: new Row(children: [
+                              Icon(IconicIcons.search),
+                              Container(
+                                margin: EdgeInsets.only(left: 30),
+                                child: Text(
+                                  "Search",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'SourceSansRegular'),
+                                ),
+                              ),
+                            ]),
+                          )),
+                  SizedBox(height: 10),
+                  connection == false
+                      ? Container()
+                      : widget.following.length == 0
+                          ? Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              12),
+                                  Image.asset(
+                                    "assets/img/empty.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Text(
+                                    "Empty! Follow a contributer now",
+                                    style: TextStyle(
+                                        fontFamily: "WorkSansBold",
+                                        fontSize: 20),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(
+                              color: Color(0xFFF1F1F1),
+                              child: MediaQuery.removePadding(
+                                context: context,
+                                removeTop: true,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: widget.following.length,
+                                  itemBuilder: (context, i) {
+                                    List contributor = [];
+                                    String date = '';
+                                    for (int j = 0;
+                                        j < widget.following.length;
+                                        j++) {
+                                      for (int k = 0;
+                                          k < widget.contributor.length;
+                                          k++) {
+                                        if (widget.contributor[k]
+                                                ['ContributorID'] ==
+                                            widget.following[j]
+                                                ['ContributorID']) {
+                                          date = widget.following[j]
+                                              ['download_date'];
+                                          contributor
+                                              .add(widget.contributor[k]);
+                                          break;
+                                        }
+                                      }
+                                    }
+                                    // Uint8List bytes = base64Decode(
+                                    //     storycollection[i].story_cover);
+
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 15),
+                                      padding: EdgeInsets.only(
+                                          top: 5, right: 5, left: 5),
+                                      child: Stack(
+                                        overflow: Overflow.visible,
+                                        children: <Widget>[
+                                          Container(
+                                            child: GestureDetector(
+                                              child: Card(
+                                                elevation: 0,
+                                                color: Colors.transparent,
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                        color: Colors.grey,
+                                                      )),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Container(
+                                                        /* child: FadeInImage(
+                                                          fit: BoxFit.cover,
+                                                          height: 100,
+                                                          width: 100,
+                                                          image: MemoryImage(
+                                                              bytes),
+                                                          placeholder: MemoryImage(
+                                                              kTransparentImage), ),*/
+                                                        height: 100,
+                                                        width: 100,
+                                                        child: Image.asset(
+                                                            "assets/img/fox.png",
+                                                            fit: BoxFit.cover),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    right: 20),
+                                                            child: Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.7,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Text(
+                                                                contributor[i]
+                                                                    ['Name'],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'SourceSansBold',
+                                                                    fontSize:
+                                                                        20),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .clip,
+                                                                maxLines: 2,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    right: 20),
+                                                            child: Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.7,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Text(
+                                                                contributor[i][
+                                                                        'followers'] +
+                                                                    " Followers",
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'SourceSansRegular',
+                                                                    fontSize:
+                                                                        18),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 10),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    right: 20),
+                                                            child: Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.7,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Text(
+                                                                'Followed since ' +
+                                                                    date.toString(),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'SourceSansLight',
+                                                                    fontSize:
+                                                                        15),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .clip,
+                                                                maxLines: 2,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WriterDetails(
+                                                            writer: widget
+                                                                .contributor,
+                                                            languageData: widget
+                                                                .languageData,
+                                                            review:
+                                                                widget.review,
+                                                            childrenID: widget
+                                                                .childrenID,
+                                                            index: widget
+                                                                .contributor
+                                                                .indexOf(
+                                                                    contributor[
+                                                                        i]),
+                                                            contributorID:
+                                                                contributor[i][
+                                                                    'ContributorID'],
+                                                          )),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          Positioned(
+                                            right: 0,
+                                            top: 0,
+                                            child: Container(
+                                              width: 30.0,
+                                              child: PopupMenuButton<int>(
+                                                onSelected: (value) {
+                                                  unfollowWriter(
+                                                      value,
+                                                      contributor[i]
+                                                          ['ContributorID']);
+                                                },
+                                                icon: Icon(
+                                                  Icons.more_vert,
+                                                ),
+                                                itemBuilder: (context) => [
+                                                  PopupMenuItem(
+                                                    value: 1,
+                                                    child: Text(
+                                                      "Unfollow",
+                                                      style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontFamily:
+                                                              'WorkSansBold'),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          i != widget.following.length - 1
+                                              ? Positioned(
+                                                  bottom: -10,
+                                                  left: 5,
+                                                  child: Container(
+                                                    height: 1.0,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            50,
+                                                    color: Color(0xFFB5B5B5),
+                                                  ),
+                                                )
+                                              : Container()
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void choiceAction(int choice, int i) async {
@@ -1642,6 +2144,21 @@ class Book_list_state extends State<Book_list>
             (item) => item.story_id == storycollection[i].story_id);
         storycollection = [];
         languageAvailable = [];
+      });
+    }
+  }
+
+  void unfollowWriter(int choice, String id) async {
+    if (choice == 1) {
+      http.post(url + "unfollowWriter.php", body: {
+        'children_id': widget.childrenID,
+        'ContributorID': id,
+      });
+
+      setState(() {
+        widget.following.removeWhere((item) =>
+            item['ContributorID'] == id &&
+            item['children_id'] == widget.childrenID);
       });
     }
   }
@@ -1703,10 +2220,12 @@ class _BookTabState extends State<BookTab> {
                   }
                 }
                 String name = '';
+                String id = '';
                 //To check who is the writer for the story.
                 for (int j = 0; j < widget.contributor.length; j++) {
                   if (widget.bookDataRoL[i]['ContributorID'] ==
                       widget.contributor[j]['ContributorID']) {
+                    id = widget.contributor[j]['ContributorID'];
                     name = widget.contributor[j]['Name'];
                   }
                 }
@@ -1744,9 +2263,13 @@ class _BookTabState extends State<BookTab> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoadDetail(
+                                reviewAll: widget.review,
+                                                          languageData: widget.languageData,
+                                                          contributorList: widget.contributor,
                                   bookData: widget.bookData,
                                   index: bookIndex,
                                   contributor: name,
+                                  contributorID: id,
                                   childrenID: widget.childrenID,
                                   language: language)),
                         );
@@ -1848,11 +2371,12 @@ class _BookTabState extends State<BookTab> {
 }
 
 class SearchPage extends StatefulWidget {
-  List bookData, contributor, languageData;
+  List bookData, contributor, languageData, review;
   String childrenID;
   SearchPage(
       {Key key,
       this.bookData,
+      this.review,
       this.contributor,
       this.languageData,
       this.childrenID})
@@ -1920,10 +2444,12 @@ class _SearchPageState extends State<SearchPage> {
               }
             }
             String name = '';
+            String id = '';
             //To check who is the writer for the story.
             for (int j = 0; j < widget.contributor.length; j++) {
               if (story[index].contributor_id ==
                   widget.contributor[j]['ContributorID']) {
+                id = widget.contributor[j]['ContributorID'];
                 name = widget.contributor[j]['Name'];
               }
             }
@@ -1951,9 +2477,13 @@ class _SearchPageState extends State<SearchPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => LoadDetail(
+                        reviewAll: widget.review,
+                                                          languageData: widget.languageData,
+                                                          contributorList: widget.contributor,
                           bookData: widget.bookData,
                           index: story[index].index,
                           contributor: name,
+                          contributorID: id,
                           childrenID: widget.childrenID,
                           language: language)),
                 );
@@ -2009,7 +2539,6 @@ class _SearchDownloadState extends State<SearchDownload> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.storyData[1].story_title);
     return Scaffold(
       appBar: AppBar(
         elevation: .5,
@@ -2025,7 +2554,6 @@ class _SearchDownloadState extends State<SearchDownload> {
           minimumChars: 1,
           hintText: 'Enter the book title',
           onItemFound: (Storybook storybook, int index) {
-          
             return ListTile(
               title: Text(storybook.story_title),
               subtitle: Column(
@@ -2055,6 +2583,103 @@ class _SearchDownloadState extends State<SearchDownload> {
                                 widget.storyData[storybook.index].story_title,
                             storyLanguage:
                                 widget.storyData[storybook.index].languageCode,
+                          )),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SearchFollow extends StatefulWidget {
+  List contributor, review, languageData;
+  String childrenID;
+  SearchFollow(
+      {Key key,
+      this.contributor,
+      this.childrenID,
+      this.review,
+      this.languageData})
+      : super(key: key);
+  @override
+  _SearchFollowState createState() => new _SearchFollowState();
+}
+
+class _SearchFollowState extends State<SearchFollow> {
+  List con = [], num = [];
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<List> getWriters(String text) async 
+  {
+    await Future.delayed(Duration(seconds: 1));
+    con = [];
+    num = [];
+    for (int i = 0; i < widget.contributor.length; i++) {
+      if (widget.contributor[i]['Name']
+          .toString()
+          .toLowerCase()
+          .contains(text.toLowerCase())) {
+        con.add(widget.contributor[i]);
+        num.add(widget.contributor.indexOf(widget.contributor[i]));
+         
+      }
+    }
+    return con;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: .5,
+        title: Text('Search for writers'),
+        actions: <Widget>[],
+      ),
+      body: Container(
+        child: SearchBar(
+          searchBarPadding: EdgeInsets.symmetric(horizontal: 10),
+          headerPadding: EdgeInsets.symmetric(horizontal: 10),
+          listPadding: EdgeInsets.symmetric(horizontal: 10),
+          onSearch: getWriters,
+          minimumChars: 1,
+          hintText: "Enter the writer's name",
+          onItemFound: (item, int index) {
+           
+            return ListTile(
+              title: Text(con[index]['Name']),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text('Date of Birth: ' + con[index]['DOB'].toString()),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text('Followers: ' + con[index]['followers'].toString()),
+                  SizedBox(
+                    height: 25,
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => WriterDetails(
+                            writer: widget.contributor,
+                            languageData: widget.languageData,
+                            review: widget.review,
+                            childrenID: widget.childrenID,
+                            index: num[index],
+                            contributorID: con[index]['ContributorID'],
                           )),
                 );
               },

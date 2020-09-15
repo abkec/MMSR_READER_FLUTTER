@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'dart:typed_data';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:reader_mmsr/Model/PageImageModel.dart';
@@ -9,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:reader_mmsr/Model/StoryModel.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:reader_mmsr/ui/writer_detail.dart';
 import 'book_list.dart';
 import 'page_content.dart';
 
@@ -18,14 +20,18 @@ import 'page_content.dart';
 
 //Load all neccessary data from local database and server database.
 class LoadDetail extends StatefulWidget {
-  List bookData;
+  List bookData, reviewAll, languageData, contributorList;
   String childrenID, language;
   int index;
-  String contributor;
+  String contributor, contributorID;
   LoadDetail(
       {Key key,
       this.bookData,
+      this.contributorList,
+      this.reviewAll,
+      this.languageData,
       this.childrenID,
+      this.contributorID,
       this.language,
       this.index,
       this.contributor})
@@ -55,6 +61,19 @@ class _LoadDetailState extends State<LoadDetail> {
     return reviewData;
   }
 
+  Future<List> getFollowing() async //retrieve all following from server
+  {
+    final response = await http.post(
+      url + "getFollowing2.php",
+      body: {
+        "childrenID": widget.childrenID,
+        "ContributorID": widget.contributorID
+      },
+    );
+    var datauser = json.decode(response.body);
+    return datauser;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -66,19 +85,35 @@ class _LoadDetailState extends State<LoadDetail> {
           if (snapshot.hasData) {
             return new FutureBuilder<List>(
                 //if equal to true then continue retrieve other data
-                future: getReview(),
-                builder: (context, snapshot2) {
-                  if (snapshot2.hasData) {
-                    return new Detail(
-                      localData: snapshot.data,
-                      bookData: widget.bookData,
-                      childrenID: widget.childrenID,
-                      index: widget.index,
-                      contributor: widget.contributor,
-                      language: widget.language,
-                      review: snapshot2.data,
-                      //Passing data into next widget.
-                    );
+                future: getFollowing(),
+                builder: (context, snapshot3) {
+                  if (snapshot3.hasData) {
+                    return new FutureBuilder<List>(
+                        //if equal to true then continue retrieve other data
+                        future: getReview(),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasData) {
+                            return new Detail(
+                              localData: snapshot.data,
+                              bookData: widget.bookData,
+                              childrenID: widget.childrenID,
+                              index: widget.index,
+                              contributor: widget.contributor,
+                              contributorList: widget.contributorList,
+                              reviewAll: widget.reviewAll,
+                              languageData: widget.languageData,
+                              language: widget.language,
+                              review: snapshot2.data,
+                              contributorID: widget.contributorID,
+                              following: snapshot3.data,
+                              //Passing data into next widget.
+                            );
+                          } else {
+                            return new Center(
+                              child: new CircularProgressIndicator(),
+                            );
+                          }
+                        });
                   } else {
                     return new Center(
                       child: new CircularProgressIndicator(),
@@ -97,17 +132,28 @@ class _LoadDetailState extends State<LoadDetail> {
 }
 
 class Detail extends StatefulWidget {
-  List bookData, localData, review;
+  List bookData,
+      localData,
+      review,
+      following,
+      reviewAll,
+      contributorList,
+      languageData;
   String childrenID, language;
   int index;
-  String contributor;
+  String contributor, contributorID;
   Detail(
       {Key key,
       this.bookData,
+      this.following,
       this.childrenID,
       this.language,
       this.index,
       this.contributor,
+      this.contributorList,
+      this.reviewAll,
+      this.languageData,
+      this.contributorID,
       this.localData,
       this.review})
       : super(key: key);
@@ -117,12 +163,21 @@ class Detail extends StatefulWidget {
 
 class _DetailState extends State<Detail> {
   String url = 'http://10.0.2.2/mmsr/';
-  bool exist = false;
+  bool exist = false, follow = false;
   String storyLanguage = '', storyID = '', storyTitle = '';
+  int conIndex;
+
   @override
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
+    for (int i = 0; i < widget.contributorList.length; i++) {
+      if (widget.contributorList[i]['ContributorID'] == widget.contributorID) {
+        conIndex = widget.contributorList.indexOf(widget.contributorList[i]);
+        break;
+      }
+    }
+
     //app bar
     for (int i = 0; i < widget.localData.length; i++) {
       setState(() {
@@ -139,6 +194,11 @@ class _DetailState extends State<Detail> {
         }
       });
     }
+
+    setState(() {
+      if (widget.following.length > 0) follow = true;
+    });
+
     final appBar = AppBar(
       elevation: .5,
       title: Text('Books Details'),
@@ -187,11 +247,35 @@ class _DetailState extends State<Detail> {
       children: <Widget>[
         text(widget.bookData[widget.index]['storybookTitle'],
             size: 25, isBold: true, padding: EdgeInsets.only(top: 16.0)),
-        text(
-          'by ${widget.contributor}',
-          color: Colors.black54,
-          size: 12,
+        Padding(
           padding: EdgeInsets.only(left: 8, top: 0, bottom: 0),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                    text: 'by ${widget.contributor}',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 12,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WriterDetails(
+                                    writer: widget.contributorList,
+                                    languageData: widget.languageData,
+                                    review: widget.reviewAll,
+                                    childrenID: widget.childrenID,
+                                    index: conIndex,
+                                    contributorID: widget.contributorID,
+                                  )),
+                        );
+                      }),
+              ],
+            ),
+          ),
         ),
         text(
           'Genre: ${widget.bookData[widget.index]['storybookGenre']}',
@@ -263,23 +347,14 @@ class _DetailState extends State<Detail> {
               shadowColor: Colors.blue.shade200,
               elevation: 5.0,
               child: Tooltip(
-                message: exist == true ? "Unfollowed" : "Follow",
+                message: follow == true ? "Unfollowed" : "Follow",
                 child: IconButton(
-                  icon:
-                      exist == true ? Icon(Icons.done) : Icon(Icons.person_add),
-                  // onPressed: () async {
-                  //   exist == true
-                  //       ? Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => LoadContent(
-                  //                   storyID: storyID,
-                  //                   childrenID: widget.childrenID,
-                  //                   storyTitle: storyTitle,
-                  //                   storyLanguage: storyLanguage)),
-                  //         )
-                  //       : download();
-                  // },
+                  icon: follow == true
+                      ? Icon(Icons.done)
+                      : Icon(Icons.person_add),
+                  onPressed: () async {
+                    follow == true ? unfollowWriter() : followWriter();
+                  },
                 ),
               ),
             ),
@@ -495,6 +570,69 @@ class _DetailState extends State<Detail> {
         db.downloadText(pageText);
       }
     }
+
+    Future.delayed(new Duration(seconds: 1), () {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => LoadBook(childrenID: widget.childrenID)),
+          (Route<dynamic> route) => false);
+    });
+  }
+
+  void followWriter() async //follow writer
+  {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+            child: Container(
+          height: 200,
+          width: 50,
+          child: Center(
+            child: SpinKitThreeBounce(color: Colors.blue),
+          ),
+        ));
+      },
+    );
+
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    print(dateFormat.format(DateTime.now()));
+    http.post(url + "followWriter.php", body: {
+      'children_id': widget.childrenID,
+      'ContributorID': widget.contributorID,
+      'download_date': dateFormat.format(DateTime.now()),
+    });
+
+    Future.delayed(new Duration(seconds: 1), () {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => LoadBook(childrenID: widget.childrenID)),
+          (Route<dynamic> route) => false);
+    });
+  }
+
+  void unfollowWriter() async //unfollow writer
+  {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+            child: Container(
+          height: 200,
+          width: 50,
+          child: Center(
+            child: SpinKitThreeBounce(color: Colors.blue),
+          ),
+        ));
+      },
+    );
+
+    http.post(url + "unfollowWriter.php", body: {
+      'children_id': widget.childrenID,
+      'ContributorID': widget.contributorID,
+    });
 
     Future.delayed(new Duration(seconds: 1), () {
       Navigator.of(context).pushAndRemoveUntil(
