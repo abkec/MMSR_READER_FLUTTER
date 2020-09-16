@@ -185,16 +185,23 @@ class _PageContent_State extends State<PageContent>
       url + "getRating3.php",
       body: {
         "storybookID": widget.storyID,
-        "language": widget.storyLanguage,
+        "language": widget.pageLanguage[languageRate].languageCode,
         "children_id": widget.childrenID
       },
     );
 
     var rating = json.decode(response.body);
-    
+   
     if (rating.length != 0) {
       review = rating;
+      print(review[0]);
       rateController.text = review[0]['comments'];
+    }
+
+    else {
+
+      review = [];
+      rateController.text = "";
     }
     
   }
@@ -393,6 +400,9 @@ class _PageContent_State extends State<PageContent>
                               icon: Icon(Icons.done),
                               onPressed: () {
                                 if (connection == true) {
+
+                                  //getReview();  
+                                  
                                   showDialog(
                                       context: context,
                                       builder: (_) => Center(
@@ -527,22 +537,6 @@ class _PageContent_State extends State<PageContent>
                                                                       seconds:
                                                                           2),
                                                                   () {
-                                                                print(widget
-                                                                    .pageLanguage[
-                                                                        languageRate]
-                                                                    .languageCode);
-                                                                http.post(
-                                                                    url +
-                                                                        "ratingRoutine.php",
-                                                                    body: {
-                                                                      'storybookID':
-                                                                          widget
-                                                                              .storyID,
-                                                                      'languageCode': widget
-                                                                          .pageLanguage[
-                                                                              languageRate]
-                                                                          .languageCode,
-                                                                    });
                                                                 Navigator.of(context).pushAndRemoveUntil(
                                                                     MaterialPageRoute(
                                                                         builder: (context) => LoadBook(
@@ -922,6 +916,7 @@ class _PageContent_State extends State<PageContent>
     //to notify user has select other langauges
     currentLanguage = pageNo;
     setState(() {
+      
       pickLanguage[pageNo] = true;
       initialLanguage = pageNo;
       for (int i = 0; i < pickLanguage.length; i++) {
@@ -930,6 +925,8 @@ class _PageContent_State extends State<PageContent>
     });
 
     changeLanguage();
+
+    getReview();
   }
 
   onPageChange(int pageNo) {
