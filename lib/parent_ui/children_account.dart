@@ -249,8 +249,10 @@ class _ChildrenAccount_State extends State<ChildrenAccount>
                         db.deleteAllBook(widget.childData[i].children_id);
                         db.deleteAllText(widget.childData[i].children_id);
                         db.deleteAllOngoing(widget.childData[i].children_id);
+                        db.deleteStats(widget.childData[i].children_id);
                         //db.deleteAllImage(widget.childData[i].children_id);
                         widget.childData.removeAt(i);
+                        
                       });
                       Navigator.of(context).pop();
                     },

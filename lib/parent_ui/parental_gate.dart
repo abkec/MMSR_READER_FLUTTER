@@ -590,6 +590,7 @@ class _ParentalGate_State extends State<ParentalGate>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => LoadBook(
+                                                  childData: widget.childData[index-1],
                                                   childrenID: widget
                                                       .childData[index-1]
                                                       .children_id)),
@@ -850,6 +851,8 @@ class AddChildren_State extends State<_AddChildren> {
           db.saveLanguagePreferred(language);
         }
       }
+
+      db.saveStats(children_id);
     }
   }
 

@@ -10,6 +10,7 @@ import 'package:reader_mmsr/localdatabase/Database.dart';
 import 'package:reader_mmsr/style/theme.dart' as Theme;
 import 'package:reader_mmsr/parent_ui/parental_gate.dart';
 import 'package:reader_mmsr/ui/writer_detail.dart';
+import 'package:reader_mmsr/Model/ChildrenModel.dart';
 import 'package:reader_mmsr/utils/transparent_image.dart';
 import 'package:reader_mmsr/utils/bubble_indication_painter.dart';
 import 'detail.dart';
@@ -26,10 +27,12 @@ import 'package:intl/intl.dart';
 
 //LoadBook Widget to load all necessary data from local database and server database
 class LoadBook extends StatefulWidget {
+  Children childData;
   String childrenID;
   int page;
 
-  LoadBook({Key key, this.childrenID, this.page}) : super(key: key);
+  LoadBook({Key key, this.childrenID, this.page, this.childData})
+      : super(key: key);
   @override
   _LoadBookState createState() => new _LoadBookState();
 }
@@ -273,6 +276,8 @@ class _LoadBookState extends State<LoadBook> {
                                                               languageData:
                                                                   languageData,
                                                               page: widget.page,
+                                                              childData: widget
+                                                                  .childData,
                                                               bookData1:
                                                                   bookData1);
                                                         }
@@ -309,6 +314,7 @@ class _LoadBookState extends State<LoadBook> {
 }
 
 class Book_list extends StatefulWidget {
+  Children childData;
   List bookData,
       bookDataR,
       contributor,
@@ -324,6 +330,7 @@ class Book_list extends StatefulWidget {
   @override
   Book_list(
       {Key key,
+      this.childData,
       this.following,
       this.childrenID,
       this.collection,
@@ -375,6 +382,7 @@ class Book_list_state extends State<Book_list>
 
   bool connection;
   void checkconnection() async {
+    print(widget.childData.children_image);
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -422,29 +430,29 @@ class Book_list_state extends State<Book_list>
             //navigate back to homepage and remove all route history
           },
         ),
-        
         actions: <Widget>[
-          _selectedIndex == 0 ?
-          IconButton(
-            // refresh Button
-            icon: const Icon(IconicIcons.loop),
-            tooltip: 'Refresh',
-            onPressed: () {
-              setState(
-                () {
-                  checkconnection2();
-                  var db = DBHelper();
-                  connection == true //advance if else statement
-                      //'?' if the statement is true
-                      ? widget.bookData1 = db.getStories(widget
-                          .childrenID) //start by "db." means retrieve data from local database.
-                      //if internet available then call getStories() with children id to retrieve data
-                      //':' else                                    and store it into the bookData1 variable.
-                      : print(connection);
-                },
-              );
-            },
-          ) : SizedBox(),
+          _selectedIndex == 0 || _selectedIndex == 1 || _selectedIndex == 3
+              ? IconButton(
+                  // refresh Button
+                  icon: const Icon(IconicIcons.loop),
+                  tooltip: 'Refresh',
+                  onPressed: () {
+                    setState(
+                      () {
+                        checkconnection2();
+                        var db = DBHelper();
+                        connection == true //advance if else statement
+                            //'?' if the statement is true
+                            ? widget.bookData1 = db.getStories(widget
+                                .childrenID) //start by "db." means retrieve data from local database.
+                            //if internet available then call getStories() with children id to retrieve data
+                            //':' else                                    and store it into the bookData1 variable.
+                            : print(connection);
+                      },
+                    );
+                  },
+                )
+              : SizedBox(),
         ],
       ),
       key: _scaffoldKey,
@@ -466,10 +474,11 @@ class Book_list_state extends State<Book_list>
                 height: 30, child: Image.asset('assets/img/downloads.png')),
             title: Text('Downloads'),
           ),
-          // BottomNavigationBarItem(
-          //   icon: SizedBox(height:30, child:Image.asset('assets/img/stats.png')),
-          //   title: Text('Stats'),
-          // ),
+          BottomNavigationBarItem(
+            icon: SizedBox(
+                height: 30, child: Image.asset('assets/img/stats.png')),
+            title: Text('Stats'),
+          ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -482,6 +491,7 @@ class Book_list_state extends State<Book_list>
               _buildLibrary(context),
               _buildFollow(context),
               _buildCollection(context),
+              _buildStats(context),
             ]),
       ),
     );
@@ -645,7 +655,7 @@ class Book_list_state extends State<Book_list>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SearchPage(
-                                          review: widget.review,
+                                              review: widget.review,
                                               bookData: widget.bookData,
                                               contributor: widget.contributor,
                                               languageData: widget.languageData,
@@ -807,10 +817,13 @@ class Book_list_state extends State<Book_list>
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         LoadDetail(
-
-                                                          reviewAll: widget.review,
-                                                          languageData: widget.languageData,
-                                                          contributorList: widget.contributor,
+                                                            reviewAll:
+                                                                widget.review,
+                                                            languageData: widget
+                                                                .languageData,
+                                                            contributorList:
+                                                                widget
+                                                                    .contributor,
                                                             bookData:
                                                                 widget.bookData,
                                                             index: bookIndex,
@@ -1092,9 +1105,13 @@ class Book_list_state extends State<Book_list>
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           LoadDetail(
-                                                            reviewAll: widget.review,
-                                                          languageData: widget.languageData,
-                                                          contributorList: widget.contributor,
+                                                              reviewAll: widget
+                                                                  .review,
+                                                              languageData: widget
+                                                                  .languageData,
+                                                              contributorList:
+                                                                  widget
+                                                                      .contributor,
                                                               bookData: widget
                                                                   .bookData,
                                                               index: bookIndex,
@@ -1331,9 +1348,12 @@ class Book_list_state extends State<Book_list>
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     LoadDetail(
-                                                      reviewAll: widget.review,
-                                                          languageData: widget.languageData,
-                                                          contributorList: widget.contributor,
+                                                        reviewAll:
+                                                            widget.review,
+                                                        languageData:
+                                                            widget.languageData,
+                                                        contributorList:
+                                                            widget.contributor,
                                                         bookData:
                                                             widget.bookData,
                                                         index: i,
@@ -2130,6 +2150,162 @@ class Book_list_state extends State<Book_list>
     );
   }
 
+  Widget _buildStats(BuildContext context) {
+    return connection == false
+        ? SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 15),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "Stats",
+                              style: TextStyle(
+                                  letterSpacing: -1.5,
+                                  fontFamily: 'SourceSansBold',
+                                  fontSize: 40),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 8),
+                              Image.asset(
+                                "assets/img/error.png",
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                "No Internet Collection!",
+                                style: TextStyle(
+                                    fontFamily: "WorkSansBold", fontSize: 20),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : SingleChildScrollView(
+            child: Container(
+              color: Color(0xFF2196F3),
+              height: MediaQuery.of(context).size.height - 140,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "Stats",
+                              style: TextStyle(
+                                  letterSpacing: -1.5,
+                                  color: Colors.white,
+                                  fontFamily: 'SourceSansBold',
+                                  fontSize: 40),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Container(
+                          alignment: Alignment.center,
+                          height: 160,
+                          child: Image.asset(
+                            widget.childData.children_image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            widget.childData.children_name,
+                            style: TextStyle(
+                                letterSpacing: -1.5,
+                                color: Colors.white,
+                                fontFamily: 'SourceSansRegular',
+                                fontSize: 30),
+                          ),
+                        ),
+                        SizedBox(height: 40),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Container(
+                                  height: 50,
+                                  child: Image.asset(
+                                    'assets/img/five.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                SizedBox(height:5),
+                                Text(
+                                  'Read 5 books',
+                                  style: TextStyle(
+                                      letterSpacing: -0.5,
+                                      color: Colors.white,
+                                      fontFamily: 'SourceSansLight',
+                                      fontSize: 15),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: <Widget>[
+                                Container(
+                                  height: 50,
+                                  child: Image.asset(
+                                    'assets/img/ten.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                SizedBox(height:5),
+                                Text(
+                                  'Download 10 books',
+                                  style: TextStyle(
+                                      letterSpacing: -0.5,
+                                      color: Colors.white,
+                                      fontFamily: 'SourceSansLight',
+                                      fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+  }
+
   void choiceAction(int choice, int i) async {
     var db = DBHelper();
     //delete all details of the storybook id
@@ -2263,9 +2439,9 @@ class _BookTabState extends State<BookTab> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoadDetail(
-                                reviewAll: widget.review,
-                                                          languageData: widget.languageData,
-                                                          contributorList: widget.contributor,
+                                  reviewAll: widget.review,
+                                  languageData: widget.languageData,
+                                  contributorList: widget.contributor,
                                   bookData: widget.bookData,
                                   index: bookIndex,
                                   contributor: name,
@@ -2477,9 +2653,9 @@ class _SearchPageState extends State<SearchPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => LoadDetail(
-                        reviewAll: widget.review,
-                                                          languageData: widget.languageData,
-                                                          contributorList: widget.contributor,
+                          reviewAll: widget.review,
+                          languageData: widget.languageData,
+                          contributorList: widget.contributor,
                           bookData: widget.bookData,
                           index: story[index].index,
                           contributor: name,
@@ -2615,8 +2791,7 @@ class _SearchFollowState extends State<SearchFollow> {
     super.initState();
   }
 
-  Future<List> getWriters(String text) async 
-  {
+  Future<List> getWriters(String text) async {
     await Future.delayed(Duration(seconds: 1));
     con = [];
     num = [];
@@ -2627,7 +2802,6 @@ class _SearchFollowState extends State<SearchFollow> {
           .contains(text.toLowerCase())) {
         con.add(widget.contributor[i]);
         num.add(widget.contributor.indexOf(widget.contributor[i]));
-         
       }
     }
     return con;
@@ -2650,7 +2824,6 @@ class _SearchFollowState extends State<SearchFollow> {
           minimumChars: 1,
           hintText: "Enter the writer's name",
           onItemFound: (item, int index) {
-           
             return ListTile(
               title: Text(con[index]['Name']),
               subtitle: Column(

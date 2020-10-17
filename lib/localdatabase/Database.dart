@@ -5,6 +5,7 @@ import 'package:reader_mmsr/Model/HistoryModel.dart';
 import 'package:reader_mmsr/Model/OngoingModel.dart';
 import 'package:reader_mmsr/Model/PageImageModel.dart';
 import 'package:reader_mmsr/Model/PageTextModel.dart';
+import 'package:reader_mmsr/Model/StatsModel.dart';
 import 'package:reader_mmsr/Model/StoryModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -106,6 +107,15 @@ class DBHelper{
         "PRIMARY KEY ( children_id, languageCode)"
         ");");
     print('languagepreferred table created');
+
+    //stats table
+    await db.execute("CREATE TABLE Stats("
+        "stats_id TEXT PRIMARY KEY,"
+        "children_id TEXT ,"
+        "num_read INTEGER,"
+        "num_download INTEGER,"
+        "num_login INTEGER);");
+    print('stats table created');
 
     //SpeechLanguage table
 //    await db.execute("CREATE TABLE SpeechLanguage("
@@ -285,6 +295,44 @@ class DBHelper{
   }
 ///////////////////////////////////////////////////////////////////////////////
 
+ //Stats
+///////////////////////////////////////////////////////////////////////////////
+  Future<int> saveStats(String children_id) async{
+    var dbClient = await db;
+    //get the biggest id in the table
+    var table = await dbClient.rawQuery("SELECT stats_id as id FROM Stats");
+    int id = table.length+1;
+    if (id == null)
+      {
+        id = 0;
+      }
+    //insert to the table using the new id
+    var raw = await dbClient.rawInsert(
+        "INSERT Into Stats (stats_id,children_id,num_read,num_download,num_login)"
+            " VALUES (?,?,?,?,?)",
+        [id, children_id, 0, 0, 0]);
+    return raw;
+  }
+
+  Future<int> deleteStats(String children)async{
+    var dbClient = await db;
+    int res = await dbClient.rawDelete("DELETE FROM Stats WHERE children_id =?",[children]);
+    return res;
+  }
+  
+  Future<List<Stats>> getStats(String id) async{
+    var dbClient = await db;
+    List<Map> list = await dbClient.rawQuery("SELECT * FROM Stats WHERE children_id = '$id'");
+    List<Stats> statsData = new List();
+    for(int i = 0; i<list.length;i++)
+    {
+      var data = new Stats(list[i]['stats_id'], list[i]['children_id'],
+          list[i]['num_read'],list[i]['num_download'], list[i]['num_login']);
+      statsData.add(data);
+    }
+    return statsData;
+  }
+///////////////////////////////////////////////////////////////////////////////
   //PageContent
 ///////////////////////////////////////////////////////////////////////////////
   Future<int> downloadText(PageTextModel pageTextModel) async{
