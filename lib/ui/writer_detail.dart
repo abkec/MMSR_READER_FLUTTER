@@ -7,7 +7,7 @@ import 'package:reader_mmsr/utils/transparent_image.dart';
 import 'package:reader_mmsr/localdatabase/Database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:reader_mmsr/Model/StoryModel.dart';
+import 'package:reader_mmsr/Model/ChildrenModel.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'book_list.dart';
@@ -16,6 +16,7 @@ import 'book_list.dart';
 class WriterDetails extends StatefulWidget {
   List writer, languageData, review;
   String childrenID;
+  Children childData;
   int index;
   String contributorID;
   WriterDetails({
@@ -23,6 +24,7 @@ class WriterDetails extends StatefulWidget {
     this.writer,
     this.languageData,
     this.review,
+    this.childData,
     this.childrenID,
     this.contributorID,
     this.index,
@@ -78,6 +80,7 @@ class _WriterDetailState extends State<WriterDetails> {
                   if (snapshot3.hasData) {
                     return new DetailWriter(
                       bookData: snapshot.data,
+                      childData: widget.childData,
                       languageData: widget.languageData,
                       review: widget.review,
                       childrenID: widget.childrenID,
@@ -107,11 +110,13 @@ class _WriterDetailState extends State<WriterDetails> {
 class DetailWriter extends StatefulWidget {
   List bookData, following, writer, languageData, review;
   String childrenID;
+  Children childData;
   int index;
   String contributorID;
   DetailWriter({
     Key key,
     this.bookData,
+    this.childData,
     this.languageData,
     this.review,
     this.following,
@@ -282,7 +287,6 @@ print(widget.index);
 
                       Uint8List bytes =
                           base64Decode(widget.bookData[i]['storybookCover']);
-
                       return Container(
                         margin: EdgeInsets.only(bottom: 15),
                         padding: EdgeInsets.only(top: 5, right: 5, left: 5),
@@ -500,9 +504,13 @@ print(widget.index);
     Future.delayed(new Duration(seconds: 1), () {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) => LoadBook(childrenID: widget.childrenID)),
+              builder: (context) => LoadBook(
+                childData: widget.childData,
+                childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
+
+    
   }
 
   void unfollowWriter() async //unfollow writer
@@ -530,7 +538,9 @@ print(widget.index);
     Future.delayed(new Duration(seconds: 1), () {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) => LoadBook(childrenID: widget.childrenID)),
+              builder: (context) => LoadBook(
+                childData: widget.childData,
+                childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }

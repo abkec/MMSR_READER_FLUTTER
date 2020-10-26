@@ -50,7 +50,7 @@ class _LoadBookState extends State<LoadBook> {
 
   var db = DBHelper();
   List bookList = [], bookList2 = [], bookList3 = [];
-  var languageList;
+  var languageList, stats;
 
   Future<List> getFollowing() async //retrieve all following from server
   {
@@ -170,130 +170,167 @@ class _LoadBookState extends State<LoadBook> {
                                   following = snapshot8.data;
 
                                 return new FutureBuilder<List>(
-                                    future: getReview(),
-                                    builder: (context, snapshot6) {
-                                      if (snapshot6.hasData)
-                                        review = snapshot6.data;
+                                    future: db.getStats(widget.childrenID),
+                                    builder: (context, statsFuture) {
+                                      if (statsFuture.hasData)
+                                        stats = statsFuture.data;
 
                                       return new FutureBuilder<List>(
-                                        future: getWriter(),
-                                        builder: (context, snapshot2) {
-                                          if (snapshot2.hasData) {
-                                            contributor = snapshot2.data;
+                                          future: getReview(),
+                                          builder: (context, snapshot6) {
+                                            if (snapshot6.hasData)
+                                              review = snapshot6.data;
+
                                             return new FutureBuilder<List>(
-                                                future: db.getLanguage(widget
-                                                    .childrenID), //start by "db." means retrieve data from local database
-                                                //retrieve children's selected languages from languagePreferred table
-                                                builder: (context, snapshot3) {
-                                                  languageList = snapshot3.data;
-
-                                                  if (snapshot3.hasData) {
-                                                    bookList = [];
-                                                    for (int i = 0;
-                                                        i < languageList.length;
-                                                        i++) {
-                                                      //children selected languages.
-                                                      //filtering stories based on languages
-                                                      for (int j = 0;
-                                                          j < bookData.length;
-                                                          j++) {
-                                                        //if match children's preferred languages
-
-                                                        if (languageList[i]
-                                                                .languageCode ==
-                                                            bookData[j][
-                                                                'languageCode']) {
-                                                          bookList
-                                                              .add(bookData[j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    bookList2 = [];
-                                                    for (int i = 0;
-                                                        i < languageList.length;
-                                                        i++) {
-                                                      //children selected languages.
-                                                      //filtering stories based on languages
-                                                      for (int j = 0;
-                                                          j < bookDataR.length;
-                                                          j++) {
-                                                        //if match children's preferred languages
-
-                                                        if (languageList[i]
-                                                                .languageCode ==
-                                                            bookDataR[j][
-                                                                'languageCode']) {
-                                                          bookList2.add(
-                                                              bookDataR[j]);
-                                                        }
-                                                      }
-                                                    }
-                                                    bookList3 = [];
-                                                    for (int i = 0;
-                                                        i < languageList.length;
-                                                        i++) {
-                                                      //children selected languages.
-                                                      //filtering stories based on languages
-                                                      for (int j = 0;
-                                                          j < bookDataL.length;
-                                                          j++) {
-                                                        //if match children's preferred languages
-
-                                                        if (languageList[i]
-                                                                .languageCode ==
-                                                            bookDataL[j][
-                                                                'languageCode']) {
-                                                          bookList3.add(
-                                                              bookDataL[j]);
-                                                        }
-                                                      }
-                                                    }
-
-                                                    return new FutureBuilder<
-                                                        List>(
-                                                      future: getLanguage(),
+                                              future: getWriter(),
+                                              builder: (context, snapshot2) {
+                                                if (snapshot2.hasData) {
+                                                  contributor = snapshot2.data;
+                                                  return new FutureBuilder<
+                                                          List>(
+                                                      future: db.getLanguage(widget
+                                                          .childrenID), //start by "db." means retrieve data from local database
+                                                      //retrieve children's selected languages from languagePreferred table
                                                       builder:
-                                                          (context, snapshot4) {
-                                                        if (snapshot4.hasData) {
-                                                          languageData =
-                                                              snapshot4.data;
-                                                          return new Book_list(
-                                                              bookData:
-                                                                  bookList,
-                                                              bookDataR:
-                                                                  bookList2,
-                                                              bookDataL:
-                                                                  bookList3,
-                                                              review: review,
-                                                              following:
-                                                                  following,
-                                                              contributor:
-                                                                  contributor,
-                                                              childrenID: widget
-                                                                  .childrenID,
-                                                              collection:
-                                                                  collection,
-                                                              languageData:
-                                                                  languageData,
-                                                              page: widget.page,
-                                                              childData: widget
-                                                                  .childData,
-                                                              bookData1:
-                                                                  bookData1);
+                                                          (context, snapshot3) {
+                                                        languageList =
+                                                            snapshot3.data;
+
+                                                        if (snapshot3.hasData) {
+                                                          bookList = [];
+                                                          for (int i = 0;
+                                                              i <
+                                                                  languageList
+                                                                      .length;
+                                                              i++) {
+                                                            //children selected languages.
+                                                            //filtering stories based on languages
+                                                            for (int j = 0;
+                                                                j <
+                                                                    bookData
+                                                                        .length;
+                                                                j++) {
+                                                              //if match children's preferred languages
+
+                                                              if (languageList[
+                                                                          i]
+                                                                      .languageCode ==
+                                                                  bookData[j][
+                                                                      'languageCode']) {
+                                                                bookList.add(
+                                                                    bookData[
+                                                                        j]);
+                                                              }
+                                                            }
+                                                          }
+                                                          bookList2 = [];
+                                                          for (int i = 0;
+                                                              i <
+                                                                  languageList
+                                                                      .length;
+                                                              i++) {
+                                                            //children selected languages.
+                                                            //filtering stories based on languages
+                                                            for (int j = 0;
+                                                                j <
+                                                                    bookDataR
+                                                                        .length;
+                                                                j++) {
+                                                              //if match children's preferred languages
+
+                                                              if (languageList[
+                                                                          i]
+                                                                      .languageCode ==
+                                                                  bookDataR[j][
+                                                                      'languageCode']) {
+                                                                bookList2.add(
+                                                                    bookDataR[
+                                                                        j]);
+                                                              }
+                                                            }
+                                                          }
+                                                          bookList3 = [];
+                                                          for (int i = 0;
+                                                              i <
+                                                                  languageList
+                                                                      .length;
+                                                              i++) {
+                                                            //children selected languages.
+                                                            //filtering stories based on languages
+                                                            for (int j = 0;
+                                                                j <
+                                                                    bookDataL
+                                                                        .length;
+                                                                j++) {
+                                                              //if match children's preferred languages
+
+                                                              if (languageList[
+                                                                          i]
+                                                                      .languageCode ==
+                                                                  bookDataL[j][
+                                                                      'languageCode']) {
+                                                                bookList3.add(
+                                                                    bookDataL[
+                                                                        j]);
+                                                              }
+                                                            }
+                                                          }
+
+                                                          return new FutureBuilder<
+                                                              List>(
+                                                            future:
+                                                                getLanguage(),
+                                                            builder: (context,
+                                                                snapshot4) {
+                                                              if (snapshot4
+                                                                  .hasData) {
+                                                                languageData =
+                                                                    snapshot4
+                                                                        .data;
+                                                                return new Book_list(
+                                                                    stats: stats,
+                                                                    bookData:
+                                                                        bookList,
+                                                                    bookDataR:
+                                                                        bookList2,
+                                                                    bookDataL:
+                                                                        bookList3,
+                                                                    review:
+                                                                        review,
+                                                                    following:
+                                                                        following,
+                                                                    contributor:
+                                                                        contributor,
+                                                                    childrenID:
+                                                                        widget
+                                                                            .childrenID,
+                                                                    collection:
+                                                                        collection,
+                                                                    languageData:
+                                                                        languageData,
+                                                                    page: widget
+                                                                        .page,
+                                                                    childData:
+                                                                        widget
+                                                                            .childData,
+                                                                    bookData1:
+                                                                        bookData1);
+                                                              }
+                                                              return SpinKitThreeBounce(
+                                                                  color: Colors
+                                                                      .blue);
+                                                            },
+                                                          );
                                                         }
                                                         return SpinKitThreeBounce(
                                                             color: Colors.blue);
-                                                      },
-                                                    );
-                                                  }
-                                                  return SpinKitThreeBounce(
-                                                      color: Colors.blue);
-                                                });
-                                          }
-                                          return SpinKitThreeBounce(
-                                              color: Colors.blue);
-                                        },
-                                      );
+                                                      });
+                                                }
+                                                return SpinKitThreeBounce(
+                                                    color: Colors.blue);
+                                              },
+                                            );
+                                          });
                                     });
                               });
                         }
@@ -322,6 +359,7 @@ class Book_list extends StatefulWidget {
       languageData,
       bookDataL,
       following,
+      stats,
       review;
   String childrenID;
   int page;
@@ -330,6 +368,7 @@ class Book_list extends StatefulWidget {
   @override
   Book_list(
       {Key key,
+      this.stats,
       this.childData,
       this.following,
       this.childrenID,
@@ -655,6 +694,7 @@ class Book_list_state extends State<Book_list>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SearchPage(
+                                              childData: widget.childData,
                                               review: widget.review,
                                               bookData: widget.bookData,
                                               contributor: widget.contributor,
@@ -666,7 +706,7 @@ class Book_list_state extends State<Book_list>
                                 child: new Container(
                                   padding: EdgeInsets.only(left: 15, right: 15),
                                   height: 60,
-                                  color: Color(0xFFF1F1F1),
+                                  color: Colors.white,
                                   child: new Row(children: [
                                     Icon(IconicIcons.search),
                                     Container(
@@ -706,6 +746,8 @@ class Book_list_state extends State<Book_list>
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) => BookTab(
+                                                        childData:
+                                                            widget.childData,
                                                         appBarTitle: "Trending",
                                                         review: widget.review,
                                                         bookData:
@@ -737,11 +779,16 @@ class Book_list_state extends State<Book_list>
                                       loop: widget.bookDataR.length == 1
                                           ? false
                                           : true,
-                                      viewportFraction: 0.9,
                                       scale: 0.5,
+                                      viewportFraction: 0.95,
                                       itemCount: widget.bookDataR == null
                                           ? 0
                                           : widget.bookDataR.length,
+                                      pagination: new SwiperPagination(
+                                        builder: new DotSwiperPaginationBuilder(
+                                            color: Colors.grey,
+                                            activeColor: Color(0xFF2196F3)),
+                                      ),
                                       itemBuilder: (context, i) {
                                         String language;
                                         //To check what is the language of the story.
@@ -817,6 +864,8 @@ class Book_list_state extends State<Book_list>
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         LoadDetail(
+                                                            childData: widget
+                                                                .childData,
                                                             reviewAll:
                                                                 widget.review,
                                                             languageData: widget
@@ -837,8 +886,6 @@ class Book_list_state extends State<Book_list>
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(40.0),
                                                 color: Colors.white,
                                               ),
                                               child: Padding(
@@ -998,6 +1045,8 @@ class Book_list_state extends State<Book_list>
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) => BookTab(
+                                                        childData:
+                                                            widget.childData,
                                                         appBarTitle:
                                                             "What's New",
                                                         bookData:
@@ -1105,6 +1154,8 @@ class Book_list_state extends State<Book_list>
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           LoadDetail(
+                                                              childData: widget
+                                                                  .childData,
                                                               reviewAll: widget
                                                                   .review,
                                                               languageData: widget
@@ -1272,6 +1323,7 @@ class Book_list_state extends State<Book_list>
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => BookTab(
+                                                  childData: widget.childData,
                                                   appBarTitle: "All Storybooks",
                                                   bookData: widget.bookData,
                                                   review: widget.review,
@@ -1348,6 +1400,8 @@ class Book_list_state extends State<Book_list>
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     LoadDetail(
+                                                        childData:
+                                                            widget.childData,
                                                         reviewAll:
                                                             widget.review,
                                                         languageData:
@@ -1570,6 +1624,7 @@ class Book_list_state extends State<Book_list>
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SearchDownload(
+                                        childData: widget.childData,
                                         storyData: storycollection,
                                         languageAvailable: languageAvailable,
                                         childrenID: widget.childrenID,
@@ -1614,9 +1669,9 @@ class Book_list_state extends State<Book_list>
                               //add language description into a list for display purpose.
                               list.add(
                                 Container(
-                                  margin: EdgeInsets.all(5),
+                                  margin: EdgeInsets.only(
+                                      right: 5, top: 5, bottom: 5),
                                   padding: EdgeInsets.all(8),
-                                  color: Colors.black12,
                                   child: Text(
                                     languageAvailable[j].languageDesc,
                                     style: TextStyle(
@@ -1714,6 +1769,7 @@ class Book_list_state extends State<Book_list>
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => LoadContent(
+                                                  childData: widget.childData,
                                                   storyID: storycollection[i]
                                                       .story_id,
                                                   childrenID: widget.childrenID,
@@ -1800,7 +1856,7 @@ class Book_list_state extends State<Book_list>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Followers",
+                        "Following",
                         style: TextStyle(
                             letterSpacing: -1.5,
                             fontFamily: 'SourceSansBold',
@@ -1836,6 +1892,7 @@ class Book_list_state extends State<Book_list>
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SearchFollow(
+                                        childData: widget.childData,
                                         contributor: widget.contributor,
                                         review: widget.review,
                                         languageData: widget.languageData,
@@ -1878,7 +1935,7 @@ class Book_list_state extends State<Book_list>
                                     fit: BoxFit.cover,
                                   ),
                                   Text(
-                                    "Empty! Follow a contributer now",
+                                    "Empty! Follow a writer now",
                                     style: TextStyle(
                                         fontFamily: "WorkSansBold",
                                         fontSize: 20),
@@ -2068,6 +2125,8 @@ class Book_list_state extends State<Book_list>
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           WriterDetails(
+                                                            childData: widget
+                                                                .childData,
                                                             writer: widget
                                                                 .contributor,
                                                             languageData: widget
@@ -2151,159 +2210,118 @@ class Book_list_state extends State<Book_list>
   }
 
   Widget _buildStats(BuildContext context) {
-    return connection == false
-        ? SingleChildScrollView(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
+    return SingleChildScrollView(
+      child: Container(
+        color: Color(0xFF2196F3),
+        height: MediaQuery.of(context).size.height - 140,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 15, right: 15),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: 15),
-                  Padding(
-                    padding: EdgeInsets.only(left: 15, right: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Stats",
-                              style: TextStyle(
-                                  letterSpacing: -1.5,
-                                  fontFamily: 'SourceSansBold',
-                                  fontSize: 40),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Center(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 8),
-                              Image.asset(
-                                "assets/img/error.png",
-                                fit: BoxFit.cover,
-                              ),
-                              Text(
-                                "No Internet Collection!",
-                                style: TextStyle(
-                                    fontFamily: "WorkSansBold", fontSize: 20),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Stats",
+                        style: TextStyle(
+                            letterSpacing: -1.5,
+                            color: Colors.white,
+                            fontFamily: 'SourceSansBold',
+                            fontSize: 40),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    alignment: Alignment.center,
+                    height: 160,
+                    child: Image.asset(
+                      widget.childData.children_image,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ],
-              ),
-            ),
-          )
-        : SingleChildScrollView(
-            child: Container(
-              color: Color(0xFF2196F3),
-              height: MediaQuery.of(context).size.height - 140,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 15, right: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Stats",
-                              style: TextStyle(
-                                  letterSpacing: -1.5,
-                                  color: Colors.white,
-                                  fontFamily: 'SourceSansBold',
-                                  fontSize: 40),
+                  SizedBox(height: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      widget.childData.children_name,
+                      style: TextStyle(
+                          letterSpacing: -1.5,
+                          color: Colors.white,
+                          fontFamily: 'SourceSansRegular',
+                          fontSize: 30),
+                    ),
+                  ),
+                  SizedBox(height: 80),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Your Medals',
+                      style: TextStyle(
+                          letterSpacing: -0.5,
+                          color: Colors.white,
+                          fontFamily: 'SourceSansRegular',
+                          fontSize: 20),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            height: 50,
+                            child: Image.asset(
+                              'assets/img/five.png',
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Container(
-                          alignment: Alignment.center,
-                          height: 160,
-                          child: Image.asset(
-                            widget.childData.children_image,
-                            fit: BoxFit.cover,
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            widget.childData.children_name,
+                          SizedBox(height: 5),
+                          Text(
+                            'Read 5 books',
                             style: TextStyle(
-                                letterSpacing: -1.5,
-                                color: Colors.white,
-                                fontFamily: 'SourceSansRegular',
-                                fontSize: 30),
+                                letterSpacing: -0.5,
+                                color: Color(0xFFcbcbcb),
+                                fontFamily: 'SourceSansLight',
+                                fontSize: 15),
                           ),
-                        ),
-                        SizedBox(height: 40),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  height: 50,
-                                  child: Image.asset(
-                                    'assets/img/five.png',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(height:5),
-                                Text(
-                                  'Read 5 books',
-                                  style: TextStyle(
-                                      letterSpacing: -0.5,
-                                      color: Colors.white,
-                                      fontFamily: 'SourceSansLight',
-                                      fontSize: 15),
-                                ),
-                              ],
+                        ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            height: 50,
+                            child: Image.asset(
+                              'assets/img/ten.png',
+                              fit: BoxFit.cover,
                             ),
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  height: 50,
-                                  child: Image.asset(
-                                    'assets/img/ten.png',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(height:5),
-                                Text(
-                                  'Download 10 books',
-                                  style: TextStyle(
-                                      letterSpacing: -0.5,
-                                      color: Colors.white,
-                                      fontFamily: 'SourceSansLight',
-                                      fontSize: 15),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'Download 10 books',
+                            style: TextStyle(
+                                letterSpacing: -0.5,
+                                color: Colors.white,
+                                fontFamily: 'SourceSansLight',
+                                fontSize: 15),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 
   void choiceAction(int choice, int i) async {
@@ -2343,11 +2361,13 @@ class Book_list_state extends State<Book_list>
 class BookTab extends StatefulWidget {
   List bookData, bookDataRoL, contributor, languageData, review;
   String childrenID, appBarTitle;
+  Children childData;
 
   BookTab(
       {Key key,
       this.bookData,
       this.review,
+      this.childData,
       this.childrenID,
       this.appBarTitle,
       this.contributor,
@@ -2439,6 +2459,7 @@ class _BookTabState extends State<BookTab> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoadDetail(
+                                  childData: widget.childData,
                                   reviewAll: widget.review,
                                   languageData: widget.languageData,
                                   contributorList: widget.contributor,
@@ -2549,9 +2570,11 @@ class _BookTabState extends State<BookTab> {
 class SearchPage extends StatefulWidget {
   List bookData, contributor, languageData, review;
   String childrenID;
+  Children childData;
   SearchPage(
       {Key key,
       this.bookData,
+      this.childData,
       this.review,
       this.contributor,
       this.languageData,
@@ -2653,6 +2676,7 @@ class _SearchPageState extends State<SearchPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => LoadDetail(
+                          childData: widget.childData,
                           reviewAll: widget.review,
                           languageData: widget.languageData,
                           contributorList: widget.contributor,
@@ -2675,8 +2699,13 @@ class _SearchPageState extends State<SearchPage> {
 class SearchDownload extends StatefulWidget {
   List storyData, languageAvailable;
   String childrenID;
+  Children childData;
   SearchDownload(
-      {Key key, this.storyData, this.languageAvailable, this.childrenID})
+      {Key key,
+      this.storyData,
+      this.languageAvailable,
+      this.childrenID,
+      this.childData})
       : super(key: key);
   @override
   _SearchDownloadState createState() => new _SearchDownloadState();
@@ -2753,6 +2782,7 @@ class _SearchDownloadState extends State<SearchDownload> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => LoadContent(
+                            childData: widget.childData,
                             storyID: widget.storyData[storybook.index].story_id,
                             childrenID: widget.childrenID,
                             storyTitle:
@@ -2772,9 +2802,11 @@ class _SearchDownloadState extends State<SearchDownload> {
 
 class SearchFollow extends StatefulWidget {
   List contributor, review, languageData;
+  Children childData;
   String childrenID;
   SearchFollow(
       {Key key,
+      this.childData,
       this.contributor,
       this.childrenID,
       this.review,
@@ -2847,6 +2879,7 @@ class _SearchFollowState extends State<SearchFollow> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => WriterDetails(
+                            childData: widget.childData,
                             writer: widget.contributor,
                             languageData: widget.languageData,
                             review: widget.review,

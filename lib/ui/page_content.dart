@@ -8,6 +8,7 @@ import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:reader_mmsr/Model/ChildrenModel.dart';
 import 'package:reader_mmsr/Model/HistoryModel.dart';
 import 'package:reader_mmsr/Model/OngoingModel.dart';
 import 'package:reader_mmsr/localdatabase/Database.dart';
@@ -23,10 +24,12 @@ import 'package:super_tooltip/super_tooltip.dart';
 
 class LoadContent extends StatefulWidget {
   String storyID, storyLanguage, storyTitle;
+  Children childData;
   String childrenID;
   LoadContent(
       {Key key,
       this.storyID,
+      this.childData,
       this.childrenID,
       this.storyTitle,
       this.storyLanguage})
@@ -75,6 +78,7 @@ class _LoadContentState extends State<LoadContent> {
                                 onGoing = snapshot4.data;
                                 return new PageContent(
                                   pageText: pageText,
+                                  childData: widget.childData,
                                   childrenID: widget.childrenID,
                                   languageData: languageData,
                                   pageLanguage: pageLanguage,
@@ -130,12 +134,14 @@ class _LoadContentState extends State<LoadContent> {
 
 class PageContent extends StatefulWidget {
   List pageText, languageData, pageLanguage, storyData, onGoing, pageImage;
+  Children childData;
   String childrenID, storyID, storyTitle, storyLanguage;
   int index;
   @override
   PageContent(
       {Key key,
       this.childrenID,
+      this.childData,
       this.storyLanguage,
       this.storyTitle,
       this.pageText,
@@ -191,19 +197,15 @@ class _PageContent_State extends State<PageContent>
     );
 
     var rating = json.decode(response.body);
-   
+
     if (rating.length != 0) {
       review = rating;
       print(review[0]);
       rateController.text = review[0]['comments'];
-    }
-
-    else {
-
+    } else {
       review = [];
       rateController.text = "";
     }
-    
   }
 
   void checkconnection() async {
@@ -277,7 +279,7 @@ class _PageContent_State extends State<PageContent>
     checkconnection();
     createValue();
     changeLanguage();
-  
+
     _appBarVisible = true;
     rateController = TextEditingController();
     _controller = AnimationController(
@@ -400,9 +402,8 @@ class _PageContent_State extends State<PageContent>
                               icon: Icon(Icons.done),
                               onPressed: () {
                                 if (connection == true) {
+                                  //getReview();
 
-                                  //getReview();  
-                                  
                                   showDialog(
                                       context: context,
                                       builder: (_) => Center(
@@ -472,6 +473,7 @@ class _PageContent_State extends State<PageContent>
                                                             Navigator.of(context).pushAndRemoveUntil(
                                                                 MaterialPageRoute(
                                                                     builder: (context) => LoadBook(
+                                                                      childData: widget.childData,
                                                                         childrenID:
                                                                             widget
                                                                                 .childrenID)),
@@ -493,21 +495,26 @@ class _PageContent_State extends State<PageContent>
                                                             onPressed:
                                                                 () async {
                                                               saveHistory();
-                                                              print(review.length);
-                                                              if (review.length == 0) 
-                                                               rating(
-                                                                      rateController
-                                                                          .text,
-                                                                      rate,
-                                                                      widget
-                                                                          .pageLanguage[
-                                                                              languageRate]
-                                                                          .languageCode);
-                                                                else updateRating(
-                                                                      rateController
-                                                                          .text,
-                                                                      rate,
-                                                                      review[0]['rating_id']);
+                                                              print(review
+                                                                  .length);
+                                                              if (review
+                                                                      .length ==
+                                                                  0)
+                                                                rating(
+                                                                    rateController
+                                                                        .text,
+                                                                    rate,
+                                                                    widget
+                                                                        .pageLanguage[
+                                                                            languageRate]
+                                                                        .languageCode);
+                                                              else
+                                                                updateRating(
+                                                                    rateController
+                                                                        .text,
+                                                                    rate,
+                                                                    review[0][
+                                                                        'rating_id']);
 
                                                               showDialog(
                                                                 context:
@@ -540,6 +547,7 @@ class _PageContent_State extends State<PageContent>
                                                                 Navigator.of(context).pushAndRemoveUntil(
                                                                     MaterialPageRoute(
                                                                         builder: (context) => LoadBook(
+                                                                          childData: widget.childData,
                                                                             childrenID: widget
                                                                                 .childrenID)),
                                                                     (Route<dynamic>
@@ -567,6 +575,7 @@ class _PageContent_State extends State<PageContent>
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
                                           builder: (context) => LoadBook(
+                                            childData: widget.childData,
                                               childrenID: widget.childrenID)),
                                       (Route<dynamic> route) => false);
                                 }
@@ -916,7 +925,6 @@ class _PageContent_State extends State<PageContent>
     //to notify user has select other langauges
     currentLanguage = pageNo;
     setState(() {
-      
       pickLanguage[pageNo] = true;
       initialLanguage = pageNo;
       for (int i = 0; i < pickLanguage.length; i++) {

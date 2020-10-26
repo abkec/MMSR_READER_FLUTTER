@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'dart:typed_data';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:reader_mmsr/Model/ChildrenModel.dart';
 import 'package:reader_mmsr/Model/PageImageModel.dart';
 import 'package:reader_mmsr/Model/PageTextModel.dart';
 import 'package:reader_mmsr/localdatabase/Database.dart';
@@ -21,12 +22,14 @@ import 'page_content.dart';
 //Load all neccessary data from local database and server database.
 class LoadDetail extends StatefulWidget {
   List bookData, reviewAll, languageData, contributorList;
+  Children childData;
   String childrenID, language;
   int index;
   String contributor, contributorID;
   LoadDetail(
       {Key key,
       this.bookData,
+      this.childData,
       this.contributorList,
       this.reviewAll,
       this.languageData,
@@ -98,6 +101,7 @@ class _LoadDetailState extends State<LoadDetail> {
                               bookData: widget.bookData,
                               childrenID: widget.childrenID,
                               index: widget.index,
+                              childData: widget.childData,
                               contributor: widget.contributor,
                               contributorList: widget.contributorList,
                               reviewAll: widget.reviewAll,
@@ -140,11 +144,13 @@ class Detail extends StatefulWidget {
       contributorList,
       languageData;
   String childrenID, language;
+  Children childData;
   int index;
   String contributor, contributorID;
   Detail(
       {Key key,
       this.bookData,
+      this.childData,
       this.following,
       this.childrenID,
       this.language,
@@ -574,7 +580,9 @@ class _DetailState extends State<Detail> {
     Future.delayed(new Duration(seconds: 1), () {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) => LoadBook(childrenID: widget.childrenID)),
+              builder: (context) => LoadBook(
+                childData: widget.childData,
+                childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }
@@ -607,7 +615,8 @@ class _DetailState extends State<Detail> {
     Future.delayed(new Duration(seconds: 1), () {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) => LoadBook(childrenID: widget.childrenID)),
+              builder: (context) => LoadBook(
+                childData: widget.childData,childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }
@@ -637,7 +646,9 @@ class _DetailState extends State<Detail> {
     Future.delayed(new Duration(seconds: 1), () {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) => LoadBook(childrenID: widget.childrenID)),
+              builder: (context) => LoadBook(
+                childData: widget.childData,
+                childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }

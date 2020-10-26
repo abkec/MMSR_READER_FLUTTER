@@ -304,9 +304,7 @@ class _ParentalGate_State extends State<ParentalGate>
                 ),
 
                 //Content
-                //_buildParent(context),
                 _buildSwiper(context),
-                //_buildChildren(context),
               ],
             ),
           ),
@@ -342,7 +340,6 @@ class _ParentalGate_State extends State<ParentalGate>
                       index == 0
                           ? Card(
                               margin: EdgeInsets.only(top: 80),
-                              elevation: 8,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32),
                               ),
@@ -499,7 +496,6 @@ class _ParentalGate_State extends State<ParentalGate>
                             )
                           : Card(
                               margin: EdgeInsets.only(top: 80),
-                              elevation: 8,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32),
                               ),
@@ -599,7 +595,7 @@ class _ParentalGate_State extends State<ParentalGate>
                                       child: Row(
                                         children: <Widget>[
                                           Text(
-                                            'Know more',
+                                            'Read',
                                             style: TextStyle(
                                               fontFamily: 'Avenir',
                                               fontSize: 16,
@@ -665,70 +661,6 @@ class _ParentalGate_State extends State<ParentalGate>
         ),
       ),
     );
-  }
-
-  Widget _buildChildren(BuildContext context) {
-    return widget.childData.length == 0
-        ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  "assets/img/empty.png",
-                  height: 150,
-                ),
-                Text(
-                  "Press '+ Children' ",
-                  style: TextStyle(fontFamily: "WorkSansBold", fontSize: 20),
-                ),
-              ],
-            ),
-          )
-        : Container(
-            padding: EdgeInsets.only(left: 5),
-            width: double.infinity,
-            height: 250,
-            child: Container(
-              alignment: Alignment.center,
-              child: ListView.builder(
-                //shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                controller: childPage,
-                itemCount:
-                    widget.childData == null ? 0 : widget.childData.length,
-                itemBuilder: (context, i) {
-                  return GestureDetector(
-                    onTap: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LoadBook(
-                                childrenID: widget.childData[i].children_id)),
-                      );
-                    },
-                    child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 15),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              alignment: Alignment.center,
-                              height: 150,
-                              child: Card(
-                                elevation: 4,
-                                clipBehavior: Clip.antiAlias,
-                                shape: CircleBorder(
-                                    side: BorderSide(
-                                        color: Colors.grey.shade200)),
-                                child: Image.asset(
-                                    widget.childData[i].children_image),
-                              ),
-                            ),
-                          ],
-                        )),
-                  );
-                },
-              ),
-            ));
   }
 }
 
