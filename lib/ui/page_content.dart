@@ -932,12 +932,15 @@ class _PageContent_State extends State<PageContent>
     widget.stats[0].num_rate += 1;
     db.updateStats(widget.stats[0]);
 
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+
     http.post(url + "rating(Reader).php", body: {
       'storybookID': widget.storyID,
       'children_id': widget.childrenID,
       'rating': rating.toString(),
       'languageCode': languageCode,
       'comments': rateText,
+      'date': dateFormat.format(DateTime.now()),
     });
   }
 

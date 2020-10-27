@@ -418,7 +418,7 @@ class _DetailState extends State<Detail> {
                 style: TextStyle(
                     fontSize: 15.0, height: 1.5, fontFamily: 'WorkSansLight'),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               rating == true
                   ? Text('Review',
                       style: TextStyle(
@@ -438,11 +438,22 @@ class _DetailState extends State<Detail> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(widget.review[i]['children_name'],
-                                  style: TextStyle(
-                                      fontSize: 15.0,
-                                      height: 1.5,
-                                      fontFamily: 'WorkSansLight')),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(widget.review[i]['children_name'],
+                                      style: TextStyle(
+                                          fontSize: 15.0,
+                                          height: 1.5,
+                                          fontFamily: 'WorkSansMedium')),
+                                  Text(widget.review[i]['rating_date'],
+                                      style: TextStyle(
+                                          fontSize: 13.0,
+                                          height: 1.5,
+                                          fontFamily: 'WorkSansLight')),
+                                ],
+                              ),
                               SizedBox(height: 5),
                               Container(
                                 child: FlutterRatingBarIndicator(
@@ -466,7 +477,21 @@ class _DetailState extends State<Detail> {
                                       fontSize: 15.0,
                                       height: 1.5,
                                       fontFamily: 'WorkSansLight')),
-                              SizedBox(height: 20),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              i < widget.review.length - 1 ? 
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom:
+                                        BorderSide(color: Colors.grey, width: 0.6),
+                                  ),
+                                ),
+                              ) : Container(),
+                              SizedBox(
+                                height: 10,
+                              ),
                             ],
                           );
                         },

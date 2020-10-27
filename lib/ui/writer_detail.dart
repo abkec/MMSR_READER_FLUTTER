@@ -511,7 +511,7 @@ class _DetailWriterState extends State<DetailWriter> {
     db.updateStats(widget.stats[0]);
 
     DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-    print(dateFormat.format(DateTime.now()));
+
     http.post(url + "followWriter.php", body: {
       'children_id': widget.childrenID,
       'ContributorID': widget.contributorID,

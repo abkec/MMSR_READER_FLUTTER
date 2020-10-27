@@ -239,6 +239,7 @@ class _ChildrenAccount_State extends State<ChildrenAccount>
                         //delete all child account data in local database
                         //no delete child account in server because the data in server can be used
                         var db = DBHelper();
+                        db.deleteStats(widget.childData[i].children_id);
                         db.deleteChildren(widget.childData[i].children_id);
                         http.post(url + "deleteLanguagePreferred(Reader).php",
                             body: {

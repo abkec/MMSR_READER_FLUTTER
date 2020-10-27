@@ -472,7 +472,7 @@ class Book_list_state extends State<Book_list>
           },
         ),
         actions: <Widget>[
-          _selectedIndex == 0 || _selectedIndex == 1 || _selectedIndex == 3
+          _selectedIndex == 0 || _selectedIndex == 1
               ? IconButton(
                   // refresh Button
                   icon: const Icon(IconicIcons.loop),
@@ -729,7 +729,7 @@ class Book_list_state extends State<Book_list>
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
-                                        "Trending",
+                                        "Editor's Choice",
                                         style: TextStyle(
                                             letterSpacing: -1.5,
                                             fontFamily: 'SourceSansBold',
