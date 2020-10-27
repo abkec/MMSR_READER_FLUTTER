@@ -114,7 +114,8 @@ class DBHelper{
         "children_id TEXT ,"
         "num_read INTEGER,"
         "num_download INTEGER,"
-        "num_login INTEGER);");
+        "num_rate INTEGER,"
+        "num_follow INTEGER);");
     print('stats table created');
 
     //SpeechLanguage table
@@ -308,9 +309,9 @@ class DBHelper{
       }
     //insert to the table using the new id
     var raw = await dbClient.rawInsert(
-        "INSERT Into Stats (stats_id,children_id,num_read,num_download,num_login)"
-            " VALUES (?,?,?,?,?)",
-        [id, children_id, 0, 0, 0]);
+        "INSERT Into Stats (stats_id,children_id,num_read,num_download,num_rate, num_follow)"
+            " VALUES (?,?,?,?,?,?)",
+        [id, children_id, 0, 0, 0, 0]);
     return raw;
   }
 
@@ -318,6 +319,13 @@ class DBHelper{
     var dbClient = await db;
     int res = await dbClient.rawDelete("DELETE FROM Stats WHERE children_id =?",[children]);
     return res;
+  }
+
+  Future<bool> updateStats(Stats stats)async{
+    var dbClient = await db;
+    int res = await dbClient.update("Stats", stats.toMap(), where: "children_id=?",
+    whereArgs: <String>[stats.children_id]);
+    return res>0? true:false;
   }
   
   Future<List<Stats>> getStats(String id) async{
@@ -327,7 +335,7 @@ class DBHelper{
     for(int i = 0; i<list.length;i++)
     {
       var data = new Stats(list[i]['stats_id'], list[i]['children_id'],
-          list[i]['num_read'],list[i]['num_download'], list[i]['num_login']);
+          list[i]['num_read'],list[i]['num_download'], list[i]['num_rate'], list[i]['num_follow']);
       statsData.add(data);
     }
     return statsData;

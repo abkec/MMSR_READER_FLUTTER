@@ -93,25 +93,37 @@ class _LoadDetailState extends State<LoadDetail> {
                   if (snapshot3.hasData) {
                     return new FutureBuilder<List>(
                         //if equal to true then continue retrieve other data
-                        future: getReview(),
-                        builder: (context, snapshot2) {
-                          if (snapshot2.hasData) {
-                            return new Detail(
-                              localData: snapshot.data,
-                              bookData: widget.bookData,
-                              childrenID: widget.childrenID,
-                              index: widget.index,
-                              childData: widget.childData,
-                              contributor: widget.contributor,
-                              contributorList: widget.contributorList,
-                              reviewAll: widget.reviewAll,
-                              languageData: widget.languageData,
-                              language: widget.language,
-                              review: snapshot2.data,
-                              contributorID: widget.contributorID,
-                              following: snapshot3.data,
-                              //Passing data into next widget.
-                            );
+                        future: db.getStats(widget.childrenID),
+                        builder: (context, snapshot4) {
+                          if (snapshot4.hasData) {
+                            return new FutureBuilder<List>(
+                                //if equal to true then continue retrieve other data
+                                future: getReview(),
+                                builder: (context, snapshot2) {
+                                  if (snapshot2.hasData) {
+                                    return new Detail(
+                                      stats: snapshot4.data,
+                                      localData: snapshot.data,
+                                      bookData: widget.bookData,
+                                      childrenID: widget.childrenID,
+                                      index: widget.index,
+                                      childData: widget.childData,
+                                      contributor: widget.contributor,
+                                      contributorList: widget.contributorList,
+                                      reviewAll: widget.reviewAll,
+                                      languageData: widget.languageData,
+                                      language: widget.language,
+                                      review: snapshot2.data,
+                                      contributorID: widget.contributorID,
+                                      following: snapshot3.data,
+                                      //Passing data into next widget.
+                                    );
+                                  } else {
+                                    return new Center(
+                                      child: new CircularProgressIndicator(),
+                                    );
+                                  }
+                                });
                           } else {
                             return new Center(
                               child: new CircularProgressIndicator(),
@@ -137,6 +149,7 @@ class _LoadDetailState extends State<LoadDetail> {
 
 class Detail extends StatefulWidget {
   List bookData,
+      stats,
       localData,
       review,
       following,
@@ -149,6 +162,7 @@ class Detail extends StatefulWidget {
   String contributor, contributorID;
   Detail(
       {Key key,
+      this.stats,
       this.bookData,
       this.childData,
       this.following,
@@ -183,6 +197,8 @@ class _DetailState extends State<Detail> {
         break;
       }
     }
+
+    print(widget.stats);
 
     //app bar
     for (int i = 0; i < widget.localData.length; i++) {
@@ -270,6 +286,7 @@ class _DetailState extends State<Detail> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => WriterDetails(
+                                    childData: widget.childData,
                                     writer: widget.contributorList,
                                     languageData: widget.languageData,
                                     review: widget.reviewAll,
@@ -542,6 +559,9 @@ class _DetailState extends State<Detail> {
         widget.language);
     db.downloadBook(story);
 
+    widget.stats[0].num_download += 1;
+    db.updateStats(widget.stats[0]);
+
     http.post(url + "download_record.php", body: {
       'storybookID': widget.bookData[widget.index]['storybookID'],
       'children_id': widget.childrenID,
@@ -581,8 +601,7 @@ class _DetailState extends State<Detail> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => LoadBook(
-                childData: widget.childData,
-                childrenID: widget.childrenID)),
+                  childData: widget.childData, childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }
@@ -604,6 +623,10 @@ class _DetailState extends State<Detail> {
       },
     );
 
+    var db = DBHelper();
+    widget.stats[0].num_follow += 1;
+    db.updateStats(widget.stats[0]);
+
     DateFormat dateFormat = DateFormat("yyyy-MM-dd");
     print(dateFormat.format(DateTime.now()));
     http.post(url + "followWriter.php", body: {
@@ -616,7 +639,7 @@ class _DetailState extends State<Detail> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => LoadBook(
-                childData: widget.childData,childrenID: widget.childrenID)),
+                  childData: widget.childData, childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }
@@ -647,8 +670,7 @@ class _DetailState extends State<Detail> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => LoadBook(
-                childData: widget.childData,
-                childrenID: widget.childrenID)),
+                  childData: widget.childData, childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }

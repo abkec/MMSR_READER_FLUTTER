@@ -288,7 +288,8 @@ class _LoadBookState extends State<LoadBook> {
                                                                     snapshot4
                                                                         .data;
                                                                 return new Book_list(
-                                                                    stats: stats,
+                                                                    stats:
+                                                                        stats,
                                                                     bookData:
                                                                         bookList,
                                                                     bookDataR:
@@ -340,6 +341,7 @@ class _LoadBookState extends State<LoadBook> {
                   : Book_list(
                       childrenID: widget.childrenID,
                       collection: collection,
+                      stats: stats,
                     );
             }
             return SpinKitThreeBounce(color: Colors.blue);
@@ -2213,7 +2215,6 @@ class Book_list_state extends State<Book_list>
     return SingleChildScrollView(
       child: Container(
         color: Color(0xFF2196F3),
-        height: MediaQuery.of(context).size.height - 140,
         width: MediaQuery.of(context).size.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -2257,7 +2258,7 @@ class Book_list_state extends State<Book_list>
                           fontSize: 30),
                     ),
                   ),
-                  SizedBox(height: 80),
+                  SizedBox(height: 40),
                   Container(
                     alignment: Alignment.center,
                     child: Text(
@@ -2272,24 +2273,34 @@ class Book_list_state extends State<Book_list>
                   SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Column(
                         children: <Widget>[
                           Container(
                             height: 50,
                             child: Image.asset(
-                              'assets/img/five.png',
+                              'assets/img/readFive.png',
+                              color: widget.stats[0].num_read < 5
+                                  ? Color(0xFFcfcfcf)
+                                  : null,
                               fit: BoxFit.cover,
                             ),
                           ),
                           SizedBox(height: 5),
-                          Text(
-                            'Read 5 books',
-                            style: TextStyle(
-                                letterSpacing: -0.5,
-                                color: Color(0xFFcbcbcb),
-                                fontFamily: 'SourceSansLight',
-                                fontSize: 15),
+                          Container(
+                            width: 100,
+                            child: Text(
+                              'Read 5 books',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  letterSpacing: -0.5,
+                                  color: widget.stats[0].num_read < 5
+                                      ? Color(0xFFcfcfcf)
+                                      : Colors.white,
+                                  fontFamily: 'SourceSansLight',
+                                  fontSize: 15),
+                            ),
                           ),
                         ],
                       ),
@@ -2298,23 +2309,102 @@ class Book_list_state extends State<Book_list>
                           Container(
                             height: 50,
                             child: Image.asset(
-                              'assets/img/ten.png',
+                              'assets/img/downloadTen.png',
                               fit: BoxFit.cover,
+                              color: widget.stats[0].num_download < 10
+                                  ? Color(0xFFcfcfcf)
+                                  : null,
                             ),
                           ),
                           SizedBox(height: 5),
-                          Text(
-                            'Download 10 books',
-                            style: TextStyle(
-                                letterSpacing: -0.5,
-                                color: Colors.white,
-                                fontFamily: 'SourceSansLight',
-                                fontSize: 15),
+                          Container(
+                            width: 100,
+                            child: Text(
+                              'Download 10 books',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  letterSpacing: -0.5,
+                                  color: widget.stats[0].num_download < 10
+                                      ? Color(0xFFcfcfcf)
+                                      : Colors.white,
+                                  fontFamily: 'SourceSansLight',
+                                  fontSize: 15),
+                            ),
                           ),
                         ],
                       ),
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            height: 50,
+                            child: Image.asset(
+                              'assets/img/rateFive.png',
+                              color: widget.stats[0].num_rate < 5
+                                  ? Color(0xFFcfcfcf)
+                                  : null,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            width: 100,
+                            child: Text(
+                              'Rate 5 books',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  letterSpacing: -0.5,
+                                  color: widget.stats[0].num_rate < 5
+                                      ? Color(0xFFcfcfcf)
+                                      : Colors.white,
+                                  fontFamily: 'SourceSansLight',
+                                  fontSize: 15),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            height: 50,
+                            child: Image.asset(
+                              'assets/img/followFive.png',
+                              fit: BoxFit.cover,
+                              color: widget.stats[0].num_follow < 5
+                                  ? Color(0xFFcfcfcf)
+                                  : null,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            width: 100,
+                            child: Text(
+                              'Follow 5 writers',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  letterSpacing: -0.5,
+                                  color: widget.stats[0].num_follow < 5
+                                      ? Color(0xFFcfcfcf)
+                                      : Colors.white,
+                                  fontFamily: 'SourceSansLight',
+                                  fontSize: 15),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
             ),

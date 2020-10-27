@@ -76,18 +76,37 @@ class _LoadContentState extends State<LoadContent> {
                             builder: (context, snapshot4) {
                               if (snapshot4.hasData) {
                                 onGoing = snapshot4.data;
-                                return new PageContent(
-                                  pageText: pageText,
-                                  childData: widget.childData,
-                                  childrenID: widget.childrenID,
-                                  languageData: languageData,
-                                  pageLanguage: pageLanguage,
-                                  storyID: widget.storyID,
-                                  storyLanguage: widget.storyLanguage,
-                                  storyTitle: widget.storyTitle,
-                                  onGoing:
-                                      onGoing, //passing data to next widget
-                                );
+
+                                return new FutureBuilder<List>(
+                                    future: db.getStats(widget.childrenID),
+                                    builder: (context, snapshot5) {
+                                      if (snapshot5.hasData) {
+                                        return new PageContent(
+                                          pageText: pageText,
+                                          stats: snapshot5.data,
+                                          childData: widget.childData,
+                                          childrenID: widget.childrenID,
+                                          languageData: languageData,
+                                          pageLanguage: pageLanguage,
+                                          storyID: widget.storyID,
+                                          storyLanguage: widget.storyLanguage,
+                                          storyTitle: widget.storyTitle,
+                                          onGoing:
+                                              onGoing, //passing data to next widget
+                                        );
+                                      } else {
+                                        return new Center(
+                                          child: new Column(
+                                            children: <Widget>[
+                                              new Padding(
+                                                  padding:
+                                                      new EdgeInsets.all(50.0)),
+                                              new CircularProgressIndicator(),
+                                            ],
+                                          ),
+                                        );
+                                      }
+                                    });
                               }
                               return new Center(
                                 child: new Column(
@@ -133,13 +152,14 @@ class _LoadContentState extends State<LoadContent> {
 }
 
 class PageContent extends StatefulWidget {
-  List pageText, languageData, pageLanguage, storyData, onGoing, pageImage;
+  List pageText, languageData, pageLanguage, storyData, onGoing, pageImage, stats;
   Children childData;
   String childrenID, storyID, storyTitle, storyLanguage;
   int index;
   @override
   PageContent(
       {Key key,
+      this.stats,
       this.childrenID,
       this.childData,
       this.storyLanguage,
@@ -473,7 +493,9 @@ class _PageContent_State extends State<PageContent>
                                                             Navigator.of(context).pushAndRemoveUntil(
                                                                 MaterialPageRoute(
                                                                     builder: (context) => LoadBook(
-                                                                      childData: widget.childData,
+                                                                        childData:
+                                                                            widget
+                                                                                .childData,
                                                                         childrenID:
                                                                             widget
                                                                                 .childrenID)),
@@ -547,7 +569,8 @@ class _PageContent_State extends State<PageContent>
                                                                 Navigator.of(context).pushAndRemoveUntil(
                                                                     MaterialPageRoute(
                                                                         builder: (context) => LoadBook(
-                                                                          childData: widget.childData,
+                                                                            childData: widget
+                                                                                .childData,
                                                                             childrenID: widget
                                                                                 .childrenID)),
                                                                     (Route<dynamic>
@@ -575,7 +598,7 @@ class _PageContent_State extends State<PageContent>
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
                                           builder: (context) => LoadBook(
-                                            childData: widget.childData,
+                                              childData: widget.childData,
                                               childrenID: widget.childrenID)),
                                       (Route<dynamic> route) => false);
                                 }
@@ -893,6 +916,8 @@ class _PageContent_State extends State<PageContent>
       });
     } else
       var db = DBHelper();
+    widget.stats[0].num_read += 1;
+    db.updateStats(widget.stats[0]);
     var history = History(widget.childrenID, widget.storyTitle, difference,
         dateFormat.format(DateTime.now()));
     db.saveHistory(history);
@@ -903,6 +928,10 @@ class _PageContent_State extends State<PageContent>
   void rating(String rateText, double rating, String languageCode) {
     //user rate the story book from 0 to 5
     //post data to php file
+
+    widget.stats[0].num_rate += 1;
+    db.updateStats(widget.stats[0]);
+
     http.post(url + "rating(Reader).php", body: {
       'storybookID': widget.storyID,
       'children_id': widget.childrenID,

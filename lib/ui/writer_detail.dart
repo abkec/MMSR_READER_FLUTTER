@@ -75,21 +75,33 @@ class _WriterDetailState extends State<WriterDetails> {
           if (snapshot.hasData) {
             return new FutureBuilder<List>(
                 //if equal to true then continue retrieve other data
-                future: getFollowing(),
-                builder: (context, snapshot3) {
-                  if (snapshot3.hasData) {
-                    return new DetailWriter(
-                      bookData: snapshot.data,
-                      childData: widget.childData,
-                      languageData: widget.languageData,
-                      review: widget.review,
-                      childrenID: widget.childrenID,
-                      index: widget.index,
-                      writer: widget.writer,
-                      contributorID: widget.contributorID,
-                      following: snapshot3.data,
-                      //Passing data into next widget.
-                    );
+                future: db.getStats(widget.childrenID),
+                builder: (context, snapshot2) {
+                  if (snapshot2.hasData) {
+                    return new FutureBuilder<List>(
+                        //if equal to true then continue retrieve other data
+                        future: getFollowing(),
+                        builder: (context, snapshot3) {
+                          if (snapshot3.hasData) {
+                            return new DetailWriter(
+                              stats: snapshot2.data,
+                              bookData: snapshot.data,
+                              childData: widget.childData,
+                              languageData: widget.languageData,
+                              review: widget.review,
+                              childrenID: widget.childrenID,
+                              index: widget.index,
+                              writer: widget.writer,
+                              contributorID: widget.contributorID,
+                              following: snapshot3.data,
+                              //Passing data into next widget.
+                            );
+                          } else {
+                            return new Center(
+                              child: new CircularProgressIndicator(),
+                            );
+                          }
+                        });
                   } else {
                     return new Center(
                       child: new CircularProgressIndicator(),
@@ -108,13 +120,14 @@ class _WriterDetailState extends State<WriterDetails> {
 }
 
 class DetailWriter extends StatefulWidget {
-  List bookData, following, writer, languageData, review;
+  List bookData, following, writer, languageData, review, stats;
   String childrenID;
   Children childData;
   int index;
   String contributorID;
   DetailWriter({
     Key key,
+    this.stats,
     this.bookData,
     this.childData,
     this.languageData,
@@ -138,7 +151,7 @@ class _DetailWriterState extends State<DetailWriter> {
 
   Widget build(BuildContext context) {
     //app bar
-print(widget.index);
+    print(widget.index);
     setState(() {
       if (widget.following.length > 0) follow = true;
     });
@@ -346,7 +359,7 @@ print(widget.index);
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(height:5),
+                                            SizedBox(height: 5),
                                             Padding(
                                               padding: EdgeInsets.only(
                                                   left: 20, right: 20),
@@ -387,7 +400,7 @@ print(widget.index);
                                                       softWrap: false,
                                                     ),
                                             ),
-                                            SizedBox(height:5),
+                                            SizedBox(height: 5),
                                             Padding(
                                                 padding: EdgeInsets.only(
                                                     left: 20, right: 20),
@@ -493,6 +506,10 @@ print(widget.index);
       },
     );
 
+    var db = DBHelper();
+    widget.stats[0].num_follow += 1;
+    db.updateStats(widget.stats[0]);
+
     DateFormat dateFormat = DateFormat("yyyy-MM-dd");
     print(dateFormat.format(DateTime.now()));
     http.post(url + "followWriter.php", body: {
@@ -505,12 +522,9 @@ print(widget.index);
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => LoadBook(
-                childData: widget.childData,
-                childrenID: widget.childrenID)),
+                  childData: widget.childData, childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
-
-    
   }
 
   void unfollowWriter() async //unfollow writer
@@ -539,8 +553,7 @@ print(widget.index);
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => LoadBook(
-                childData: widget.childData,
-                childrenID: widget.childrenID)),
+                  childData: widget.childData, childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
   }

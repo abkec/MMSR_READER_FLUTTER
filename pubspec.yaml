@@ -61,8 +61,10 @@ flutter:
     - assets/img/gallery.png
     - assets/img/following.png
     - assets/img/stats.png
-    - assets/img/five.png
-    - assets/img/ten.png
+    - assets/img/downloadTen.png
+    - assets/img/followFive.png
+    - assets/img/readFive.png
+    - assets/img/rateFive.png
 
   fonts:
     - family: WorkSansSemiBold

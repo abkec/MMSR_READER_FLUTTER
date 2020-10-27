@@ -3,27 +3,31 @@ class Stats {
   String children_id;
   int num_read;
   int num_download;
-  int num_login;
+  int num_rate;
+  int num_follow;
   
   Stats(
       this.stats_id,
       this.children_id,
       this.num_read,
       this.num_download,
-      this.num_login);
+      this.num_rate,
+      this.num_follow);
 
   Stats.map(dynamic obj) {
     this.stats_id = obj['stats_id'];
     this.children_id = obj['children_id'];
     this.num_read = obj['num_read'];
     this.num_download = obj['num_download'];
-    this.num_login = obj['num_login'];
+    this.num_rate = obj['num_rate'];
+    this.num_follow = obj['num_follow'];
   }
   String get _stats_id => stats_id;
   String get _children_id => children_id;
   int get _num_read => num_read;
   int get _num_download => num_download;
-  int get _num_login => num_login;
+  int get _num_rate => num_rate;
+  int get _num_follow => num_follow;
   
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -31,7 +35,8 @@ class Stats {
     map['children_id'] = children_id;
     map['num_read'] = num_read;
     map['num_download'] = num_download;
-    map['num_login'] = num_login;
+    map['num_rate'] = num_rate;
+    map['num_follow'] = num_follow;
     return map;
   }
 }
