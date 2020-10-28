@@ -87,6 +87,13 @@ class _LoadBookState extends State<LoadBook> {
     return Contributor;
   }
 
+  Future<List> getLowHighRating() async //retrieve all writer data from server
+  {
+    final response = await http.post(url + "getLowHighRating.php");
+    var lowHighRating = json.decode(response.body);
+    return lowHighRating;
+  }
+
   Future<List>
       getLanguage() async //retrieve all languages are available on server
   {
@@ -143,197 +150,226 @@ class _LoadBookState extends State<LoadBook> {
                         if (snapshot.hasData) {
                           bookData = snapshot.data;
 
-                          bookDataR = [];
-                          for (int i = 0; i < bookData.length; i++) {
-                            if (bookData[i]['recommendation'] == 'Y') {
-                              bookDataR.add(bookData[i]);
-                            }
-                          }
+                          return FutureBuilder<List>(
+                            future: getLowHighRating(),
+                            builder: (context, lowHigh) {
+                              if (lowHigh.hasData) {
+                                
+                                bookDataR = [];
+                                for (int i = 0; i < lowHigh.data.length; i++) {
+                                  if (lowHigh.data[i]
+                                          ['RemovedRecommendStatus'] ==
+                                      'Recommend') {
+                                    for (int j = 0; j < bookData.length; j++) {
 
-                          bookDataL = [];
-                          for (int i = bookData.length - 1; i >= 0; i--) {
-                            var parsedDate =
-                                DateTime.parse(bookData[i]['dateOfCreation']);
-                            var date =
-                                DateTime.now().subtract(new Duration(days: 10));
 
-                            if (date.isBefore(parsedDate)) {
-                              //print(bookData[i]['dateOfCreation'].toString());
-                              bookDataL.add(bookData[i]);
-                            }
-                          }
+                                      if (lowHigh.data[i]['storybookId'] ==
+                                          bookData[j]['storybookID']) {
+                                            
+                                        bookDataR.add(bookData[j]);
+                                        break;
+                                      }
+                                    }
+                                  }
+                                }
 
-                          return new FutureBuilder<List>(
-                              future: getFollowing(),
-                              builder: (context, snapshot8) {
-                                if (snapshot8.hasData)
-                                  following = snapshot8.data;
+                                bookDataL = [];
+                                for (int i = bookData.length - 1; i >= 0; i--) {
+                                  var parsedDate = DateTime.parse(
+                                      bookData[i]['PublishedDate']);
+                                  var date = DateTime.now()
+                                      .subtract(new Duration(days: 10));
+
+                                  if (date.isBefore(parsedDate)) {
+                                    //print(bookData[i]['dateOfCreation'].toString());
+                                    bookDataL.add(bookData[i]);
+                                  }
+                                }
 
                                 return new FutureBuilder<List>(
-                                    future: db.getStats(widget.childrenID),
-                                    builder: (context, statsFuture) {
-                                      if (statsFuture.hasData)
-                                        stats = statsFuture.data;
+                                    future: getFollowing(),
+                                    builder: (context, snapshot8) {
+                                      if (snapshot8.hasData)
+                                        following = snapshot8.data;
 
                                       return new FutureBuilder<List>(
-                                          future: getReview(),
-                                          builder: (context, snapshot6) {
-                                            if (snapshot6.hasData)
-                                              review = snapshot6.data;
+                                          future:
+                                              db.getStats(widget.childrenID),
+                                          builder: (context, statsFuture) {
+                                            if (statsFuture.hasData)
+                                              stats = statsFuture.data;
 
                                             return new FutureBuilder<List>(
-                                              future: getWriter(),
-                                              builder: (context, snapshot2) {
-                                                if (snapshot2.hasData) {
-                                                  contributor = snapshot2.data;
+                                                future: getReview(),
+                                                builder: (context, snapshot6) {
+                                                  if (snapshot6.hasData)
+                                                    review = snapshot6.data;
+
                                                   return new FutureBuilder<
-                                                          List>(
-                                                      future: db.getLanguage(widget
-                                                          .childrenID), //start by "db." means retrieve data from local database
-                                                      //retrieve children's selected languages from languagePreferred table
-                                                      builder:
-                                                          (context, snapshot3) {
-                                                        languageList =
-                                                            snapshot3.data;
-
-                                                        if (snapshot3.hasData) {
-                                                          bookList = [];
-                                                          for (int i = 0;
-                                                              i <
-                                                                  languageList
-                                                                      .length;
-                                                              i++) {
-                                                            //children selected languages.
-                                                            //filtering stories based on languages
-                                                            for (int j = 0;
-                                                                j <
-                                                                    bookData
-                                                                        .length;
-                                                                j++) {
-                                                              //if match children's preferred languages
-
-                                                              if (languageList[
-                                                                          i]
-                                                                      .languageCode ==
-                                                                  bookData[j][
-                                                                      'languageCode']) {
-                                                                bookList.add(
-                                                                    bookData[
-                                                                        j]);
-                                                              }
-                                                            }
-                                                          }
-                                                          bookList2 = [];
-                                                          for (int i = 0;
-                                                              i <
-                                                                  languageList
-                                                                      .length;
-                                                              i++) {
-                                                            //children selected languages.
-                                                            //filtering stories based on languages
-                                                            for (int j = 0;
-                                                                j <
-                                                                    bookDataR
-                                                                        .length;
-                                                                j++) {
-                                                              //if match children's preferred languages
-
-                                                              if (languageList[
-                                                                          i]
-                                                                      .languageCode ==
-                                                                  bookDataR[j][
-                                                                      'languageCode']) {
-                                                                bookList2.add(
-                                                                    bookDataR[
-                                                                        j]);
-                                                              }
-                                                            }
-                                                          }
-                                                          bookList3 = [];
-                                                          for (int i = 0;
-                                                              i <
-                                                                  languageList
-                                                                      .length;
-                                                              i++) {
-                                                            //children selected languages.
-                                                            //filtering stories based on languages
-                                                            for (int j = 0;
-                                                                j <
-                                                                    bookDataL
-                                                                        .length;
-                                                                j++) {
-                                                              //if match children's preferred languages
-
-                                                              if (languageList[
-                                                                          i]
-                                                                      .languageCode ==
-                                                                  bookDataL[j][
-                                                                      'languageCode']) {
-                                                                bookList3.add(
-                                                                    bookDataL[
-                                                                        j]);
-                                                              }
-                                                            }
-                                                          }
-
-                                                          return new FutureBuilder<
-                                                              List>(
-                                                            future:
-                                                                getLanguage(),
+                                                      List>(
+                                                    future: getWriter(),
+                                                    builder:
+                                                        (context, snapshot2) {
+                                                      if (snapshot2.hasData) {
+                                                        contributor =
+                                                            snapshot2.data;
+                                                        return new FutureBuilder<
+                                                                List>(
+                                                            future: db.getLanguage(
+                                                                widget
+                                                                    .childrenID), //start by "db." means retrieve data from local database
+                                                            //retrieve children's selected languages from languagePreferred table
                                                             builder: (context,
-                                                                snapshot4) {
-                                                              if (snapshot4
+                                                                snapshot3) {
+                                                              languageList =
+                                                                  snapshot3
+                                                                      .data;
+
+                                                              if (snapshot3
                                                                   .hasData) {
-                                                                languageData =
-                                                                    snapshot4
-                                                                        .data;
-                                                                return new Book_list(
-                                                                    stats:
-                                                                        stats,
-                                                                    bookData:
-                                                                        bookList,
-                                                                    bookDataR:
-                                                                        bookList2,
-                                                                    bookDataL:
-                                                                        bookList3,
-                                                                    review:
-                                                                        review,
-                                                                    following:
-                                                                        following,
-                                                                    contributor:
-                                                                        contributor,
-                                                                    childrenID:
-                                                                        widget
-                                                                            .childrenID,
-                                                                    collection:
-                                                                        collection,
-                                                                    languageData:
-                                                                        languageData,
-                                                                    page: widget
-                                                                        .page,
-                                                                    childData:
-                                                                        widget
-                                                                            .childData,
-                                                                    bookData1:
-                                                                        bookData1);
+                                                                bookList = [];
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        languageList
+                                                                            .length;
+                                                                    i++) {
+                                                                  //children selected languages.
+                                                                  //filtering stories based on languages
+                                                                  for (int j =
+                                                                          0;
+                                                                      j <
+                                                                          bookData
+                                                                              .length;
+                                                                      j++) {
+                                                                    //if match children's preferred languages
+
+                                                                    if (languageList[i]
+                                                                            .languageCode ==
+                                                                        bookData[j]
+                                                                            [
+                                                                            'languageCode']) {
+                                                                      bookList.add(
+                                                                          bookData[
+                                                                              j]);
+                                                                    }
+                                                                  }
+                                                                }
+                                                                bookList2 = [];
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        languageList
+                                                                            .length;
+                                                                    i++) {
+                                                                  //children selected languages.
+                                                                  //filtering stories based on languages
+                                                                  for (int j =
+                                                                          0;
+                                                                      j <
+                                                                          bookDataR
+                                                                              .length;
+                                                                      j++) {
+                                                                    //if match children's preferred languages
+
+                                                                    if (languageList[i]
+                                                                            .languageCode ==
+                                                                        bookDataR[j]
+                                                                            [
+                                                                            'languageCode']) {
+                                                                      bookList2.add(
+                                                                          bookDataR[
+                                                                              j]);
+                                                                    }
+                                                                  }
+                                                                }
+                                                                bookList3 = [];
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        languageList
+                                                                            .length;
+                                                                    i++) {
+                                                                  //children selected languages.
+                                                                  //filtering stories based on languages
+                                                                  for (int j =
+                                                                          0;
+                                                                      j <
+                                                                          bookDataL
+                                                                              .length;
+                                                                      j++) {
+                                                                    //if match children's preferred languages
+
+                                                                    if (languageList[i]
+                                                                            .languageCode ==
+                                                                        bookDataL[j]
+                                                                            [
+                                                                            'languageCode']) {
+                                                                      bookList3.add(
+                                                                          bookDataL[
+                                                                              j]);
+                                                                    }
+                                                                  }
+                                                                }
+
+                                                                return new FutureBuilder<
+                                                                    List>(
+                                                                  future:
+                                                                      getLanguage(),
+                                                                  builder: (context,
+                                                                      snapshot4) {
+                                                                    if (snapshot4
+                                                                        .hasData) {
+                                                                      languageData =
+                                                                          snapshot4
+                                                                              .data;
+                                                                      return new Book_list(
+                                                                          stats:
+                                                                              stats,
+                                                                          bookData:
+                                                                              bookList,
+                                                                          bookDataR:
+                                                                              bookList2,
+                                                                          bookDataL:
+                                                                              bookList3,
+                                                                          review:
+                                                                              review,
+                                                                          following:
+                                                                              following,
+                                                                          contributor:
+                                                                              contributor,
+                                                                          childrenID: widget
+                                                                              .childrenID,
+                                                                          collection:
+                                                                              collection,
+                                                                          languageData:
+                                                                              languageData,
+                                                                          page: widget
+                                                                              .page,
+                                                                          childData: widget
+                                                                              .childData,
+                                                                          bookData1:
+                                                                              bookData1);
+                                                                    }
+                                                                    return SpinKitThreeBounce(
+                                                                        color: Colors
+                                                                            .blue);
+                                                                  },
+                                                                );
                                                               }
                                                               return SpinKitThreeBounce(
                                                                   color: Colors
                                                                       .blue);
-                                                            },
-                                                          );
-                                                        }
-                                                        return SpinKitThreeBounce(
-                                                            color: Colors.blue);
-                                                      });
-                                                }
-                                                return SpinKitThreeBounce(
-                                                    color: Colors.blue);
-                                              },
-                                            );
+                                                            });
+                                                      }
+                                                      return SpinKitThreeBounce(
+                                                          color: Colors.blue);
+                                                    },
+                                                  );
+                                                });
                                           });
                                     });
-                              });
+                              }
+                              return SpinKitThreeBounce(color: Colors.blue);
+                            },
+                          );
                         }
                         return SpinKitThreeBounce(color: Colors.blue);
                       },
@@ -750,7 +786,8 @@ class Book_list_state extends State<Book_list>
                                                   builder: (context) => BookTab(
                                                         childData:
                                                             widget.childData,
-                                                        appBarTitle: "Trending",
+                                                        appBarTitle:
+                                                            "Editor's Choice",
                                                         review: widget.review,
                                                         bookData:
                                                             widget.bookData,
@@ -2697,7 +2734,7 @@ class _SearchPageState extends State<SearchPage> {
             widget.bookData[i]['storybookCover'],
             widget.bookData[i]['storybookDesc'],
             widget.bookData[i]['storybookGenre'],
-            widget.bookData[i]['dateOfCreation'],
+            widget.bookData[i]['PublishedDate'],
             widget.bookData[i]['status'],
             widget.bookData[i]['ContributorID'],
             widget.bookData[i]['languageCode'],

@@ -64,6 +64,16 @@ class _LoadDetailState extends State<LoadDetail> {
     return reviewData;
   }
 
+  Future<List> getLowHighRating() async //retrieve all writer data from server
+  {
+    final response = await http.post(
+      url + "getLowHighRating2.php",
+      body: {"storyID": widget.bookData[widget.index]['storybookID']},
+    );
+    var lowHighRating = json.decode(response.body);
+    return lowHighRating;
+  }
+
   Future<List> getFollowing() async //retrieve all following from server
   {
     final response = await http.post(
@@ -93,31 +103,46 @@ class _LoadDetailState extends State<LoadDetail> {
                   if (snapshot3.hasData) {
                     return new FutureBuilder<List>(
                         //if equal to true then continue retrieve other data
-                        future: db.getStats(widget.childrenID),
-                        builder: (context, snapshot4) {
-                          if (snapshot4.hasData) {
+                        future: getLowHighRating(),
+                        builder: (context, lowHigh) {
+                          if (lowHigh.hasData) {
                             return new FutureBuilder<List>(
                                 //if equal to true then continue retrieve other data
-                                future: getReview(),
-                                builder: (context, snapshot2) {
-                                  if (snapshot2.hasData) {
-                                    return new Detail(
-                                      stats: snapshot4.data,
-                                      localData: snapshot.data,
-                                      bookData: widget.bookData,
-                                      childrenID: widget.childrenID,
-                                      index: widget.index,
-                                      childData: widget.childData,
-                                      contributor: widget.contributor,
-                                      contributorList: widget.contributorList,
-                                      reviewAll: widget.reviewAll,
-                                      languageData: widget.languageData,
-                                      language: widget.language,
-                                      review: snapshot2.data,
-                                      contributorID: widget.contributorID,
-                                      following: snapshot3.data,
-                                      //Passing data into next widget.
-                                    );
+                                future: db.getStats(widget.childrenID),
+                                builder: (context, snapshot4) {
+                                  if (snapshot4.hasData) {
+                                    return new FutureBuilder<List>(
+                                        //if equal to true then continue retrieve other data
+                                        future: getReview(),
+                                        builder: (context, snapshot2) {
+                                          if (snapshot2.hasData) {
+                                            return new Detail(
+                                              lowHigh: lowHigh.data,
+                                              stats: snapshot4.data,
+                                              localData: snapshot.data,
+                                              bookData: widget.bookData,
+                                              childrenID: widget.childrenID,
+                                              index: widget.index,
+                                              childData: widget.childData,
+                                              contributor: widget.contributor,
+                                              contributorList:
+                                                  widget.contributorList,
+                                              reviewAll: widget.reviewAll,
+                                              languageData: widget.languageData,
+                                              language: widget.language,
+                                              review: snapshot2.data,
+                                              contributorID:
+                                                  widget.contributorID,
+                                              following: snapshot3.data,
+                                              //Passing data into next widget.
+                                            );
+                                          } else {
+                                            return new Center(
+                                              child:
+                                                  new CircularProgressIndicator(),
+                                            );
+                                          }
+                                        });
                                   } else {
                                     return new Center(
                                       child: new CircularProgressIndicator(),
@@ -149,6 +174,7 @@ class _LoadDetailState extends State<LoadDetail> {
 
 class Detail extends StatefulWidget {
   List bookData,
+      lowHigh,
       stats,
       localData,
       review,
@@ -162,6 +188,7 @@ class Detail extends StatefulWidget {
   String contributor, contributorID;
   Detail(
       {Key key,
+      this.lowHigh,
       this.stats,
       this.bookData,
       this.childData,
@@ -268,72 +295,110 @@ class _DetailState extends State<Detail> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         text(widget.bookData[widget.index]['storybookTitle'],
-            size: 25, isBold: true, padding: EdgeInsets.only(top: 16.0)),
-        Padding(
-          padding: EdgeInsets.only(left: 8, top: 0, bottom: 0),
-          child: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                    text: 'by ${widget.contributor}',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 12,
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WriterDetails(
-                                    childData: widget.childData,
-                                    writer: widget.contributorList,
-                                    languageData: widget.languageData,
-                                    review: widget.reviewAll,
-                                    childrenID: widget.childrenID,
-                                    index: conIndex,
-                                    contributorID: widget.contributorID,
-                                  )),
-                        );
-                      }),
-              ],
+            size: 22,
+            isBold: true,
+            color: Colors.white,
+            padding: EdgeInsets.only(top: 16.0)),
+        SizedBox(height: 10),
+        Material(
+          borderRadius: BorderRadius.circular(20.0),
+          shadowColor: Colors.blue.shade200,
+          elevation: 5.0,
+          child: Padding(
+            padding: EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                      text: 'by ${widget.contributor}',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WriterDetails(
+                                      childData: widget.childData,
+                                      writer: widget.contributorList,
+                                      languageData: widget.languageData,
+                                      review: widget.reviewAll,
+                                      childrenID: widget.childrenID,
+                                      index: conIndex,
+                                      contributorID: widget.contributorID,
+                                    )),
+                          );
+                        }),
+                ],
+              ),
             ),
           ),
         ),
-        text(
-          'Genre: ${widget.bookData[widget.index]['storybookGenre']}',
-          isBold: true,
-          padding: EdgeInsets.only(right: 8.0, top: 10),
-        ),
-        text(
-          'Created: ${widget.bookData[widget.index]['dateOfCreation']}',
-          isBold: true,
-          padding: EdgeInsets.only(top: 5, right: 8.0),
-        ),
-        Container(height: 5),
-        Row(
-          children: <Widget>[
-            text(
-              'Rating: ',
-              isBold: true,
-              padding: EdgeInsets.only(right: 8.0),
+        SizedBox(height: 10),
+        Table(
+          columnWidths: {
+            0: FlexColumnWidth(1),
+            1: FlexColumnWidth(3),
+          },
+          children: [
+            TableRow(
+              children: [
+                text(
+                  'Genre',
+                  color: Colors.white,
+                  isBold: true,
+                  padding: EdgeInsets.only(right: 8.0, top: 10),
+                ),
+                text(
+                  '${widget.bookData[widget.index]['storybookGenre']}',
+                  color: Colors.white70,
+                  padding: EdgeInsets.only(right: 8.0, top: 10),
+                ),
+              ],
             ),
-            rating == true
-                ? FlutterRatingBarIndicator(
-                    rating:
-                        double.parse(widget.bookData[widget.index]['rating']),
-                    itemCount: 5,
-                    itemSize: 20.0,
-                    emptyColor: Colors.amber.withAlpha(50),
-                  )
-                : text(
-                    "(No rating yet)",
-                    isBold: true,
-                    padding: EdgeInsets.only(right: 8.0),
-                  ),
+            TableRow(
+              children: [
+                text(
+                  'Created',
+                  color: Colors.white,
+                  isBold: true,
+                  padding: EdgeInsets.only(right: 8.0, top: 10),
+                ),
+                text(
+                  '${widget.bookData[widget.index]['PublishedDate']}',
+                  color: Colors.white70,
+                  padding: EdgeInsets.only(right: 8.0, top: 10),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                text(
+                  'Rating',
+                  color: Colors.white,
+                  isBold: true,
+                  padding: EdgeInsets.only(right: 8.0, top: 10),
+                ),
+                rating == true
+                    ? FlutterRatingBarIndicator(
+                        rating: double.parse(
+                            widget.bookData[widget.index]['rating']),
+                        itemCount: 5,
+                        itemSize: 20.0,
+                        emptyColor: Colors.amber.withAlpha(50),
+                      )
+                    : text(
+                        "(No rating yet)",
+                        color: Colors.white70,
+                        padding: EdgeInsets.only(right: 8.0, top: 10),
+                      ),
+              ],
+            ),
           ],
         ),
-        SizedBox(height: 32.0),
+        SizedBox(height: 25.0),
         Row(
           children: <Widget>[
             Material(
@@ -419,6 +484,44 @@ class _DetailState extends State<Detail> {
                     fontSize: 15.0, height: 1.5, fontFamily: 'WorkSansLight'),
               ),
               SizedBox(height: 30),
+              widget.lowHigh.length != 0
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              height: 20,
+                              child: Image.asset("assets/img/star.png"),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Highly recommended',
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  height: 1.5,
+                                  fontFamily: 'WorkSansSemiBold'),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            widget.lowHigh[0]['comment'],
+                            style: TextStyle(
+                                fontSize: 15.0,
+                                height: 1.5,
+                                fontStyle: FontStyle.italic,
+                                fontFamily: 'WorkSansLight'),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(),
+              SizedBox(height: 30),
               rating == true
                   ? Text('Review',
                       style: TextStyle(
@@ -480,15 +583,16 @@ class _DetailState extends State<Detail> {
                               SizedBox(
                                 height: 10,
                               ),
-                              i < widget.review.length - 1 ? 
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom:
-                                        BorderSide(color: Colors.grey, width: 0.6),
-                                  ),
-                                ),
-                              ) : Container(),
+                              i < widget.review.length - 1
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey, width: 0.6),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
                               SizedBox(
                                 height: 10,
                               ),
