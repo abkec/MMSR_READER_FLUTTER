@@ -152,7 +152,13 @@ class _LoadContentState extends State<LoadContent> {
 }
 
 class PageContent extends StatefulWidget {
-  List pageText, languageData, pageLanguage, storyData, onGoing, pageImage, stats;
+  List pageText,
+      languageData,
+      pageLanguage,
+      storyData,
+      onGoing,
+      pageImage,
+      stats;
   Children childData;
   String childrenID, storyID, storyTitle, storyLanguage;
   int index;
@@ -914,6 +920,17 @@ class _PageContent_State extends State<PageContent>
         'read_date': dateFormat.format(DateTime.now()),
         'duration': difference.toString(),
       });
+
+      http.post(url + "addLogChildren(Reader).php", body: {
+        'children_id': widget.childrenID,
+        'title': 'Read Storybook',
+        'description': widget.childrenID +
+            ' has read a storybook: ' +
+            widget.storyID +
+            ' for ' +
+            difference.toString() +
+            ' minutes',
+      });
     } else
       var db = DBHelper();
     widget.stats[0].num_read += 1;
@@ -942,6 +959,13 @@ class _PageContent_State extends State<PageContent>
       'comments': rateText,
       'date': dateFormat.format(DateTime.now()),
     });
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+      'children_id': widget.childrenID,
+      'title': 'Rate Storybook',
+      'description':
+          widget.childrenID + ' has rated a storybook: ' + widget.storyID,
+    });
   }
 
   void updateRating(String rateText, double rating, String rateID) {
@@ -950,6 +974,13 @@ class _PageContent_State extends State<PageContent>
       'rateID': rateID,
       'rating': rating.toString(),
       'comments': rateText,
+    });
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+      'children_id': widget.childrenID,
+      'title': 'Change Rating On Storybook',
+      'description':
+          widget.childrenID + ' has changed the rating on storybook: ' + widget.storyID,
     });
   }
 

@@ -7,6 +7,7 @@ import 'package:reader_mmsr/parent_ui/history.dart';
 import 'package:reader_mmsr/parent_ui/pickLanguages.dart';
 import '../utils/swipe_widget.dart';
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:reader_mmsr/localdatabase/Database.dart';
 import 'pickLanguages.dart';
@@ -14,9 +15,9 @@ import 'pickLanguages.dart';
 //Page to show a list of children account under the main account
 
 class ChildrenAccount extends StatefulWidget {
-  List childData;
+  List childData, parentData;
   @override
-  ChildrenAccount({Key key, this.childData}) : super(key: key);
+  ChildrenAccount({Key key, this.childData, this.parentData}) : super(key: key);
   _ChildrenAccount_State createState() => new _ChildrenAccount_State();
 }
 
@@ -235,6 +236,21 @@ class _ChildrenAccount_State extends State<ChildrenAccount>
                 FlatButton(
                     color: Colors.amber,
                     onPressed: () async {
+                      try {
+                        final result =
+                            await InternetAddress.lookup('google.com');
+                        if (result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          http.post(url + "addLogChildren(Reader).php", body: {
+                            'children_id': widget.childData[i].children_id,
+                            'title': 'Delete Children Account',
+                            'description': widget.parentData[0].username +
+                                ' has deleted a children account: ' +
+                                widget.childData[i].children_id,
+                          });
+                        }
+                      } on SocketException catch (_) {}
+
                       setState(() {
                         //delete all child account data in local database
                         //no delete child account in server because the data in server can be used
@@ -245,6 +261,7 @@ class _ChildrenAccount_State extends State<ChildrenAccount>
                             body: {
                               "children_id": widget.childData[i].children_id,
                             });
+
                         db.deleteLanguagePreferred(
                             widget.childData[i].children_id);
                         db.deleteAllBook(widget.childData[i].children_id);
@@ -253,7 +270,6 @@ class _ChildrenAccount_State extends State<ChildrenAccount>
                         db.deleteStats(widget.childData[i].children_id);
                         //db.deleteAllImage(widget.childData[i].children_id);
                         widget.childData.removeAt(i);
-                        
                       });
                       Navigator.of(context).pop();
                     },

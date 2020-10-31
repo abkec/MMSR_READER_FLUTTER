@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:reader_mmsr/Model/StoryModel.dart';
@@ -154,18 +153,14 @@ class _LoadBookState extends State<LoadBook> {
                             future: getLowHighRating(),
                             builder: (context, lowHigh) {
                               if (lowHigh.hasData) {
-                                
                                 bookDataR = [];
                                 for (int i = 0; i < lowHigh.data.length; i++) {
                                   if (lowHigh.data[i]
                                           ['RemovedRecommendStatus'] ==
                                       'Recommend') {
                                     for (int j = 0; j < bookData.length; j++) {
-
-
                                       if (lowHigh.data[i]['storybookId'] ==
                                           bookData[j]['storybookID']) {
-                                            
                                         bookDataR.add(bookData[j]);
                                         break;
                                       }
@@ -2005,7 +2000,7 @@ class Book_list_state extends State<Book_list>
                                             widget.following[j]
                                                 ['ContributorID']) {
                                           date = widget.following[j]
-                                              ['download_date'];
+                                              ['follow_date'];
                                           contributor
                                               .add(widget.contributor[k]);
                                           break;
@@ -2295,7 +2290,7 @@ class Book_list_state extends State<Book_list>
                           fontSize: 30),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 30),
                   Container(
                     alignment: Alignment.center,
                     child: Text(
@@ -2455,6 +2450,15 @@ class Book_list_state extends State<Book_list>
     var db = DBHelper();
     //delete all details of the storybook id
     if (choice == 1) {
+
+      //logging for delete storybook
+       http.post(url + "addLogChildren(Reader).php", body: {
+        'children_id': widget.childrenID,
+        'title': 'Delete Storybook From Downloads',
+        'description':
+            widget.childrenID + ' has removed a storybook from downloads: ' + storycollection[i].story_id,
+      });
+
       db.deleteBook(storycollection[i].story_id, widget.childrenID);
       db.deleteText(storycollection[i].story_id, widget.childrenID,
           storycollection[i].languageCode);
@@ -2466,6 +2470,8 @@ class Book_list_state extends State<Book_list>
         storycollection = [];
         languageAvailable = [];
       });
+
+      
     }
   }
 
@@ -2474,6 +2480,13 @@ class Book_list_state extends State<Book_list>
       http.post(url + "unfollowWriter.php", body: {
         'children_id': widget.childrenID,
         'ContributorID': id,
+      });
+
+      http.post(url + "addLogChildren(Reader).php", body: {
+        'children_id': widget.childrenID,
+        'title': 'Unfollow Contributor',
+        'description':
+            widget.childrenID + ' has unfollowed a contributor: ' + id,
       });
 
       setState(() {

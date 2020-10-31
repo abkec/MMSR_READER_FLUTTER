@@ -361,6 +361,21 @@ class _DetailState extends State<Detail> {
             TableRow(
               children: [
                 text(
+                  'Level',
+                  color: Colors.white,
+                  isBold: true,
+                  padding: EdgeInsets.only(right: 8.0, top: 10),
+                ),
+                text(
+                  '${widget.bookData[widget.index]['ReadabilityLevel']}',
+                  color: Colors.white70,
+                  padding: EdgeInsets.only(right: 8.0, top: 10),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                text(
                   'Created',
                   color: Colors.white,
                   isBold: true,
@@ -382,13 +397,15 @@ class _DetailState extends State<Detail> {
                   padding: EdgeInsets.only(right: 8.0, top: 10),
                 ),
                 rating == true
-                    ? FlutterRatingBarIndicator(
+                    ? 
+                    Container(padding: EdgeInsets.only(top: 6),child:
+                    FlutterRatingBarIndicator(
                         rating: double.parse(
                             widget.bookData[widget.index]['rating']),
                         itemCount: 5,
-                        itemSize: 20.0,
-                        emptyColor: Colors.amber.withAlpha(50),
-                      )
+                        itemSize: 16.0,
+                        emptyColor: Colors.amber.withAlpha(100),
+                      ),)
                     : text(
                         "(No rating yet)",
                         color: Colors.white70,
@@ -698,6 +715,14 @@ class _DetailState extends State<Detail> {
       'download_date': dateFormat.format(DateTime.now()),
     });
 
+    http.post(url + "addLogChildren(Reader).php", body: {
+      'children_id': widget.childrenID,
+      'title': 'Download Storybook',
+      'description': widget.childrenID +
+          ' has downloaded a storybook: ' +
+          widget.bookData[widget.index]['storybookID'],
+    });
+
 //    if(pageImage.length>0)
 //    {
 //      print(pageImage.length);
@@ -726,6 +751,15 @@ class _DetailState extends State<Detail> {
       }
     }
 
+    // setState(() {
+    //   exist = true;
+    //   storyLanguage = widget.bookData[widget.index]['languageCode'];
+    //   storyTitle = widget.bookData[widget.index]['storybookTitle'];
+    //   storyID = widget.bookData[widget.index]['storybookID'];
+    //   widget.
+    // });
+
+    // Navigator.of(context, rootNavigator: true).pop();
     Future.delayed(new Duration(seconds: 1), () {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -733,6 +767,18 @@ class _DetailState extends State<Detail> {
                   childData: widget.childData, childrenID: widget.childrenID)),
           (Route<dynamic> route) => false);
     });
+  }
+
+  Future<List> getFollowing() async //retrieve all following from server
+  {
+    final response = await http.post(
+      url + "getFollowing.php",
+      body: {
+        "childrenID": widget.childrenID,
+      },
+    );
+    var datauser = json.decode(response.body);
+    return datauser;
   }
 
   void followWriter() async //follow writer
@@ -761,15 +807,36 @@ class _DetailState extends State<Detail> {
     http.post(url + "followWriter.php", body: {
       'children_id': widget.childrenID,
       'ContributorID': widget.contributorID,
-      'download_date': dateFormat.format(DateTime.now()),
+      'follow_date': dateFormat.format(DateTime.now()),
+    });
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+      'children_id': widget.childrenID,
+      'title': 'Follow Contributor',
+      'description': widget.childrenID +
+          ' has followed a contributor: ' +
+          widget.contributorID,
     });
 
     Future.delayed(new Duration(seconds: 1), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => LoadBook(
-                  childData: widget.childData, childrenID: widget.childrenID)),
-          (Route<dynamic> route) => false);
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //       MaterialPageRoute(
+      //           builder: (context) => LoadBook(
+      //               childData: widget.childData, childrenID: widget.childrenID)),
+      //       (Route<dynamic> route) => false);
+      setState(() {
+        follow = true;
+        FutureBuilder<List>(
+          future: getFollowing(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              widget.following = snapshot.data;
+            }
+          },
+        );
+      });
+
+      Navigator.of(context, rootNavigator: true).pop();
     });
   }
 
@@ -795,12 +862,34 @@ class _DetailState extends State<Detail> {
       'ContributorID': widget.contributorID,
     });
 
+    http.post(url + "addLogChildren(Reader).php", body: {
+      'children_id': widget.childrenID,
+      'title': 'Unfollow Contributor',
+      'description': widget.childrenID +
+          ' has unfollowed a contributor: ' +
+          widget.contributorID,
+    });
+
     Future.delayed(new Duration(seconds: 1), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => LoadBook(
-                  childData: widget.childData, childrenID: widget.childrenID)),
-          (Route<dynamic> route) => false);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(
+      //         builder: (context) => LoadBook(
+      //             childData: widget.childData, childrenID: widget.childrenID)),
+      //     (Route<dynamic> route) => false);
+
+      setState(() {
+        follow = false;
+        FutureBuilder<List>(
+          future: getFollowing(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              widget.following = snapshot.data;
+            }
+          },
+        );
+      });
+
+      Navigator.of(context, rootNavigator: true).pop();
     });
   }
 

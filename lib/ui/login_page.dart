@@ -774,7 +774,6 @@ class _LoginPageState extends State<LoginPage>
 
   Future<List> _login() async //login function
   {
-  
     if (usernameController.text == "" || passwordController.text == "") {
       showInSnackBar("Fill in All Boxes");
     } else {
@@ -800,6 +799,19 @@ class _LoginPageState extends State<LoginPage>
         final response = await http.post(url + "getParent(Reader).php", body: {
           "parent_username": loginID,
         });
+
+        String desc;
+        if (datauser[0]['parent_gender'] == 'M')
+          desc = loginID + ' has log into his account';
+        else
+          desc = loginID + ' has log into her account';
+
+        http.post(url + "addLogParent(Reader).php", body: {
+          'parent_username': loginID,
+          'title': 'Account Login',
+          'description': desc,
+        });
+
         datauser = json.decode(response.body);
         var db = DBHelper();
         var parent = Parent(
@@ -813,8 +825,7 @@ class _LoginPageState extends State<LoginPage>
         //db.deleteParent("111");
 
         db.saveParent(parent);
-        
-        
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Load()),
@@ -905,12 +916,21 @@ class _LoginPageState extends State<LoginPage>
             "parent_name": signupNameController.text,
             "parent_gender": parent_gender,
           });
+          http.post('http://10.0.2.2/mmsr/' + "addLogParent(Reader).php",
+              body: {
+                'parent_username': signupUsernameController.text,
+                'title': 'Account Registration',
+                'description': signupUsernameController.text +
+                    ' has registered a new account',
+              });
           signupUsernameController.text = "";
           signupPasswordController.text = "";
           signupNameController.text = "";
           signupEmailController.text = "";
           signupConfirmPasswordController.text = "";
           DOB_text = 'Birthdate';
+          
+
           _onSignInButtonPress();
           BlueSnackBar("Successfull Registered");
         } else {

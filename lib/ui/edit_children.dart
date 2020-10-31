@@ -295,6 +295,19 @@ class _ChangeProfilePicState extends State<ChangeProfilePic> {
       'children_image':children_image,
       'children_id': widget.childData[0].children_id//reuse unchanged data
     });
+    String desc;
+        if (widget.childData[0].children_gender == 'M')
+          desc = widget.childData[0].children_id +
+              ' has changed his profile picture';
+        else
+          desc = widget.childData[0].children_id +
+              ' has changed her profile picture';
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+                            'children_id': widget.childData[0].children_id,
+                            'title': 'Edit Children Account',
+                            'description': desc,
+                          });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var loginID = prefs.getString('loginID');
     var db = DBHelper();

@@ -489,6 +489,18 @@ class _DetailWriterState extends State<DetailWriter> {
     );
   }
 
+  Future<List> getFollowing() async //retrieve all following from server
+  {
+    final response = await http.post(
+      url + "getFollowing.php",
+      body: {
+        "childrenID": widget.childrenID,
+      },
+    );
+    var datauser = json.decode(response.body);
+    return datauser;
+  }
+
   void followWriter() async //follow writer
   {
     showDialog(
@@ -515,16 +527,40 @@ class _DetailWriterState extends State<DetailWriter> {
     http.post(url + "followWriter.php", body: {
       'children_id': widget.childrenID,
       'ContributorID': widget.contributorID,
-      'download_date': dateFormat.format(DateTime.now()),
+      'follow_date': dateFormat.format(DateTime.now()),
+    });
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+      'children_id': widget.childrenID,
+      'title': 'Follow Contributor',
+      'description': widget.childrenID +
+          ' has followed a contributor: ' +
+          widget.contributorID,
     });
 
     Future.delayed(new Duration(seconds: 1), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => LoadBook(
-                  childData: widget.childData, childrenID: widget.childrenID)),
-          (Route<dynamic> route) => false);
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //       MaterialPageRoute(
+      //           builder: (context) => LoadBook(
+      //               childData: widget.childData, childrenID: widget.childrenID)),
+      //       (Route<dynamic> route) => false);
+
+      setState(() {
+        follow = true;
+        FutureBuilder<List>(
+          future: getFollowing(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              widget.following = snapshot.data;
+            }
+          },
+        );
+      });
+
+      Navigator.of(context, rootNavigator: true).pop();
     });
+
+    
   }
 
   void unfollowWriter() async //unfollow writer
@@ -549,12 +585,33 @@ class _DetailWriterState extends State<DetailWriter> {
       'ContributorID': widget.contributorID,
     });
 
+    http.post(url + "addLogChildren(Reader).php", body: {
+      'children_id': widget.childrenID,
+      'title': 'Unfollow Contributor',
+      'description': widget.childrenID +
+          ' has unfollowed a contributor: ' +
+          widget.contributorID,
+    });
+
     Future.delayed(new Duration(seconds: 1), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => LoadBook(
-                  childData: widget.childData, childrenID: widget.childrenID)),
-          (Route<dynamic> route) => false);
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //       MaterialPageRoute(
+      //           builder: (context) => LoadBook(
+      //               childData: widget.childData, childrenID: widget.childrenID)),
+      //       (Route<dynamic> route) => false);
+
+      setState(() {
+        follow = false;
+        FutureBuilder<List>(
+          future: getFollowing(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              widget.following = snapshot.data;
+            }
+          },
+        );
+      });
+      Navigator.of(context, rootNavigator: true).pop();
     });
   }
 

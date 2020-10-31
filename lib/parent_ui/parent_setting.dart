@@ -134,7 +134,7 @@ class _ParentalSettings_State extends State<ParentSettings> with SingleTickerPro
             child: ListTile(
               onTap: (){
                 Navigator.push(context,
-                  MaterialPageRoute(builder: (context)=> ChildrenAccount(childData:widget.childData)),);
+                  MaterialPageRoute(builder: (context)=> ChildrenAccount(childData:widget.childData, parentData:widget.parentData)),);
               },
               leading: Icon(FontAwesomeIcons.users),
               title: Text("Manage Children Account",style:TextStyle(fontFamily: "WorkSansMedium"

@@ -12,16 +12,18 @@ import 'package:reader_mmsr/localdatabase/Database.dart';
 
 //Edit profile details
 
-class EditProfile extends StatefulWidget{
+class EditProfile extends StatefulWidget {
   List parentData;
   @override
-  EditProfile({Key key,this.parentData}) : super(key:key);
+  EditProfile({Key key, this.parentData}) : super(key: key);
   _EditProfile_State createState() => new _EditProfile_State();
 }
+
 // ignore: camel_case_types
-class _EditProfile_State extends State<EditProfile> with SingleTickerProviderStateMixin {
+class _EditProfile_State extends State<EditProfile>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  TextEditingController name,username,email;
+  TextEditingController name, username, email;
   String gender_value;
   static const String MIN_DATETIME = '1950-01-01';
   static const String MAX_DATETIME = '2000-12-31';
@@ -29,7 +31,7 @@ class _EditProfile_State extends State<EditProfile> with SingleTickerProviderSta
   String BirthDate;
   DateTime _dateTime;
   String _format = 'yyyy-MM-dd';
-  String DOB_text ;
+  String DOB_text;
   int groupValue;
   String url = 'http://10.0.2.2/mmsr/';
 
@@ -44,11 +46,9 @@ class _EditProfile_State extends State<EditProfile> with SingleTickerProviderSta
     email = new TextEditingController(text: widget.parentData[0].parent_email);
     DOB_text = widget.parentData[0].parent_DOB;
     gender_value = widget.parentData[0].parent_gender;
-    if(gender_value == 'M')
-      {
-        radioOnchange(1);
-      }
-    else
+    if (gender_value == 'M') {
+      radioOnchange(1);
+    } else
       radioOnchange(2);
     super.initState();
   }
@@ -56,19 +56,27 @@ class _EditProfile_State extends State<EditProfile> with SingleTickerProviderSta
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(title: new Text('Edit Profile',style:TextStyle(fontFamily: "WorkSansBold")),automaticallyImplyLeading: false,backgroundColor: Colors.lightBlue,
+      appBar: new AppBar(
+        title: new Text('Edit Profile',
+            style: TextStyle(fontFamily: "WorkSansBold")),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.lightBlue,
         actions: <Widget>[
           new Container(
             alignment: Alignment.center,
             child: FlatButton(
-              onPressed: ()
-              {
+              onPressed: () {
                 updateDetails();
               },
-              child: Text('Done',style: TextStyle(fontFamily: "WorkSansMedium",fontSize: 18,color: Colors.lightGreenAccent)),
+              child: Text('Done',
+                  style: TextStyle(
+                      fontFamily: "WorkSansMedium",
+                      fontSize: 18,
+                      color: Colors.lightGreenAccent)),
             ),
           ),
-        ],),
+        ],
+      ),
       key: _scaffoldKey,
       body: Container(
         decoration: new BoxDecoration(
@@ -92,84 +100,106 @@ class _EditProfile_State extends State<EditProfile> with SingleTickerProviderSta
       ),
     );
   }
-  Widget _edit(BuildContext context)
-  {
+
+  Widget _edit(BuildContext context) {
     return Container(
       child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 10,top: 20),
+            padding: EdgeInsets.only(left: 10, top: 20),
             alignment: Alignment.centerLeft,
-            child: Text('Name',style: TextStyle(fontFamily: "WorkSansBold",fontSize: 20,)),
+            child: Text('Name',
+                style: TextStyle(
+                  fontFamily: "WorkSansBold",
+                  fontSize: 20,
+                )),
           ),
           Container(
-            padding: EdgeInsets.only(left: 10,right: 10),
+            padding: EdgeInsets.only(left: 10, right: 10),
             child: TextField(
                 controller: name,
-                style: TextStyle(fontFamily: "WorkSansMedium",fontSize: 18)
-            ),
+                style: TextStyle(fontFamily: "WorkSansMedium", fontSize: 18)),
           ),
-
           Container(
-            padding: EdgeInsets.only(left: 10,top: 10),
+            padding: EdgeInsets.only(left: 10, top: 10),
             alignment: Alignment.centerLeft,
-            child: Text('Email',style: TextStyle(fontFamily: "WorkSansBold",fontSize: 20,)),
+            child: Text('Email',
+                style: TextStyle(
+                  fontFamily: "WorkSansBold",
+                  fontSize: 20,
+                )),
           ),
           Container(
-            padding: EdgeInsets.only(left: 10,right: 10),
+            padding: EdgeInsets.only(left: 10, right: 10),
             child: TextField(
                 controller: email,
-                style: TextStyle(fontFamily: "WorkSansMedium",fontSize: 18)
-            ),
+                style: TextStyle(fontFamily: "WorkSansMedium", fontSize: 18)),
           ),
           Container(
-            padding: EdgeInsets.only(left: 10,top: 10),
+            padding: EdgeInsets.only(left: 10, top: 10),
             alignment: Alignment.centerLeft,
-            child: Text('Date of Birth',style: TextStyle(fontFamily: "WorkSansBold",fontSize: 20,)),
+            child: Text('Date of Birth',
+                style: TextStyle(
+                  fontFamily: "WorkSansBold",
+                  fontSize: 20,
+                )),
           ),
           GestureDetector(
-            onTap: ()
-            {
+            onTap: () {
               _showDatePicker();
             },
             child: Container(
               alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(left: 10.0, right: 10.0,bottom: 10,top: 10),
+              padding:
+                  EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10, top: 10),
               child: Text(
                 '$DOB_text',
-                style: TextStyle(
-                    fontFamily: "WorkSansMedium",fontSize: 18),
-
+                style: TextStyle(fontFamily: "WorkSansMedium", fontSize: 18),
               ),
             ),
           ),
           Container(
             color: Colors.blueGrey,
-            padding: EdgeInsets.only(left: 10,right:10),
+            padding: EdgeInsets.only(left: 10, right: 10),
             width: 395,
             height: 1,
           ),
           Container(
-            padding: EdgeInsets.only(left: 10,top: 10),
+            padding: EdgeInsets.only(left: 10, top: 10),
             alignment: Alignment.centerLeft,
-            child: Text('Gender',style: TextStyle(fontFamily: "WorkSansBold",fontSize: 20,)),
+            child: Text('Gender',
+                style: TextStyle(
+                  fontFamily: "WorkSansBold",
+                  fontSize: 20,
+                )),
           ),
           Container(
-            padding: EdgeInsets.only(left: 10,right: 10),
+            padding: EdgeInsets.only(left: 10, right: 10),
             child: Row(
               children: <Widget>[
-                Radio(value: 1, groupValue: groupValue, onChanged:(e)=>radioOnchange(e),activeColor: Colors.blue,),
-                Text('Male',style: TextStyle(
-                    fontFamily: "WorkSansMedium",fontSize: 18)),
-                Radio(value: 2, groupValue: groupValue, onChanged:(e)=>radioOnchange(e),activeColor: Colors.red),
-                Text('Female',style: TextStyle(
-                    fontFamily: "WorkSansMedium",fontSize: 18)),
+                Radio(
+                  value: 1,
+                  groupValue: groupValue,
+                  onChanged: (e) => radioOnchange(e),
+                  activeColor: Colors.blue,
+                ),
+                Text('Male',
+                    style:
+                        TextStyle(fontFamily: "WorkSansMedium", fontSize: 18)),
+                Radio(
+                    value: 2,
+                    groupValue: groupValue,
+                    onChanged: (e) => radioOnchange(e),
+                    activeColor: Colors.red),
+                Text('Female',
+                    style:
+                        TextStyle(fontFamily: "WorkSansMedium", fontSize: 18)),
               ],
             ),
           ),
           Container(
             color: Colors.blueGrey,
-            padding: EdgeInsets.only(left: 10,right:10),
+            padding: EdgeInsets.only(left: 10, right: 10),
             width: 395,
             height: 1,
           ),
@@ -177,48 +207,55 @@ class _EditProfile_State extends State<EditProfile> with SingleTickerProviderSta
       ),
     );
   }
-  void radioOnchange(int e)//for radio button
+
+  void radioOnchange(int e) //for radio button
   {
     setState(() {
-      if(e == 1)
-      {
+      if (e == 1) {
         groupValue = 1;
-      }
-      else if (e == 2)
-      {
+      } else if (e == 2) {
         groupValue = 2;
       }
     });
-
   }
-  void updateDetails() async
-  {
+
+  void updateDetails() async {
     final prefs = await SharedPreferences.getInstance();
     var target = prefs.getString('loginID');
     String gender;
-    if(groupValue==1)
-      {
-        gender = 'M';
-      }
-    else if(groupValue ==2)
-      {
-        gender = 'F';
-      }
+    if (groupValue == 1) {
+      gender = 'M';
+    } else if (groupValue == 2) {
+      gender = 'F';
+    }
 //pass data to php file to update details
-        http.post(url+"updateParent(Reader).php",
-            body: {
-              'target':target,
-              'parent_name': name.text,
-              'parent_gender': gender,
-              'parent_email': email.text,
-              'parent_DOB': DOB_text,
-            });
-    var db = DBHelper();
-    var parent = Parent(target,widget.parentData[0].password,name.text,email.text,gender,DOB_text);
-    db.updateParent(parent);//update in local database
-        Navigator.of(context).pop();
+    http.post(url + "updateParent(Reader).php", body: {
+      'target': target,
+      'parent_name': name.text,
+      'parent_gender': gender,
+      'parent_email': email.text,
+      'parent_DOB': DOB_text,
+    });
 
+    String desc;
+    if (gender == 'M')
+      desc = target + ' has edited his profile';
+    else 
+      desc = target + ' has edited her profile';
+
+    http.post(url + "addLogParent(Reader).php", body: {
+      'parent_username': target,
+      'title': 'Edit Profile',
+      'description': desc,
+    });
+
+    var db = DBHelper();
+    var parent = Parent(target, widget.parentData[0].password, name.text,
+        email.text, gender, DOB_text);
+    db.updateParent(parent); //update in local database
+    Navigator.of(context).pop();
   }
+
   void _showDatePicker() {
     DatePicker.showDatePicker(
       context,
@@ -239,11 +276,16 @@ class _EditProfile_State extends State<EditProfile> with SingleTickerProviderSta
       onConfirm: (dateTime, List<int> index) {
         setState(() {
           _dateTime = dateTime;
-          DOB_text = _dateTime.year.toString() +'-'+_dateTime.month.toString().padLeft(2, '0') +'-'+_dateTime.day.toString().padLeft(2,'0');
+          DOB_text = _dateTime.year.toString() +
+              '-' +
+              _dateTime.month.toString().padLeft(2, '0') +
+              '-' +
+              _dateTime.day.toString().padLeft(2, '0');
         });
       },
     );
   }
+
   void showInSnackBar(String value) {
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
@@ -260,6 +302,7 @@ class _EditProfile_State extends State<EditProfile> with SingleTickerProviderSta
       duration: Duration(seconds: 3),
     ));
   }
+
   void BlueSnackBar(String value) {
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();

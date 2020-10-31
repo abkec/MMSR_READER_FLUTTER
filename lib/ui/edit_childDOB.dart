@@ -126,6 +126,19 @@ class _ChangeChildDOB_State extends State<ChangeChildDOB> with SingleTickerProvi
       'children_image':widget.childData[0].children_image,//reuse unchanged details
       'children_id': widget.childData[0].children_id//reuse unchanged details
     });
+    String desc;
+        if (widget.childData[0].children_gender == 'M')
+          desc = widget.childData[0].children_id +
+              ' has changed his date of birth';
+        else
+          desc = widget.childData[0].children_id +
+              ' has changed her date of birth';
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+                            'children_id': widget.childData[0].children_id,
+                            'title': 'Edit Children Account',
+                            'description': desc,
+                          });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var loginID = prefs.getString('loginID');//parent username
     var db = DBHelper();

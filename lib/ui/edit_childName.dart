@@ -103,6 +103,20 @@ class _ChangeChildName_State extends State<ChangeChildName> with SingleTickerPro
       'children_image':widget.childData[0].children_image,//reuse all unchange details
       'children_id': widget.childData[0].children_id//reuse all unchange details
     });
+
+    String desc;
+        if (widget.childData[0].children_gender == 'M')
+          desc = widget.childData[0].children_id +
+              ' has changed his name';
+        else
+          desc = widget.childData[0].children_id +
+              ' has changed her name';
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+                            'children_id': widget.childData[0].children_id,
+                            'title': 'Edit Children Account',
+                            'description': desc,
+                          });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var loginID = prefs.getString('loginID');
     //update in local database

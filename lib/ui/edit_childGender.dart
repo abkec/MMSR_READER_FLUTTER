@@ -135,6 +135,19 @@ class _ChangeChildGender_State extends State<ChangeChildGender> with SingleTicke
       'children_image':widget.childData[0].children_image,//reuse all unchanged details
       'children_id': widget.childData[0].children_id//reuse all unchanged details
     });
+    String desc;
+        if (widget.childData[0].children_gender == 'M')
+          desc = widget.childData[0].children_id +
+              ' has changed his gender';
+        else
+          desc = widget.childData[0].children_id +
+              ' has changed her gender';
+
+    http.post(url + "addLogChildren(Reader).php", body: {
+                            'children_id': widget.childData[0].children_id,
+                            'title': 'Edit Children Account',
+                            'description': desc,
+                          });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var loginID = prefs.getString('loginID');
     var db = DBHelper();

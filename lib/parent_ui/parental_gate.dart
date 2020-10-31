@@ -46,61 +46,61 @@ class _LoadState extends State<Load> {
   @override
   Widget build(BuildContext context) {
     return new AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
-    child:Scaffold(
-      //extendBodyBehindAppBar: true,
+        value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+        ),
+        child: Scaffold(
+          //extendBodyBehindAppBar: true,
 
-      // appBar: new AppBar(
-      //   centerTitle: true,
-      //   title: new Text('Parental Gate',
-      //       style: TextStyle(fontFamily: 'Avenir',fontWeight: FontWeight.w900, fontSize:30)),
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   automaticallyImplyLeading: false,
-      //   actions: <Widget>[
-      //     Tooltip(
-      //       child: IconButton(
-      //           icon: Icon(
-      //             FontAwesomeIcons.signOutAlt,
-      //           ),
-      //           onPressed: () async {
-      //             SharedPreferences prefs =
-      //                 await SharedPreferences.getInstance();
-      //             prefs.remove('loginID');
-      //             Navigator.of(context).pushAndRemoveUntil(
-      //                 MaterialPageRoute(builder: (context) => LoginPage()),
-      //                 (Route<dynamic> route) => false);
-      //           }),
-      //       message: "Log Out",
-      //     )
-      //   ],
-      // ),
-      body: new FutureBuilder<List>(
-        future: db.getParent(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            parentData = snapshot.data;
-            return new FutureBuilder<List>(
-              future: db.getChildren(),
-              builder: (context, snapshot2) {
-                if (snapshot2.hasData) {
-                  childData = snapshot2.data;
-                  //pass data to second widget
-                  return new ParentalGate(
-                    parentData: parentData,
-                    childData: childData,
-                  );
-                }
-                return SpinKitThreeBounce(color: Colors.blue);
-              },
-            );
-          }
-          return SpinKitThreeBounce(color: Colors.blue);
-        },
-      ),
-     ) );
+          // appBar: new AppBar(
+          //   centerTitle: true,
+          //   title: new Text('Parental Gate',
+          //       style: TextStyle(fontFamily: 'Avenir',fontWeight: FontWeight.w900, fontSize:30)),
+          //   backgroundColor: Colors.transparent,
+          //   elevation: 0,
+          //   automaticallyImplyLeading: false,
+          //   actions: <Widget>[
+          //     Tooltip(
+          //       child: IconButton(
+          //           icon: Icon(
+          //             FontAwesomeIcons.signOutAlt,
+          //           ),
+          //           onPressed: () async {
+          //             SharedPreferences prefs =
+          //                 await SharedPreferences.getInstance();
+          //             prefs.remove('loginID');
+          //             Navigator.of(context).pushAndRemoveUntil(
+          //                 MaterialPageRoute(builder: (context) => LoginPage()),
+          //                 (Route<dynamic> route) => false);
+          //           }),
+          //       message: "Log Out",
+          //     )
+          //   ],
+          // ),
+          body: new FutureBuilder<List>(
+            future: db.getParent(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                parentData = snapshot.data;
+                return new FutureBuilder<List>(
+                  future: db.getChildren(),
+                  builder: (context, snapshot2) {
+                    if (snapshot2.hasData) {
+                      childData = snapshot2.data;
+                      //pass data to second widget
+                      return new ParentalGate(
+                        parentData: parentData,
+                        childData: childData,
+                      );
+                    }
+                    return SpinKitThreeBounce(color: Colors.blue);
+                  },
+                );
+              }
+              return SpinKitThreeBounce(color: Colors.blue);
+            },
+          ),
+        ));
   }
 } //load children data
 
@@ -138,7 +138,7 @@ class _ParentalGate_State extends State<ParentalGate>
 
   Future<List> getParent() async {
     //retrieve parent detail
-    final response = await  http.post(
+    final response = await http.post(
       url + "getParent(Reader).php",
       body: {"parent_username": widget.parentData[0].username},
     );
@@ -153,7 +153,7 @@ class _ParentalGate_State extends State<ParentalGate>
     var db = DBHelper();
     db.updateParent(
         parent); //update parent detail if had make changes in other devices
-        
+
     return data;
   }
 
@@ -272,6 +272,37 @@ class _ParentalGate_State extends State<ParentalGate>
                                     color: const Color(0xffffffff),
                                   ),
                                   onPressed: () async {
+                                    try {
+                                      final result =
+                                          await InternetAddress.lookup(
+                                              'google.com');
+                                      if (result.isNotEmpty &&
+                                          result[0].rawAddress.isNotEmpty) {
+                                        String desc;
+                                        if (widget
+                                                .parentData[0].parent_gender ==
+                                            'M')
+                                          desc = widget
+                                                  .parentData[0]
+                                                  .username +
+                                              ' has log out from his account';
+                                        else
+                                          desc = widget
+                                                  .parentData[0]
+                                                  .username +
+                                              ' has log out from her account';
+
+                                        http.post(
+                                            url + "addLogParent(Reader).php",
+                                            body: {
+                                              'parent_username': widget
+                                                  .parentData[0]
+                                                  .username,
+                                              'title': 'Account Logout',
+                                              'description': desc,
+                                            });
+                                      }
+                                    } on SocketException catch (_) {}
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     var db = DBHelper();
@@ -551,7 +582,7 @@ class _ParentalGate_State extends State<ParentalGate>
                                                     LoadChildData(
                                                         childData:
                                                             widget.childData,
-                                                        index: index-1)),
+                                                        index: index - 1)),
                                           );
                                         } else if (connection == false) {
                                           showInSnackBar(
@@ -586,9 +617,10 @@ class _ParentalGate_State extends State<ParentalGate>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => LoadBook(
-                                                  childData: widget.childData[index-1],
+                                                  childData: widget
+                                                      .childData[index - 1],
                                                   childrenID: widget
-                                                      .childData[index-1]
+                                                      .childData[index - 1]
                                                       .children_id)),
                                         );
                                       },
@@ -764,6 +796,14 @@ class AddChildren_State extends State<_AddChildren> {
         "children_gender": gender,
         "children_image": children_image,
       });
+
+      http.post(url + "addLogChildren(Reader).php", body: {
+                            'children_id': children_id,
+                            'title': 'Add Children Account',
+                            'description': parent_username +
+                                ' has created a children account: ' +
+                                children_id,
+                          });
 
       var db = DBHelper();
       var children = Children(children_id, parent_username, nameController.text,
