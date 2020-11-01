@@ -14,6 +14,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:reader_mmsr/ui/writer_detail.dart';
 import 'book_list.dart';
 import 'page_content.dart';
+import 'dart:io';
 
 //Story details Page
 //Download function available
@@ -316,20 +317,36 @@ class _DetailState extends State<Detail> {
                         fontSize: 12,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WriterDetails(
-                                      childData: widget.childData,
-                                      writer: widget.contributorList,
-                                      languageData: widget.languageData,
-                                      review: widget.reviewAll,
-                                      childrenID: widget.childrenID,
-                                      index: conIndex,
-                                      contributorID: widget.contributorID,
-                                    )),
-                          );
+                        ..onTap = () async {
+                          bool connection = false;
+                          try {
+                            final result =
+                                await InternetAddress.lookup('google.com');
+                            if (result.isNotEmpty &&
+                                result[0].rawAddress.isNotEmpty) {
+                              connection = true;
+                            }
+                          } on SocketException catch (_) {
+                            connection = false;
+                          }
+                          print(connection);
+                          if (connection == true) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WriterDetails(
+                                        childData: widget.childData,
+                                        writer: widget.contributorList,
+                                        languageData: widget.languageData,
+                                        review: widget.reviewAll,
+                                        childrenID: widget.childrenID,
+                                        index: conIndex,
+                                        contributorID: widget.contributorID,
+                                      )),
+                            );
+                          } else if (connection == false) {
+                            showInSnackBar('No internet connection');
+                          }
                         }),
                 ],
               ),
@@ -397,15 +414,16 @@ class _DetailState extends State<Detail> {
                   padding: EdgeInsets.only(right: 8.0, top: 10),
                 ),
                 rating == true
-                    ? 
-                    Container(padding: EdgeInsets.only(top: 6),child:
-                    FlutterRatingBarIndicator(
-                        rating: double.parse(
-                            widget.bookData[widget.index]['rating']),
-                        itemCount: 5,
-                        itemSize: 16.0,
-                        emptyColor: Colors.amber.withAlpha(100),
-                      ),)
+                    ? Container(
+                        padding: EdgeInsets.only(top: 6),
+                        child: FlutterRatingBarIndicator(
+                          rating: double.parse(
+                              widget.bookData[widget.index]['rating']),
+                          itemCount: 5,
+                          itemSize: 16.0,
+                          emptyColor: Colors.amber.withAlpha(100),
+                        ),
+                      )
                     : text(
                         "(No rating yet)",
                         color: Colors.white70,
@@ -458,7 +476,22 @@ class _DetailState extends State<Detail> {
                       ? Icon(Icons.done)
                       : Icon(Icons.person_add),
                   onPressed: () async {
-                    follow == true ? unfollowWriter() : followWriter();
+                    bool connection = false;
+                    try {
+                      final result = await InternetAddress.lookup('google.com');
+                      if (result.isNotEmpty &&
+                          result[0].rawAddress.isNotEmpty) {
+                        connection = true;
+                      }
+                    } on SocketException catch (_) {
+                      connection = false;
+                    }
+                    print(connection);
+                    if (connection == true) {
+                      follow == true ? unfollowWriter() : followWriter();
+                    } else if (connection == false) {
+                      showInSnackBar('No internet connection');
+                    }
                   },
                 ),
               ),

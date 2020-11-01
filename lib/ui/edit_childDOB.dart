@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
 //This is the page to change children account date of birth
 
@@ -48,9 +49,24 @@ class _ChangeChildDOB_State extends State<ChangeChildDOB> with SingleTickerProvi
           new Container(
             alignment: Alignment.center,
             child: FlatButton(
-              onPressed: ()
+              onPressed: () async
               {
-                updateDOB();
+                bool connection = false;
+                try {
+                  final result = await InternetAddress.lookup('google.com');
+                  if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                    connection = true;
+                  }
+                } on SocketException catch (_) {
+                  connection = false;
+                }
+                print(connection);
+                if (connection == true) {
+                  updateDOB();
+                } else if (connection == false) {
+                  showInSnackBar('No internet connection');
+                }
+                
               },
               child: Text('Done',style: TextStyle(fontFamily: "WorkSansMedium",fontSize: 18,color: Colors.lightGreenAccent)),
             ),
@@ -80,6 +96,8 @@ class _ChangeChildDOB_State extends State<ChangeChildDOB> with SingleTickerProvi
       ),
     );
   }
+
+  
 
   Widget _changeUsername(BuildContext context) //should rename to "_updateChildDOB"
   {

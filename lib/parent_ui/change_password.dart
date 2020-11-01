@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flushbar/flushbar.dart';
 import 'package:reader_mmsr/Model/ParentModel.dart';
+import 'dart:io';
 
 //Change password page
 //Edit user details can reference Writer Module
@@ -37,15 +38,29 @@ class _ChangePassword_State extends State<ChangePassword>
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Edit Profile',
+        title: new Text('Change Password',
             style: TextStyle(fontFamily: "WorkSansBold")),
         backgroundColor: Colors.lightBlue,
         actions: <Widget>[
           new Container(
             alignment: Alignment.center,
             child: FlatButton(
-              onPressed: () {
-                updatePassword();
+              onPressed: () async {
+                bool connection = false;
+                try {
+                  final result = await InternetAddress.lookup('google.com');
+                  if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                    connection = true;
+                  }
+                } on SocketException catch (_) {
+                  connection = false;
+                }
+                print(connection);
+                if (connection == true) {
+                  updatePassword();
+                } else if (connection == false) {
+                  showInSnackBar('No internet connection');
+                }
               },
               child: Text('Done',
                   style: TextStyle(

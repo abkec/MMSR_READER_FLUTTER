@@ -1818,28 +1818,56 @@ class Book_list_state extends State<Book_list>
                                   ),
                                 ),
                                 Positioned(
-                                  right: 0,
-                                  top: 0,
+                                  right: 5,
+                                  bottom: -15,
                                   child: Container(
                                     width: 30.0,
-                                    child: PopupMenuButton<int>(
-                                      onSelected: (value) {
-                                        choiceAction(value, i);
+                                    child: IconButton(
+                                      icon: Icon(Icons.delete_outline),
+                                      tooltip: 'Delete',
+                                      onPressed: () {
+                                        showDialog<void>(
+                                                    context: context,
+                                                    barrierDismissible:
+                                                        false, // user must tap button!
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            'Delete ' + storycollection[i]
+                                                          .story_title),
+                                                        content:
+                                                            SingleChildScrollView(
+                                                          child: ListBody(
+                                                            children: <Widget>[
+                                                              Text('Are you sure?'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        actions: <Widget>[
+                                                          FlatButton(
+                                                            child: Text('No'),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          FlatButton(
+                                                            child: Text('Yes'),
+                                                            onPressed: () {
+                                                              choiceAction(1, i);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                        
                                       },
-                                      icon: Icon(
-                                        Icons.more_vert,
-                                      ),
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          value: 1,
-                                          child: Text(
-                                            "Delete",
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontFamily: 'WorkSansBold'),
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ),
                                 ),
@@ -2183,32 +2211,60 @@ class Book_list_state extends State<Book_list>
                                             ),
                                           ),
                                           Positioned(
-                                            right: 0,
-                                            top: 0,
+                                            right: 5,
+                                            bottom: -15,
                                             child: Container(
                                               width: 30.0,
-                                              child: PopupMenuButton<int>(
-                                                onSelected: (value) {
-                                                  unfollowWriter(
-                                                      value,
-                                                      contributor[i]
-                                                          ['ContributorID']);
+                                              child: IconButton(
+                                                icon:
+                                                    Icon(Icons.delete_outline),
+                                                tooltip: 'Unfollow',
+                                                onPressed: () {
+                                                  showDialog<void>(
+                                                    context: context,
+                                                    barrierDismissible:
+                                                        false, // user must tap button!
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            'Unfollow ' + contributor[i]
+                                                                      ['Name']),
+                                                        content:
+                                                            SingleChildScrollView(
+                                                          child: ListBody(
+                                                            children: <Widget>[
+                                                              Text('Are you sure?'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        actions: <Widget>[
+                                                          FlatButton(
+                                                            child: Text('No'),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          FlatButton(
+                                                            child: Text('Yes'),
+                                                            onPressed: () {
+                                                              unfollowWriter(
+                                                                  1,
+                                                                  contributor[i]
+                                                                      [
+                                                                      'ContributorID']);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
                                                 },
-                                                icon: Icon(
-                                                  Icons.more_vert,
-                                                ),
-                                                itemBuilder: (context) => [
-                                                  PopupMenuItem(
-                                                    value: 1,
-                                                    child: Text(
-                                                      "Unfollow",
-                                                      style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontFamily:
-                                                              'WorkSansBold'),
-                                                    ),
-                                                  ),
-                                                ],
                                               ),
                                             ),
                                           ),
@@ -2450,13 +2506,13 @@ class Book_list_state extends State<Book_list>
     var db = DBHelper();
     //delete all details of the storybook id
     if (choice == 1) {
-
       //logging for delete storybook
-       http.post(url + "addLogChildren(Reader).php", body: {
+      http.post(url + "addLogChildren(Reader).php", body: {
         'children_id': widget.childrenID,
         'title': 'Delete Storybook From Downloads',
-        'description':
-            widget.childrenID + ' has removed a storybook from downloads: ' + storycollection[i].story_id,
+        'description': widget.childrenID +
+            ' has removed a storybook from downloads: ' +
+            storycollection[i].story_id,
       });
 
       db.deleteBook(storycollection[i].story_id, widget.childrenID);
@@ -2470,8 +2526,6 @@ class Book_list_state extends State<Book_list>
         storycollection = [];
         languageAvailable = [];
       });
-
-      
     }
   }
 
