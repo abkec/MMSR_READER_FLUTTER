@@ -695,494 +695,214 @@ class Book_list_state extends State<Book_list>
                   ),
                 ),
               )
-            : SingleChildScrollView(
-                child: Container(
-                  color: Color(0xFF2196F3),
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  "Gallery",
-                                  style: TextStyle(
-                                      letterSpacing: -1.5,
-                                      color: Colors.white,
-                                      fontFamily: 'SourceSansBold',
-                                      fontSize: 40),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SearchPage(
-                                              childData: widget.childData,
-                                              review: widget.review,
-                                              bookData: widget.bookData,
-                                              contributor: widget.contributor,
-                                              languageData: widget.languageData,
-                                              childrenID: widget.childrenID,
-                                            )),
-                                  );
-                                },
-                                child: new Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  height: 60,
-                                  color: Colors.white,
-                                  child: new Row(children: [
-                                    Icon(IconicIcons.search),
-                                    Container(
-                                      margin: EdgeInsets.only(left: 30),
-                                      child: Text(
-                                        "Search",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontFamily: 'SourceSansRegular'),
+            : Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Color(0xFF2196F3),
+                child: SingleChildScrollView(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 15, right: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    "Gallery",
+                                    style: TextStyle(
+                                        letterSpacing: -1.5,
+                                        color: Colors.white,
+                                        fontFamily: 'SourceSansBold',
+                                        fontSize: 40),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SearchPage(
+                                                childData: widget.childData,
+                                                review: widget.review,
+                                                bookData: widget.bookData,
+                                                contributor: widget.contributor,
+                                                languageData:
+                                                    widget.languageData,
+                                                childrenID: widget.childrenID,
+                                              )),
+                                    );
+                                  },
+                                  child: new Container(
+                                    padding:
+                                        EdgeInsets.only(left: 15, right: 15),
+                                    height: 60,
+                                    color: Colors.white,
+                                    child: new Row(children: [
+                                      Icon(IconicIcons.search),
+                                      Container(
+                                        margin: EdgeInsets.only(left: 30),
+                                        child: Text(
+                                          "Search",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontFamily: 'SourceSansRegular'),
+                                        ),
                                       ),
-                                    ),
-                                  ]),
-                                )),
-                            SizedBox(height: 10),
-                            widget.bookDataR.length != 0
-                                ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        "Editor's Choice",
-                                        style: TextStyle(
-                                            letterSpacing: -1.5,
-                                            fontFamily: 'SourceSansBold',
-                                            color: const Color(0xffffffff),
-                                            fontSize: 26),
-                                      ),
-                                      IconButton(
-                                          // refresh Button
-                                          icon: const Icon(
-                                              IconicIcons.article_alt),
-                                          iconSize: 20,
-                                          tooltip: 'View more',
-                                          color: Colors.white,
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => BookTab(
-                                                        childData:
-                                                            widget.childData,
-                                                        appBarTitle:
-                                                            "Editor's Choice",
-                                                        review: widget.review,
-                                                        bookData:
-                                                            widget.bookData,
-                                                        childrenID:
-                                                            widget.childrenID,
-                                                        bookDataRoL:
-                                                            widget.bookDataR,
-                                                        contributor:
-                                                            widget.contributor,
-                                                        languageData:
-                                                            widget.languageData,
-                                                      )),
-                                            );
-                                          }),
-                                    ],
-                                  )
-                                : Container(),
-                            widget.bookDataR.length != 0
-                                ? SizedBox(height: 10)
-                                : Container(),
-                            widget.bookDataR.length != 0
-                                ? Container(
-                                    height: 220,
-                                    child: Swiper(
-                                      autoplay: widget.bookDataR.length == 1
-                                          ? false
-                                          : true,
-                                      loop: widget.bookDataR.length == 1
-                                          ? false
-                                          : true,
-                                      scale: 0.5,
-                                      viewportFraction: 0.95,
-                                      itemCount: widget.bookDataR == null
-                                          ? 0
-                                          : widget.bookDataR.length,
-                                      pagination: new SwiperPagination(
-                                        builder: new DotSwiperPaginationBuilder(
-                                            color: Colors.grey,
-                                            activeColor: Color(0xFF2196F3)),
-                                      ),
-                                      itemBuilder: (context, i) {
-                                        String language;
-                                        //To check what is the language of the story.
-                                        for (int j = 0;
-                                            j < widget.languageData.length;
-                                            j++) {
-                                          if (widget.bookDataR[i]
-                                                  ['languageCode'] ==
-                                              widget.languageData[j]
-                                                  ['languageCode']) {
-                                            language = widget.languageData[j]
-                                                ['languageDesc'];
-                                          }
-                                        }
-                                        String name = '';
-                                        String id = '';
-                                        //To check who is the writer for the story.
-                                        for (int j = 0;
-                                            j < widget.contributor.length;
-                                            j++) {
-                                          if (widget.bookDataR[i]
-                                                  ['ContributorID'] ==
-                                              widget.contributor[j]
-                                                  ['ContributorID']) {
-                                            id = widget.contributor[j]
-                                                ['ContributorID'];
-                                            name =
-                                                widget.contributor[j]['Name'];
-                                          }
-                                        }
-                                        Uint8List bytes = base64Decode(widget
-                                            .bookDataR[i]['storybookCover']);
-
-                                        int bookIndex;
-                                        for (int j = 0;
-                                            j < widget.bookData.length;
-                                            j++) {
-                                          if (widget.bookData[j]
-                                                      ['storybookID'] ==
-                                                  widget.bookDataR[i]
-                                                      ['storybookID'] &&
-                                              widget.bookDataR[i]
-                                                      ['languageCode'] ==
-                                                  widget.bookData[j]
-                                                      ['languageCode']) {
-                                            bookIndex = j;
-                                            break;
-                                          }
-                                        }
-
-                                        bool rating = false;
-                                        for (int j = 0;
-                                            j < widget.review.length;
-                                            j++) {
-                                          if (widget.review[j]['storybookID'] ==
-                                                  widget.bookDataR[i]
-                                                      ['storybookID'] &&
-                                              widget.review[j]
-                                                      ['languageCode'] ==
-                                                  widget.bookDataR[i]
-                                                      ['languageCode']) {
-                                            rating = true;
-                                            break;
-                                          }
-                                        }
-                                        return Container(
-                                          //width: MediaQuery.of(context).size.width,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              print(bookIndex.toString());
+                                    ]),
+                                  )),
+                              SizedBox(height: 10),
+                              widget.bookDataR.length != 0
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          "Editor's Choice",
+                                          style: TextStyle(
+                                              letterSpacing: -1.5,
+                                              fontFamily: 'SourceSansBold',
+                                              color: const Color(0xffffffff),
+                                              fontSize: 26),
+                                        ),
+                                        IconButton(
+                                            // refresh Button
+                                            icon: const Icon(
+                                                IconicIcons.article_alt),
+                                            iconSize: 20,
+                                            tooltip: 'View more',
+                                            color: Colors.white,
+                                            onPressed: () {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        LoadDetail(
-                                                            childData: widget
-                                                                .childData,
-                                                            reviewAll:
-                                                                widget.review,
-                                                            languageData: widget
-                                                                .languageData,
-                                                            contributorList:
-                                                                widget
-                                                                    .contributor,
-                                                            bookData:
-                                                                widget.bookData,
-                                                            index: bookIndex,
-                                                            contributor: name,
-                                                            contributorID: id,
-                                                            childrenID: widget
-                                                                .childrenID,
-                                                            language:
-                                                                language)),
+                                                        BookTab(
+                                                          childData:
+                                                              widget.childData,
+                                                          appBarTitle:
+                                                              "Editor's Choice",
+                                                          review: widget.review,
+                                                          bookData:
+                                                              widget.bookData,
+                                                          childrenID:
+                                                              widget.childrenID,
+                                                          bookDataRoL:
+                                                              widget.bookDataR,
+                                                          contributor: widget
+                                                              .contributor,
+                                                          languageData: widget
+                                                              .languageData,
+                                                        )),
                                               );
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 10, bottom: 10),
-                                                child: Stack(
-                                                  children: <Widget>[
-                                                    Center(
-                                                      child: Image(
-                                                        gaplessPlayback: true,
-                                                        image:
-                                                            MemoryImage(bytes),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                    Column(
-                                                      children: <Widget>[
-                                                        SizedBox(height: 115),
-                                                        Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        30.0),
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    255,
-                                                                    255,
-                                                                    255,
-                                                                    0.8),
-                                                          ),
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 40,
-                                                                  right: 40),
-                                                          alignment:
-                                                              Alignment.topLeft,
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: <Widget>[
-                                                              Container(
-                                                                child: Text(
-                                                                  '${widget.bookDataR[i]['storybookTitle']}',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          20,
-                                                                      fontFamily:
-                                                                          'SourceSansBold'),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                  maxLines: 1,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                'by $name',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontFamily:
-                                                                      'SourceSansLight',
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .clip,
-                                                              ),
-                                                              SizedBox(
-                                                                  height: 3),
-                                                              rating == true
-                                                                  ? Container(
-                                                                      child:
-                                                                          FlutterRatingBarIndicator(
-                                                                        itemPadding:
-                                                                            EdgeInsets.only(right: 1),
-                                                                        rating: double.parse(widget.bookDataR[i]['rating']) ==
-                                                                                null
-                                                                            ? 0
-                                                                            : double.parse(widget.bookDataR[i]['rating']),
-                                                                        itemCount:
-                                                                            5,
-                                                                        itemSize:
-                                                                            15.0,
-                                                                        emptyColor:
-                                                                            Color(0xFF000000),
-                                                                      ),
-                                                                    )
-                                                                  : Text(
-                                                                      "(No rating yet)",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              13,
-                                                                          fontFamily:
-                                                                              'SourceSansRegular'),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .clip,
-                                                                      softWrap:
-                                                                          false,
-                                                                    ),
-                                                              SizedBox(
-                                                                  height: 3),
-                                                              Text(
-                                                                language,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    fontFamily:
-                                                                        'SourceSansLight'),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .clip,
-                                                                softWrap: false,
-                                                              )
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  )
-                                : Container(),
-                            widget.bookDataR.length != 0
-                                ? SizedBox(height: 10)
-                                : Container(),
-                            widget.bookDataL.length != 0
-                                ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        "What's New",
-                                        style: TextStyle(
-                                            letterSpacing: -1.5,
-                                            fontFamily: 'SourceSansBold',
-                                            color: const Color(0xffffffff),
-                                            fontSize: 26),
-                                      ),
-                                      IconButton(
-                                          // refresh Button
-                                          icon: const Icon(
-                                              IconicIcons.article_alt),
-                                          iconSize: 20,
-                                          tooltip: 'View more',
-                                          color: Colors.white,
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => BookTab(
-                                                        childData:
-                                                            widget.childData,
-                                                        appBarTitle:
-                                                            "What's New",
-                                                        bookData:
-                                                            widget.bookData,
-                                                        review: widget.review,
-                                                        childrenID:
-                                                            widget.childrenID,
-                                                        bookDataRoL:
-                                                            widget.bookDataL,
-                                                        contributor:
-                                                            widget.contributor,
-                                                        languageData:
-                                                            widget.languageData,
-                                                      )),
-                                            );
-                                          }),
-                                    ],
-                                  )
-                                : Container(),
-                            widget.bookDataL.length != 0
-                                ? SizedBox(height: 10)
-                                : Container(),
-                            widget.bookDataL.length != 0
-                                ? Container(
-                                    height: 220,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: widget.bookDataL == null
-                                          ? 0
-                                          : widget.bookDataL.length,
-                                      itemBuilder: (context, i) {
-                                        String language;
-                                        //To check what is the language of the story.
-                                        for (int j = 0;
-                                            j < widget.languageData.length;
-                                            j++) {
-                                          if (widget.bookDataL[i]
-                                                  ['languageCode'] ==
-                                              widget.languageData[j]
-                                                  ['languageCode']) {
-                                            language = widget.languageData[j]
-                                                ['languageDesc'];
+                                            }),
+                                      ],
+                                    )
+                                  : Container(),
+                              widget.bookDataR.length != 0
+                                  ? SizedBox(height: 10)
+                                  : Container(),
+                              widget.bookDataR.length != 0
+                                  ? Container(
+                                      height: 220,
+                                      child: Swiper(
+                                        autoplay: widget.bookDataR.length == 1
+                                            ? false
+                                            : true,
+                                        loop: widget.bookDataR.length == 1
+                                            ? false
+                                            : true,
+                                        scale: 0.5,
+                                        viewportFraction: 0.95,
+                                        itemCount: widget.bookDataR == null
+                                            ? 0
+                                            : widget.bookDataR.length,
+                                        pagination: new SwiperPagination(
+                                          builder:
+                                              new DotSwiperPaginationBuilder(
+                                                  color: Colors.grey,
+                                                  activeColor:
+                                                      Color(0xFF2196F3)),
+                                        ),
+                                        itemBuilder: (context, i) {
+                                          String language;
+                                          //To check what is the language of the story.
+                                          for (int j = 0;
+                                              j < widget.languageData.length;
+                                              j++) {
+                                            if (widget.bookDataR[i]
+                                                    ['languageCode'] ==
+                                                widget.languageData[j]
+                                                    ['languageCode']) {
+                                              language = widget.languageData[j]
+                                                  ['languageDesc'];
+                                            }
                                           }
-                                        }
-                                        String name = '';
-                                        String id = '';
-                                        //To check who is the writer for the story.
-                                        for (int j = 0;
-                                            j < widget.contributor.length;
-                                            j++) {
-                                          if (widget.bookDataL[i]
-                                                  ['ContributorID'] ==
-                                              widget.contributor[j]
-                                                  ['ContributorID']) {
-                                            id = widget.contributor[j]
-                                                ['ContributorID'];
-                                            name =
-                                                widget.contributor[j]['Name'];
+                                          String name = '';
+                                          String id = '';
+                                          //To check who is the writer for the story.
+                                          for (int j = 0;
+                                              j < widget.contributor.length;
+                                              j++) {
+                                            if (widget.bookDataR[i]
+                                                    ['ContributorID'] ==
+                                                widget.contributor[j]
+                                                    ['ContributorID']) {
+                                              id = widget.contributor[j]
+                                                  ['ContributorID'];
+                                              name =
+                                                  widget.contributor[j]['Name'];
+                                            }
                                           }
-                                        }
+                                          Uint8List bytes = base64Decode(widget
+                                              .bookDataR[i]['storybookCover']);
 
-                                        Uint8List bytes = base64Decode(widget
-                                            .bookDataL[i]['storybookCover']);
-
-                                        int bookIndex;
-                                        for (int j = 0;
-                                            j < widget.bookData.length;
-                                            j++) {
-                                          if (widget.bookData[j]
-                                                      ['storybookID'] ==
-                                                  widget.bookDataL[i]
-                                                      ['storybookID'] &&
-                                              widget.bookDataL[i]
-                                                      ['languageCode'] ==
-                                                  widget.bookData[j]
-                                                      ['languageCode']) {
-                                            bookIndex = j;
-                                            break;
+                                          int bookIndex;
+                                          for (int j = 0;
+                                              j < widget.bookData.length;
+                                              j++) {
+                                            if (widget.bookData[j]
+                                                        ['storybookID'] ==
+                                                    widget.bookDataR[i]
+                                                        ['storybookID'] &&
+                                                widget.bookDataR[i]
+                                                        ['languageCode'] ==
+                                                    widget.bookData[j]
+                                                        ['languageCode']) {
+                                              bookIndex = j;
+                                              break;
+                                            }
                                           }
-                                        }
 
-                                        bool rating = false;
-                                        for (int j = 0;
-                                            j < widget.review.length;
-                                            j++) {
-                                          if (widget.review[j]['storybookID'] ==
-                                                  widget.bookDataL[i]
-                                                      ['storybookID'] &&
-                                              widget.review[j]
-                                                      ['languageCode'] ==
-                                                  widget.bookDataL[i]
-                                                      ['languageCode']) {
-                                            rating = true;
-                                            break;
+                                          bool rating = false;
+                                          for (int j = 0;
+                                              j < widget.review.length;
+                                              j++) {
+                                            if (widget.review[j]
+                                                        ['storybookID'] ==
+                                                    widget.bookDataR[i]
+                                                        ['storybookID'] &&
+                                                widget.review[j]
+                                                        ['languageCode'] ==
+                                                    widget.bookDataR[i]
+                                                        ['languageCode']) {
+                                              rating = true;
+                                              break;
+                                            }
                                           }
-                                        }
-                                        return Container(
-                                          padding: EdgeInsets.all(5),
-                                          width: 120,
-                                          //color: Color(0xFFF1F1F1),
-                                          child: GestureDetector(
+                                          return Container(
+                                            //width: MediaQuery.of(context).size.width,
+                                            child: GestureDetector(
                                               onTap: () {
+                                                print(bookIndex.toString());
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -1201,50 +921,640 @@ class Book_list_state extends State<Book_list>
                                                                   .bookData,
                                                               index: bookIndex,
                                                               contributor: name,
+                                                              contributorID: id,
                                                               childrenID: widget
                                                                   .childrenID,
-                                                              contributorID: id,
                                                               language:
                                                                   language)),
                                                 );
                                               },
-                                              child: Card(
-                                                color: Colors.transparent,
-                                                elevation: 0,
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                        color: Colors.grey,
-                                                      )),
-                                                      child: FadeInImage(
-                                                        //Fade animation
-                                                        fit: BoxFit.cover,
-                                                        height: 100,
-                                                        width: 100,
-                                                        image:
-                                                            MemoryImage(bytes),
-                                                        placeholder: MemoryImage(
-                                                            kTransparentImage),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 10, bottom: 10),
+                                                  child: Stack(
+                                                    children: <Widget>[
+                                                      Center(
+                                                        child: Image(
+                                                          gaplessPlayback: true,
+                                                          image: MemoryImage(
+                                                              bytes),
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Container(
-                                                      // padding: EdgeInsets.all(left: 20),
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                      Column(
                                                         children: <Widget>[
-                                                          SizedBox(height: 3),
+                                                          SizedBox(height: 115),
                                                           Container(
-                                                            height: 42,
-                                                            child: Text(
-                                                              '${widget.bookDataL[i]['storybookTitle']}',
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          30.0),
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      0.8),
+                                                            ),
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 40,
+                                                                    right: 40),
+                                                            alignment: Alignment
+                                                                .topLeft,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <
+                                                                  Widget>[
+                                                                Container(
+                                                                  child: Text(
+                                                                    '${widget.bookDataR[i]['storybookTitle']}',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontFamily:
+                                                                            'SourceSansBold'),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip,
+                                                                    maxLines: 1,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  'by $name',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontFamily:
+                                                                        'SourceSansLight',
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .clip,
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 3),
+                                                                rating == true
+                                                                    ? Container(
+                                                                        child:
+                                                                            FlutterRatingBarIndicator(
+                                                                          itemPadding:
+                                                                              EdgeInsets.only(right: 1),
+                                                                          rating: double.parse(widget.bookDataR[i]['rating']) == null
+                                                                              ? 0
+                                                                              : double.parse(widget.bookDataR[i]['rating']),
+                                                                          itemCount:
+                                                                              5,
+                                                                          itemSize:
+                                                                              15.0,
+                                                                          emptyColor:
+                                                                              Color(0xFF000000),
+                                                                        ),
+                                                                      )
+                                                                    : Text(
+                                                                        "(No rating yet)",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            fontFamily:
+                                                                                'SourceSansRegular'),
+                                                                        overflow:
+                                                                            TextOverflow.clip,
+                                                                        softWrap:
+                                                                            false,
+                                                                      ),
+                                                                SizedBox(
+                                                                    height: 3),
+                                                                Text(
+                                                                  language,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'SourceSansLight'),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .clip,
+                                                                  softWrap:
+                                                                      false,
+                                                                )
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Container(),
+                              widget.bookDataR.length != 0
+                                  ? SizedBox(height: 10)
+                                  : Container(),
+                              widget.bookDataL.length != 0
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          "What's New",
+                                          style: TextStyle(
+                                              letterSpacing: -1.5,
+                                              fontFamily: 'SourceSansBold',
+                                              color: const Color(0xffffffff),
+                                              fontSize: 26),
+                                        ),
+                                        IconButton(
+                                            // refresh Button
+                                            icon: const Icon(
+                                                IconicIcons.article_alt),
+                                            iconSize: 20,
+                                            tooltip: 'View more',
+                                            color: Colors.white,
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BookTab(
+                                                          childData:
+                                                              widget.childData,
+                                                          appBarTitle:
+                                                              "What's New",
+                                                          bookData:
+                                                              widget.bookData,
+                                                          review: widget.review,
+                                                          childrenID:
+                                                              widget.childrenID,
+                                                          bookDataRoL:
+                                                              widget.bookDataL,
+                                                          contributor: widget
+                                                              .contributor,
+                                                          languageData: widget
+                                                              .languageData,
+                                                        )),
+                                              );
+                                            }),
+                                      ],
+                                    )
+                                  : Container(),
+                              widget.bookDataL.length != 0
+                                  ? SizedBox(height: 10)
+                                  : Container(),
+                              widget.bookDataL.length != 0
+                                  ? Container(
+                                      height: 220,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: widget.bookDataL == null
+                                            ? 0
+                                            : widget.bookDataL.length,
+                                        itemBuilder: (context, i) {
+                                          String language;
+                                          //To check what is the language of the story.
+                                          for (int j = 0;
+                                              j < widget.languageData.length;
+                                              j++) {
+                                            if (widget.bookDataL[i]
+                                                    ['languageCode'] ==
+                                                widget.languageData[j]
+                                                    ['languageCode']) {
+                                              language = widget.languageData[j]
+                                                  ['languageDesc'];
+                                            }
+                                          }
+                                          String name = '';
+                                          String id = '';
+                                          //To check who is the writer for the story.
+                                          for (int j = 0;
+                                              j < widget.contributor.length;
+                                              j++) {
+                                            if (widget.bookDataL[i]
+                                                    ['ContributorID'] ==
+                                                widget.contributor[j]
+                                                    ['ContributorID']) {
+                                              id = widget.contributor[j]
+                                                  ['ContributorID'];
+                                              name =
+                                                  widget.contributor[j]['Name'];
+                                            }
+                                          }
+
+                                          Uint8List bytes = base64Decode(widget
+                                              .bookDataL[i]['storybookCover']);
+
+                                          int bookIndex;
+                                          for (int j = 0;
+                                              j < widget.bookData.length;
+                                              j++) {
+                                            if (widget.bookData[j]
+                                                        ['storybookID'] ==
+                                                    widget.bookDataL[i]
+                                                        ['storybookID'] &&
+                                                widget.bookDataL[i]
+                                                        ['languageCode'] ==
+                                                    widget.bookData[j]
+                                                        ['languageCode']) {
+                                              bookIndex = j;
+                                              break;
+                                            }
+                                          }
+
+                                          bool rating = false;
+                                          for (int j = 0;
+                                              j < widget.review.length;
+                                              j++) {
+                                            if (widget.review[j]
+                                                        ['storybookID'] ==
+                                                    widget.bookDataL[i]
+                                                        ['storybookID'] &&
+                                                widget.review[j]
+                                                        ['languageCode'] ==
+                                                    widget.bookDataL[i]
+                                                        ['languageCode']) {
+                                              rating = true;
+                                              break;
+                                            }
+                                          }
+                                          return Container(
+                                            padding: EdgeInsets.all(5),
+                                            width: 120,
+                                            //color: Color(0xFFF1F1F1),
+                                            child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) => LoadDetail(
+                                                            childData: widget
+                                                                .childData,
+                                                            reviewAll:
+                                                                widget.review,
+                                                            languageData: widget
+                                                                .languageData,
+                                                            contributorList:
+                                                                widget
+                                                                    .contributor,
+                                                            bookData:
+                                                                widget.bookData,
+                                                            index: bookIndex,
+                                                            contributor: name,
+                                                            childrenID: widget
+                                                                .childrenID,
+                                                            contributorID: id,
+                                                            language:
+                                                                language)),
+                                                  );
+                                                },
+                                                child: Card(
+                                                  color: Colors.transparent,
+                                                  elevation: 0,
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                border:
+                                                                    Border.all(
+                                                          color: Colors.grey,
+                                                        )),
+                                                        child: FadeInImage(
+                                                          //Fade animation
+                                                          fit: BoxFit.cover,
+                                                          height: 100,
+                                                          width: 100,
+                                                          image: MemoryImage(
+                                                              bytes),
+                                                          placeholder: MemoryImage(
+                                                              kTransparentImage),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        // padding: EdgeInsets.all(left: 20),
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            SizedBox(height: 3),
+                                                            Container(
+                                                              height: 42,
+                                                              child: Text(
+                                                                '${widget.bookDataL[i]['storybookTitle']}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontFamily:
+                                                                        'SourceSansRegular'),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .clip,
+                                                                maxLines: 2,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'by $name',
                                                               style: TextStyle(
-                                                                  fontSize: 16,
+                                                                fontSize: 12,
+                                                                fontFamily:
+                                                                    'SourceSansLight',
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .clip,
+                                                            ),
+                                                            SizedBox(height: 3),
+                                                            rating == true
+                                                                ? Container(
+                                                                    child:
+                                                                        FlutterRatingBarIndicator(
+                                                                      itemPadding:
+                                                                          EdgeInsets.only(
+                                                                              right: 1),
+                                                                      rating: double.parse(widget.bookData[i]['rating']) ==
+                                                                              null
+                                                                          ? 0
+                                                                          : double.parse(widget.bookDataL[i]
+                                                                              [
+                                                                              'rating']),
+                                                                      itemCount:
+                                                                          5,
+                                                                      itemSize:
+                                                                          15.0,
+                                                                      emptyColor:
+                                                                          Color(
+                                                                              0xFF000000),
+                                                                    ),
+                                                                  )
+                                                                : Text(
+                                                                    "(No rating yet)",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontFamily:
+                                                                            'SourceSansRegular'),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip,
+                                                                    softWrap:
+                                                                        false,
+                                                                  ),
+                                                            SizedBox(height: 3),
+                                                            Text(
+                                                              language,
+                                                              style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily:
+                                                                      'SourceSansLight'),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .clip,
+                                                              softWrap: false,
+                                                            )
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Container(),
+                              widget.bookDataL.length != 0
+                                  ? SizedBox(height: 10)
+                                  : Container(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    "All Storybooks",
+                                    style: TextStyle(
+                                        letterSpacing: -1.5,
+                                        fontFamily: 'SourceSansBold',
+                                        color: const Color(0xffffffff),
+                                        fontSize: 26),
+                                  ),
+                                  IconButton(
+                                      // refresh Button
+                                      icon: const Icon(IconicIcons.article_alt),
+                                      iconSize: 20,
+                                      tooltip: 'View more',
+                                      color: Colors.white,
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => BookTab(
+                                                    childData: widget.childData,
+                                                    appBarTitle:
+                                                        "All Storybooks",
+                                                    bookData: widget.bookData,
+                                                    review: widget.review,
+                                                    childrenID:
+                                                        widget.childrenID,
+                                                    bookDataRoL:
+                                                        widget.bookData,
+                                                    contributor:
+                                                        widget.contributor,
+                                                    languageData:
+                                                        widget.languageData,
+                                                  )),
+                                        );
+                                      }),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                height: 220,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: widget.bookData == null
+                                      ? 0
+                                      : widget.bookData.length,
+                                  itemBuilder: (context, i) {
+                                    String language;
+                                    //To check what is the language of the story.
+                                    for (int j = 0;
+                                        j < widget.languageData.length;
+                                        j++) {
+                                      if (widget.bookData[i]['languageCode'] ==
+                                          widget.languageData[j]
+                                              ['languageCode']) {
+                                        language = widget.languageData[j]
+                                            ['languageDesc'];
+                                      }
+                                    }
+                                    String name = '';
+                                    String id = '';
+                                    //To check who is the writer for the story.
+                                    for (int j = 0;
+                                        j < widget.contributor.length;
+                                        j++) {
+                                      if (widget.bookData[i]['ContributorID'] ==
+                                          widget.contributor[j]
+                                              ['ContributorID']) {
+                                        id = widget.contributor[j]
+                                            ['ContributorID'];
+                                        name = widget.contributor[j]['Name'];
+                                      }
+                                    }
+
+                                    Uint8List bytes = base64Decode(
+                                        widget.bookData[i]['storybookCover']);
+
+                                    bool rating = false;
+                                    for (int j = 0;
+                                        j < widget.review.length;
+                                        j++) {
+                                      if (widget.review[j]['storybookID'] ==
+                                              widget.bookData[i]
+                                                  ['storybookID'] &&
+                                          widget.review[j]['languageCode'] ==
+                                              widget.bookData[i]
+                                                  ['languageCode']) {
+                                        rating = true;
+                                        break;
+                                      }
+                                    }
+                                    return Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 120,
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      LoadDetail(
+                                                          childData:
+                                                              widget.childData,
+                                                          reviewAll:
+                                                              widget.review,
+                                                          languageData: widget
+                                                              .languageData,
+                                                          contributorList:
+                                                              widget
+                                                                  .contributor,
+                                                          bookData:
+                                                              widget.bookData,
+                                                          index: i,
+                                                          contributor: name,
+                                                          contributorID: id,
+                                                          childrenID:
+                                                              widget.childrenID,
+                                                          language: language)),
+                                            );
+                                          },
+                                          child: Card(
+                                            color: Colors.transparent,
+                                            elevation: 0,
+                                            child: Column(
+                                              children: <Widget>[
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                    color: Colors.grey,
+                                                  )),
+                                                  child: FadeInImage(
+                                                    //Fade animation
+                                                    fit: BoxFit.cover,
+                                                    height: 100,
+                                                    width: 100,
+                                                    image: MemoryImage(bytes),
+                                                    placeholder: MemoryImage(
+                                                        kTransparentImage),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  // padding: EdgeInsets.all(left: 20),
+                                                  alignment: Alignment.topLeft,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      SizedBox(height: 3),
+                                                      Container(
+                                                        height: 42,
+                                                        child: Text(
+                                                          '${widget.bookData[i]['storybookTitle']}',
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  Colors.white,
+                                                              fontFamily:
+                                                                  'SourceSansRegular'),
+                                                          overflow:
+                                                              TextOverflow.clip,
+                                                          maxLines: 2,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'by $name',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              'SourceSansLight',
+                                                        ),
+                                                        overflow:
+                                                            TextOverflow.clip,
+                                                      ),
+                                                      SizedBox(height: 3),
+                                                      rating == true
+                                                          ? Container(
+                                                              child:
+                                                                  FlutterRatingBarIndicator(
+                                                                itemPadding:
+                                                                    EdgeInsets.only(
+                                                                        right:
+                                                                            1),
+                                                                rating: double.parse(widget.bookData[i]
+                                                                            [
+                                                                            'rating']) ==
+                                                                        null
+                                                                    ? 0
+                                                                    : double.parse(
+                                                                        widget.bookData[i]
+                                                                            [
+                                                                            'rating']),
+                                                                itemCount: 5,
+                                                                itemSize: 15.0,
+                                                                emptyColor: Color(
+                                                                    0xFF000000),
+                                                              ),
+                                                            )
+                                                          : Text(
+                                                              "(No rating yet)",
+                                                              style: TextStyle(
+                                                                  fontSize: 12,
                                                                   color: Colors
                                                                       .white,
                                                                   fontFamily:
@@ -1252,325 +1562,35 @@ class Book_list_state extends State<Book_list>
                                                               overflow:
                                                                   TextOverflow
                                                                       .clip,
-                                                              maxLines: 2,
+                                                              softWrap: false,
                                                             ),
-                                                          ),
-                                                          Text(
-                                                            'by $name',
-                                                            style: TextStyle(
-                                                              fontSize: 12,
-                                                              fontFamily:
-                                                                  'SourceSansLight',
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .clip,
-                                                          ),
-                                                          SizedBox(height: 3),
-                                                          rating == true
-                                                              ? Container(
-                                                                  child:
-                                                                      FlutterRatingBarIndicator(
-                                                                    itemPadding:
-                                                                        EdgeInsets.only(
-                                                                            right:
-                                                                                1),
-                                                                    rating: double.parse(widget.bookData[i]['rating']) ==
-                                                                            null
-                                                                        ? 0
-                                                                        : double.parse(widget.bookDataL[i]
-                                                                            [
-                                                                            'rating']),
-                                                                    itemCount:
-                                                                        5,
-                                                                    itemSize:
-                                                                        15.0,
-                                                                    emptyColor:
-                                                                        Color(
-                                                                            0xFF000000),
-                                                                  ),
-                                                                )
-                                                              : Text(
-                                                                  "(No rating yet)",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontFamily:
-                                                                          'SourceSansRegular'),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                  softWrap:
-                                                                      false,
-                                                                ),
-                                                          SizedBox(height: 3),
-                                                          Text(
-                                                            language,
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontFamily:
-                                                                    'SourceSansLight'),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .clip,
-                                                            softWrap: false,
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              )),
-                                        );
-                                      },
-                                    ),
-                                  )
-                                : Container(),
-                            widget.bookDataL.length != 0
-                                ? SizedBox(height: 10)
-                                : Container(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  "All Storybooks",
-                                  style: TextStyle(
-                                      letterSpacing: -1.5,
-                                      fontFamily: 'SourceSansBold',
-                                      color: const Color(0xffffffff),
-                                      fontSize: 26),
-                                ),
-                                IconButton(
-                                    // refresh Button
-                                    icon: const Icon(IconicIcons.article_alt),
-                                    iconSize: 20,
-                                    tooltip: 'View more',
-                                    color: Colors.white,
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => BookTab(
-                                                  childData: widget.childData,
-                                                  appBarTitle: "All Storybooks",
-                                                  bookData: widget.bookData,
-                                                  review: widget.review,
-                                                  childrenID: widget.childrenID,
-                                                  bookDataRoL: widget.bookData,
-                                                  contributor:
-                                                      widget.contributor,
-                                                  languageData:
-                                                      widget.languageData,
-                                                )),
-                                      );
-                                    }),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              height: 220,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: widget.bookData == null
-                                    ? 0
-                                    : widget.bookData.length,
-                                itemBuilder: (context, i) {
-                                  String language;
-                                  //To check what is the language of the story.
-                                  for (int j = 0;
-                                      j < widget.languageData.length;
-                                      j++) {
-                                    if (widget.bookData[i]['languageCode'] ==
-                                        widget.languageData[j]
-                                            ['languageCode']) {
-                                      language = widget.languageData[j]
-                                          ['languageDesc'];
-                                    }
-                                  }
-                                  String name = '';
-                                  String id = '';
-                                  //To check who is the writer for the story.
-                                  for (int j = 0;
-                                      j < widget.contributor.length;
-                                      j++) {
-                                    if (widget.bookData[i]['ContributorID'] ==
-                                        widget.contributor[j]
-                                            ['ContributorID']) {
-                                      id = widget.contributor[j]
-                                          ['ContributorID'];
-                                      name = widget.contributor[j]['Name'];
-                                    }
-                                  }
-
-                                  Uint8List bytes = base64Decode(
-                                      widget.bookData[i]['storybookCover']);
-
-                                  bool rating = false;
-                                  for (int j = 0;
-                                      j < widget.review.length;
-                                      j++) {
-                                    if (widget.review[j]['storybookID'] ==
-                                            widget.bookData[i]['storybookID'] &&
-                                        widget.review[j]['languageCode'] ==
-                                            widget.bookData[i]
-                                                ['languageCode']) {
-                                      rating = true;
-                                      break;
-                                    }
-                                  }
-                                  return Container(
-                                    padding: EdgeInsets.all(5),
-                                    width: 120,
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    LoadDetail(
-                                                        childData:
-                                                            widget.childData,
-                                                        reviewAll:
-                                                            widget.review,
-                                                        languageData:
-                                                            widget.languageData,
-                                                        contributorList:
-                                                            widget.contributor,
-                                                        bookData:
-                                                            widget.bookData,
-                                                        index: i,
-                                                        contributor: name,
-                                                        contributorID: id,
-                                                        childrenID:
-                                                            widget.childrenID,
-                                                        language: language)),
-                                          );
-                                        },
-                                        child: Card(
-                                          color: Colors.transparent,
-                                          elevation: 0,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                  color: Colors.grey,
-                                                )),
-                                                child: FadeInImage(
-                                                  //Fade animation
-                                                  fit: BoxFit.cover,
-                                                  height: 100,
-                                                  width: 100,
-                                                  image: MemoryImage(bytes),
-                                                  placeholder: MemoryImage(
-                                                      kTransparentImage),
-                                                ),
-                                              ),
-                                              Container(
-                                                // padding: EdgeInsets.all(left: 20),
-                                                alignment: Alignment.topLeft,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    SizedBox(height: 3),
-                                                    Container(
-                                                      height: 42,
-                                                      child: Text(
-                                                        '${widget.bookData[i]['storybookTitle']}',
+                                                      SizedBox(height: 3),
+                                                      Text(
+                                                        language,
                                                         style: TextStyle(
-                                                            fontSize: 16,
+                                                            fontSize: 12,
                                                             color: Colors.white,
                                                             fontFamily:
-                                                                'SourceSansRegular'),
+                                                                'SourceSansLight'),
                                                         overflow:
                                                             TextOverflow.clip,
-                                                        maxLines: 2,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      'by $name',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.white,
-                                                        fontFamily:
-                                                            'SourceSansLight',
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                    ),
-                                                    SizedBox(height: 3),
-                                                    rating == true
-                                                        ? Container(
-                                                            child:
-                                                                FlutterRatingBarIndicator(
-                                                              itemPadding:
-                                                                  EdgeInsets
-                                                                      .only(
-                                                                          right:
-                                                                              1),
-                                                              rating: double.parse(
-                                                                          widget.bookData[i]
-                                                                              [
-                                                                              'rating']) ==
-                                                                      null
-                                                                  ? 0
-                                                                  : double.parse(
-                                                                      widget.bookData[
-                                                                              i]
-                                                                          [
-                                                                          'rating']),
-                                                              itemCount: 5,
-                                                              itemSize: 15.0,
-                                                              emptyColor: Color(
-                                                                  0xFF000000),
-                                                            ),
-                                                          )
-                                                        : Text(
-                                                            "(No rating yet)",
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontFamily:
-                                                                    'SourceSansRegular'),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .clip,
-                                                            softWrap: false,
-                                                          ),
-                                                    SizedBox(height: 3),
-                                                    Text(
-                                                      language,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: Colors.white,
-                                                          fontFamily:
-                                                              'SourceSansLight'),
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      softWrap: false,
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        )),
-                                  );
-                                },
+                                                        softWrap: false,
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          )),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -1827,46 +1847,39 @@ class Book_list_state extends State<Book_list>
                                       tooltip: 'Delete',
                                       onPressed: () {
                                         showDialog<void>(
-                                                    context: context,
-                                                    barrierDismissible:
-                                                        false, // user must tap button!
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text(
-                                                            'Delete ' + storycollection[i]
-                                                          .story_title),
-                                                        content:
-                                                            SingleChildScrollView(
-                                                          child: ListBody(
-                                                            children: <Widget>[
-                                                              Text('Are you sure?'),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        actions: <Widget>[
-                                                          FlatButton(
-                                                            child: Text('No'),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                          FlatButton(
-                                                            child: Text('Yes'),
-                                                            onPressed: () {
-                                                              choiceAction(1, i);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                        
+                                          context: context,
+                                          barrierDismissible:
+                                              false, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('Delete ' +
+                                                  storycollection[i]
+                                                      .story_title),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: <Widget>[
+                                                    Text('Are you sure?'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: Text('No'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                FlatButton(
+                                                  child: Text('Yes'),
+                                                  onPressed: () {
+                                                    choiceAction(1, i);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                     ),
                                   ),
@@ -2228,13 +2241,15 @@ class Book_list_state extends State<Book_list>
                                                         (BuildContext context) {
                                                       return AlertDialog(
                                                         title: Text(
-                                                            'Unfollow ' + contributor[i]
-                                                                      ['Name']),
+                                                            'Unfollow ' +
+                                                                contributor[i]
+                                                                    ['Name']),
                                                         content:
                                                             SingleChildScrollView(
                                                           child: ListBody(
                                                             children: <Widget>[
-                                                              Text('Are you sure?'),
+                                                              Text(
+                                                                  'Are you sure?'),
                                                             ],
                                                           ),
                                                         ),
@@ -2300,203 +2315,207 @@ class Book_list_state extends State<Book_list>
   }
 
   Widget _buildStats(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        color: Color(0xFF2196F3),
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: 15, right: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Stats",
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      color: Color(0xFF2196F3),
+      child: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 15, right: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Stats",
+                          style: TextStyle(
+                              letterSpacing: -1.5,
+                              color: Colors.white,
+                              fontFamily: 'SourceSansBold',
+                              fontSize: 40),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      alignment: Alignment.center,
+                      height: 160,
+                      child: Image.asset(
+                        widget.childData.children_image,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        widget.childData.children_name,
                         style: TextStyle(
                             letterSpacing: -1.5,
                             color: Colors.white,
-                            fontFamily: 'SourceSansBold',
-                            fontSize: 40),
+                            fontFamily: 'SourceSansRegular',
+                            fontSize: 30),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    alignment: Alignment.center,
-                    height: 160,
-                    child: Image.asset(
-                      widget.childData.children_image,
-                      fit: BoxFit.cover,
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      widget.childData.children_name,
-                      style: TextStyle(
-                          letterSpacing: -1.5,
-                          color: Colors.white,
-                          fontFamily: 'SourceSansRegular',
-                          fontSize: 30),
+                    SizedBox(height: 30),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Your Medals',
+                        style: TextStyle(
+                            letterSpacing: -0.5,
+                            color: Colors.white,
+                            fontFamily: 'SourceSansRegular',
+                            fontSize: 20),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 30),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Your Medals',
-                      style: TextStyle(
-                          letterSpacing: -0.5,
-                          color: Colors.white,
-                          fontFamily: 'SourceSansRegular',
-                          fontSize: 20),
+                    SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              child: Image.asset(
+                                'assets/img/readFive.png',
+                                color: widget.stats[0].num_read < 5
+                                    ? Color(0xFFcfcfcf)
+                                    : null,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Container(
+                              width: 100,
+                              child: Text(
+                                'Read 5 books',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    letterSpacing: -0.5,
+                                    color: widget.stats[0].num_read < 5
+                                        ? Color(0xFFcfcfcf)
+                                        : Colors.white,
+                                    fontFamily: 'SourceSansLight',
+                                    fontSize: 15),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              child: Image.asset(
+                                'assets/img/downloadTen.png',
+                                fit: BoxFit.cover,
+                                color: widget.stats[0].num_download < 10
+                                    ? Color(0xFFcfcfcf)
+                                    : null,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Container(
+                              width: 100,
+                              child: Text(
+                                'Download 10 books',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    letterSpacing: -0.5,
+                                    color: widget.stats[0].num_download < 10
+                                        ? Color(0xFFcfcfcf)
+                                        : Colors.white,
+                                    fontFamily: 'SourceSansLight',
+                                    fontSize: 15),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            height: 50,
-                            child: Image.asset(
-                              'assets/img/readFive.png',
-                              color: widget.stats[0].num_read < 5
-                                  ? Color(0xFFcfcfcf)
-                                  : null,
-                              fit: BoxFit.cover,
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              child: Image.asset(
+                                'assets/img/rateFive.png',
+                                color: widget.stats[0].num_rate < 5
+                                    ? Color(0xFFcfcfcf)
+                                    : null,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 5),
-                          Container(
-                            width: 100,
-                            child: Text(
-                              'Read 5 books',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  letterSpacing: -0.5,
-                                  color: widget.stats[0].num_read < 5
-                                      ? Color(0xFFcfcfcf)
-                                      : Colors.white,
-                                  fontFamily: 'SourceSansLight',
-                                  fontSize: 15),
+                            SizedBox(height: 5),
+                            Container(
+                              width: 100,
+                              child: Text(
+                                'Rate 5 books',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    letterSpacing: -0.5,
+                                    color: widget.stats[0].num_rate < 5
+                                        ? Color(0xFFcfcfcf)
+                                        : Colors.white,
+                                    fontFamily: 'SourceSansLight',
+                                    fontSize: 15),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            height: 50,
-                            child: Image.asset(
-                              'assets/img/downloadTen.png',
-                              fit: BoxFit.cover,
-                              color: widget.stats[0].num_download < 10
-                                  ? Color(0xFFcfcfcf)
-                                  : null,
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              child: Image.asset(
+                                'assets/img/followFive.png',
+                                fit: BoxFit.cover,
+                                color: widget.stats[0].num_follow < 5
+                                    ? Color(0xFFcfcfcf)
+                                    : null,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 5),
-                          Container(
-                            width: 100,
-                            child: Text(
-                              'Download 10 books',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  letterSpacing: -0.5,
-                                  color: widget.stats[0].num_download < 10
-                                      ? Color(0xFFcfcfcf)
-                                      : Colors.white,
-                                  fontFamily: 'SourceSansLight',
-                                  fontSize: 15),
+                            SizedBox(height: 5),
+                            Container(
+                              width: 100,
+                              child: Text(
+                                'Follow 5 writers',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    letterSpacing: -0.5,
+                                    color: widget.stats[0].num_follow < 5
+                                        ? Color(0xFFcfcfcf)
+                                        : Colors.white,
+                                    fontFamily: 'SourceSansLight',
+                                    fontSize: 15),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            height: 50,
-                            child: Image.asset(
-                              'assets/img/rateFive.png',
-                              color: widget.stats[0].num_rate < 5
-                                  ? Color(0xFFcfcfcf)
-                                  : null,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Container(
-                            width: 100,
-                            child: Text(
-                              'Rate 5 books',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  letterSpacing: -0.5,
-                                  color: widget.stats[0].num_rate < 5
-                                      ? Color(0xFFcfcfcf)
-                                      : Colors.white,
-                                  fontFamily: 'SourceSansLight',
-                                  fontSize: 15),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            height: 50,
-                            child: Image.asset(
-                              'assets/img/followFive.png',
-                              fit: BoxFit.cover,
-                              color: widget.stats[0].num_follow < 5
-                                  ? Color(0xFFcfcfcf)
-                                  : null,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Container(
-                            width: 100,
-                            child: Text(
-                              'Follow 5 writers',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  letterSpacing: -0.5,
-                                  color: widget.stats[0].num_follow < 5
-                                      ? Color(0xFFcfcfcf)
-                                      : Colors.white,
-                                  fontFamily: 'SourceSansLight',
-                                  fontSize: 15),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                ],
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
