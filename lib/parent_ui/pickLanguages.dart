@@ -51,7 +51,7 @@ class PickLanguage extends StatefulWidget{
 // ignore: camel_case_types
 class PickLanguage_State extends State<PickLanguage> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   var checkBox =[];
   void createValue()

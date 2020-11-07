@@ -28,9 +28,8 @@ import 'package:intl/intl.dart';
 class LoadBook extends StatefulWidget {
   Children childData;
   String childrenID;
-  int page;
-
-  LoadBook({Key key, this.childrenID, this.page, this.childData})
+  
+  LoadBook({Key key, this.childrenID, this.childData})
       : super(key: key);
   @override
   _LoadBookState createState() => new _LoadBookState();
@@ -45,7 +44,7 @@ class _LoadBookState extends State<LoadBook> {
       languageData,
       review,
       following;
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   var db = DBHelper();
   List bookList = [], bookList2 = [], bookList3 = [];
@@ -82,8 +81,8 @@ class _LoadBookState extends State<LoadBook> {
   Future<List> getWriter() async //retrieve all writer data from server
   {
     final response = await http.post(url + "getAllContributor.php");
-    var Contributor = json.decode(response.body);
-    return Contributor;
+    var contributor = json.decode(response.body);
+    return contributor;
   }
 
   Future<List> getLowHighRating() async //retrieve all writer data from server
@@ -130,29 +129,31 @@ class _LoadBookState extends State<LoadBook> {
 
   @override
   Widget build(BuildContext context) {
+    
     return new AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
         //starting of data retrieving
-        body: FutureBuilder<List>(
+        body: new FutureBuilder<List>(
           future: bookData1,
           builder: (context, snapshot5) {
+            
             if (snapshot5.hasData) {
               collection = snapshot5.data; //copy all the data into the list
               return connection == true
-                  ? FutureBuilder<List>(
+                  ? new FutureBuilder<List>(
                       //if equal to true then continue retrieve other data
                       future: getStories(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           bookData = snapshot.data;
-
-                          return FutureBuilder<List>(
+                          return new FutureBuilder<List>(
                             future: getLowHighRating(),
                             builder: (context, lowHigh) {
                               if (lowHigh.hasData) {
+                               
                                 bookDataR = [];
                                 for (int i = 0; i < lowHigh.data.length; i++) {
                                   if (lowHigh.data[i]
@@ -336,8 +337,7 @@ class _LoadBookState extends State<LoadBook> {
                                                                               collection,
                                                                           languageData:
                                                                               languageData,
-                                                                          page: widget
-                                                                              .page,
+                                                                       
                                                                           childData: widget
                                                                               .childData,
                                                                           bookData1:
@@ -361,10 +361,12 @@ class _LoadBookState extends State<LoadBook> {
                                                 });
                                           });
                                     });
+                              
                               }
                               return SpinKitThreeBounce(color: Colors.blue);
                             },
                           );
+                        
                         }
                         return SpinKitThreeBounce(color: Colors.blue);
                       },
@@ -395,7 +397,7 @@ class Book_list extends StatefulWidget {
       stats,
       review;
   String childrenID;
-  int page;
+
   Future<List> bookData1;
 
   @override
@@ -406,7 +408,7 @@ class Book_list extends StatefulWidget {
       this.following,
       this.childrenID,
       this.collection,
-      this.page,
+
       this.review,
       this.bookData,
       this.contributor,
@@ -450,7 +452,7 @@ class Book_list_state extends State<Book_list>
     super.initState();
   }
 
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   bool connection;
   void checkconnection() async {

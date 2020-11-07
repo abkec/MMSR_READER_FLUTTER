@@ -35,7 +35,7 @@ class WriterDetails extends StatefulWidget {
 
 class _WriterDetailState extends State<WriterDetails> {
   var db = DBHelper();
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
   void initState() {
     getStories();
     super.initState();
@@ -93,7 +93,7 @@ class _WriterDetailState extends State<WriterDetails> {
                               index: widget.index,
                               writer: widget.writer,
                               contributorID: widget.contributorID,
-                              following: snapshot3.data,
+                              following: snapshot3.data.length > 0 ? true : false,
                               //Passing data into next widget.
                             );
                           } else {
@@ -120,7 +120,8 @@ class _WriterDetailState extends State<WriterDetails> {
 }
 
 class DetailWriter extends StatefulWidget {
-  List bookData, following, writer, languageData, review, stats;
+  List bookData, writer, languageData, review, stats;
+  bool following;
   String childrenID;
   Children childData;
   int index;
@@ -143,7 +144,7 @@ class DetailWriter extends StatefulWidget {
 }
 
 class _DetailWriterState extends State<DetailWriter> {
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
   bool exist = false, follow = false;
 
   @override
@@ -151,10 +152,7 @@ class _DetailWriterState extends State<DetailWriter> {
 
   Widget build(BuildContext context) {
     //app bar
-    print(widget.index);
-    setState(() {
-      if (widget.following.length > 0) follow = true;
-    });
+    follow = widget.following;
 
     final appBar = AppBar(
       elevation: .5,
@@ -547,14 +545,9 @@ class _DetailWriterState extends State<DetailWriter> {
 
       setState(() {
         follow = true;
-        FutureBuilder<List>(
-          future: getFollowing(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              widget.following = snapshot.data;
-            }
-          },
-        );
+        int flw = int.parse(widget.writer[widget.index]['followers']) + 1;
+        widget.writer[widget.index]['followers'] = flw.toString();
+        widget.following = true;
       });
 
       Navigator.of(context, rootNavigator: true).pop();
@@ -593,6 +586,9 @@ class _DetailWriterState extends State<DetailWriter> {
           widget.contributorID,
     });
 
+    
+
+
     Future.delayed(new Duration(seconds: 1), () {
       //   Navigator.of(context).pushAndRemoveUntil(
       //       MaterialPageRoute(
@@ -602,14 +598,9 @@ class _DetailWriterState extends State<DetailWriter> {
 
       setState(() {
         follow = false;
-        FutureBuilder<List>(
-          future: getFollowing(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              widget.following = snapshot.data;
-            }
-          },
-        );
+        int flw = int.parse(widget.writer[widget.index]['followers']) - 1;
+        widget.writer[widget.index]['followers'] = flw.toString();
+        widget.following = false;
       });
       Navigator.of(context, rootNavigator: true).pop();
     });

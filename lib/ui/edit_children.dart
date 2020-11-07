@@ -216,7 +216,7 @@ class _ChangeProfilePicState extends State<ChangeProfilePic> {
     'assets/img/fox.png',
     'assets/img/rabbit.png'
   ];
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   String children_image;
   var pickImage = [];

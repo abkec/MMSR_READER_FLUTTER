@@ -63,10 +63,10 @@ class _LoginPageState extends State<LoginPage>
   Color left = Colors.black;
   Color right = Colors.white;
 
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   //For localhost database:
-  //  String url = 'http://10.0.2.2/mmsr/';
+  //  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   @override
   Widget build(BuildContext context) {
@@ -916,7 +916,7 @@ class _LoginPageState extends State<LoginPage>
             "parent_name": signupNameController.text,
             "parent_gender": parent_gender,
           });
-          http.post('http://10.0.2.2/mmsr/' + "addLogParent(Reader).php",
+          http.post('http://i2hub.tarc.edu.my:8887/mmsr/' + "addLogParent(Reader).php",
               body: {
                 'parent_username': signupUsernameController.text,
                 'title': 'Account Registration',

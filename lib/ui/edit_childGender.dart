@@ -26,7 +26,7 @@ class _ChangeChildGender_State extends State<ChangeChildGender>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int groupValue;
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   @override
   void initState() {

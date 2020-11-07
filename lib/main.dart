@@ -13,7 +13,7 @@ Future<void> main() async {
     final result = await InternetAddress.lookup('google.com');
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
       if (loginID != null) {
-        http.post('http://10.0.2.2/mmsr/' + "addLogParent(Reader).php", body: {
+        http.post('http://i2hub.tarc.edu.my:8887/mmsr/' + "addLogParent(Reader).php", body: {
           'parent_username': loginID,
           'title': 'Story Reader App Opened',
           'description': loginID + ' has opened the application',

@@ -25,7 +25,7 @@ class ChildrenAccount extends StatefulWidget {
 class _ChildrenAccount_State extends State<ChildrenAccount>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +146,7 @@ class _ChildrenAccount_State extends State<ChildrenAccount>
 
   void choiceAction(int choice, int i) async {
     //user selected actions, e.g. "Delete","Check History"
-    String url = 'http://10.0.2.2/mmsr/';
+    String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
     if (choice == 1) {
       bool connection = false;

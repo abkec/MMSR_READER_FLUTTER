@@ -46,7 +46,7 @@ class LoadDetail extends StatefulWidget {
 
 class _LoadDetailState extends State<LoadDetail> {
   var db = DBHelper();
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
   void initState() {
     getReview();
     super.initState();
@@ -134,7 +134,7 @@ class _LoadDetailState extends State<LoadDetail> {
                                               review: snapshot2.data,
                                               contributorID:
                                                   widget.contributorID,
-                                              following: snapshot3.data,
+                                              following: snapshot3.data.length > 0 ? true : false,
                                               //Passing data into next widget.
                                             );
                                           } else {
@@ -179,10 +179,10 @@ class Detail extends StatefulWidget {
       stats,
       localData,
       review,
-      following,
       reviewAll,
       contributorList,
       languageData;
+  bool following;
   String childrenID, language;
   Children childData;
   int index;
@@ -210,7 +210,7 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
   bool exist = false, follow = false;
   String storyLanguage = '', storyID = '', storyTitle = '';
   int conIndex;
@@ -245,9 +245,7 @@ class _DetailState extends State<Detail> {
       });
     }
 
-    setState(() {
-      if (widget.following.length > 0) follow = true;
-    });
+    follow = widget.following;
 
     final appBar = AppBar(
       elevation: .5,
@@ -859,14 +857,9 @@ class _DetailState extends State<Detail> {
       //       (Route<dynamic> route) => false);
       setState(() {
         follow = true;
-        FutureBuilder<List>(
-          future: getFollowing(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              widget.following = snapshot.data;
-            }
-          },
-        );
+        widget.following = true;
+        int flw = int.parse(widget.contributorList[conIndex]['followers']) + 1;
+        widget.contributorList[conIndex]['followers'] = flw.toString();
       });
 
       Navigator.of(context, rootNavigator: true).pop();
@@ -912,14 +905,10 @@ class _DetailState extends State<Detail> {
 
       setState(() {
         follow = false;
-        FutureBuilder<List>(
-          future: getFollowing(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              widget.following = snapshot.data;
-            }
-          },
-        );
+        widget.following = false;
+        int flw = int.parse(widget.contributorList[conIndex]['followers']) - 1;
+        widget.contributorList[conIndex]['followers'] = flw.toString();
+        
       });
 
       Navigator.of(context, rootNavigator: true).pop();

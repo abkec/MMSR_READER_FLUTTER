@@ -23,7 +23,7 @@ class ChangeChildDOB extends StatefulWidget{
 class _ChangeChildDOB_State extends State<ChangeChildDOB> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String DOB_text = "";
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   static const String MIN_DATETIME = '2005-01-01';
   static const String MAX_DATETIME = '2018-12-31';

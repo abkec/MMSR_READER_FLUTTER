@@ -24,7 +24,7 @@ class _ChangeChildName_State extends State<ChangeChildName>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController nameField = new TextEditingController();
-  String url = 'http://10.0.2.2/mmsr/';
+  String url = 'http://i2hub.tarc.edu.my:8887/mmsr/';
 
   @override
   void initState() {
