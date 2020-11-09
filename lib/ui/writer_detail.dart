@@ -93,7 +93,8 @@ class _WriterDetailState extends State<WriterDetails> {
                               index: widget.index,
                               writer: widget.writer,
                               contributorID: widget.contributorID,
-                              following: snapshot3.data.length > 0 ? true : false,
+                              following:
+                                  snapshot3.data.length > 0 ? true : false,
                               //Passing data into next widget.
                             );
                           } else {
@@ -160,9 +161,11 @@ class _DetailWriterState extends State<DetailWriter> {
       actions: <Widget>[],
     );
 
-    ///detail of book image and it's pages
-    // Uint8List bytes =
-    //     base64Decode(widget.bookData[widget.index]['storybookCover']);
+    Uint8List profile;
+    if (widget.writer[widget.index]['picture'] != null)
+      profile = base64Decode(widget.writer[widget.index]['picture']);
+    else
+      profile = null;
 
     final top = Container(
       height: 150,
@@ -171,14 +174,13 @@ class _DetailWriterState extends State<DetailWriter> {
         Container(
           height: 120,
           width: 120,
-          child: Image.asset("assets/img/fox.png", fit: BoxFit.cover),
+          child: profile == null
+              ? Image.asset("assets/img/profile.png", fit: BoxFit.cover)
+              : Image.memory(
+                  profile,
+                  fit: BoxFit.cover,
+                ),
         ),
-
-        // Image.memory(
-        //   bytes,
-        //   fit: BoxFit.cover,
-        // ),
-
         Positioned(
           bottom: 0,
           right: 0,
@@ -552,8 +554,6 @@ class _DetailWriterState extends State<DetailWriter> {
 
       Navigator.of(context, rootNavigator: true).pop();
     });
-
-    
   }
 
   void unfollowWriter() async //unfollow writer
@@ -585,9 +585,6 @@ class _DetailWriterState extends State<DetailWriter> {
           ' has unfollowed a contributor: ' +
           widget.contributorID,
     });
-
-    
-
 
     Future.delayed(new Duration(seconds: 1), () {
       //   Navigator.of(context).pushAndRemoveUntil(

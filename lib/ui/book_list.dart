@@ -28,9 +28,8 @@ import 'package:intl/intl.dart';
 class LoadBook extends StatefulWidget {
   Children childData;
   String childrenID;
-  
-  LoadBook({Key key, this.childrenID, this.childData})
-      : super(key: key);
+
+  LoadBook({Key key, this.childrenID, this.childData}) : super(key: key);
   @override
   _LoadBookState createState() => new _LoadBookState();
 }
@@ -129,7 +128,6 @@ class _LoadBookState extends State<LoadBook> {
 
   @override
   Widget build(BuildContext context) {
-    
     return new AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -139,7 +137,6 @@ class _LoadBookState extends State<LoadBook> {
         body: new FutureBuilder<List>(
           future: bookData1,
           builder: (context, snapshot5) {
-            
             if (snapshot5.hasData) {
               collection = snapshot5.data; //copy all the data into the list
               return connection == true
@@ -153,7 +150,6 @@ class _LoadBookState extends State<LoadBook> {
                             future: getLowHighRating(),
                             builder: (context, lowHigh) {
                               if (lowHigh.hasData) {
-                               
                                 bookDataR = [];
                                 for (int i = 0; i < lowHigh.data.length; i++) {
                                   if (lowHigh.data[i]
@@ -337,7 +333,6 @@ class _LoadBookState extends State<LoadBook> {
                                                                               collection,
                                                                           languageData:
                                                                               languageData,
-                                                                       
                                                                           childData: widget
                                                                               .childData,
                                                                           bookData1:
@@ -361,12 +356,10 @@ class _LoadBookState extends State<LoadBook> {
                                                 });
                                           });
                                     });
-                              
                               }
                               return SpinKitThreeBounce(color: Colors.blue);
                             },
                           );
-                        
                         }
                         return SpinKitThreeBounce(color: Colors.blue);
                       },
@@ -408,7 +401,6 @@ class Book_list extends StatefulWidget {
       this.following,
       this.childrenID,
       this.collection,
-
       this.review,
       this.bookData,
       this.contributor,
@@ -2050,9 +2042,14 @@ class Book_list_state extends State<Book_list>
                                         }
                                       }
                                     }
-                                    // Uint8List bytes = base64Decode(
-                                    //     storycollection[i].story_cover);
 
+                                    Uint8List bytes;
+                                    if (contributor[i]['picture'] != null)
+                                      bytes = base64Decode(contributor[i]['picture']);
+                                    else
+                                      bytes = null;
+
+                                    
                                     return Container(
                                       margin: EdgeInsets.only(bottom: 15),
                                       padding: EdgeInsets.only(
@@ -2068,27 +2065,33 @@ class Book_list_state extends State<Book_list>
                                                 child: Row(
                                                   children: <Widget>[
                                                     Container(
-                                                      decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                        color: Colors.grey,
-                                                      )),
+                                                      
                                                       alignment:
                                                           Alignment.center,
-                                                      child: Container(
-                                                        /* child: FadeInImage(
-                                                          fit: BoxFit.cover,
-                                                          height: 100,
-                                                          width: 100,
-                                                          image: MemoryImage(
-                                                              bytes),
-                                                          placeholder: MemoryImage(
-                                                              kTransparentImage), ),*/
-                                                        height: 100,
-                                                        width: 100,
-                                                        child: Image.asset(
-                                                            "assets/img/fox.png",
-                                                            fit: BoxFit.cover),
-                                                      ),
+                                                      child: bytes != null
+                                                          ? Container(
+                                                              child:
+                                                                  FadeInImage(
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                height: 100,
+                                                                width: 100,
+                                                                image:
+                                                                    MemoryImage(
+                                                                        bytes),
+                                                                placeholder:
+                                                                    MemoryImage(
+                                                                        kTransparentImage),
+                                                              ),
+                                                            )
+                                                          : Container(
+                                                              height: 100,
+                                                              width: 100,
+                                                              child: Image.asset(
+                                                                  "assets/img/profile.png",
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                            ),
                                                     ),
                                                     Expanded(
                                                       child: Column(
