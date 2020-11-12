@@ -279,6 +279,7 @@ class _DetailState extends State<Detail> {
               child: Card(
                 child: Image.memory(
                   bytes,
+                  gaplessPlayback: true,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -539,8 +540,8 @@ class _DetailState extends State<Detail> {
                         Row(
                           children: <Widget>[
                             Container(
-                              height: 20,
-                              child: Image.asset("assets/img/star.png"),
+                              height: 27,
+                              child: Image.asset("assets/img/like.png"),
                             ),
                             SizedBox(
                               width: 10,

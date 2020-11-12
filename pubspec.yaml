@@ -67,6 +67,7 @@ flutter:
     - assets/img/rateFive.png
     - assets/img/star.png
     - assets/img/profile.png
+    - assets/img/like.png
 
   fonts:
     - family: WorkSansSemiBold

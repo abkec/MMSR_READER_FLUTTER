@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -240,105 +241,113 @@ class _ParentalGate_State extends State<ParentalGate>
               stops: [0.0, 1.0],
               tileMode: TileMode.clamp),
         ),
-        child: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.only(top: 60),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: 5, bottom: 10, left: 30, right: 30),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 5, bottom: 10, left: 30, right: 30),
+                      child: Column(
                         children: <Widget>[
-                          Expanded(
-                            flex: 9,
-                            child: Text('Welcome',
-                                style: TextStyle(
-                                    letterSpacing: -1.5,
-                                    fontFamily: 'SourceSansBold',
-                                    color: const Color(0xffffffff),
-                                    fontSize: 44)),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Tooltip(
-                              child: IconButton(
-                                  icon: Icon(
-                                    FontAwesomeIcons.signOutAlt,
-                                    color: const Color(0xffffffff),
-                                  ),
-                                  onPressed: () async {
-                                    try {
-                                      final result =
-                                          await InternetAddress.lookup(
-                                              'google.com');
-                                      if (result.isNotEmpty &&
-                                          result[0].rawAddress.isNotEmpty) {
-                                        String desc;
-                                        if (widget
-                                                .parentData[0].parent_gender ==
-                                            'M')
-                                          desc = widget
-                                                  .parentData[0]
-                                                  .username +
-                                              ' has log out from his account';
-                                        else
-                                          desc = widget
-                                                  .parentData[0]
-                                                  .username +
-                                              ' has log out from her account';
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 9,
+                                child: Text('Welcome',
+                                    style: TextStyle(
+                                        letterSpacing: -1.5,
+                                        fontFamily: 'SourceSansBold',
+                                        color: const Color(0xffffffff),
+                                        fontSize: 44)),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Tooltip(
+                                  child: IconButton(
+                                      icon: Icon(
+                                        FontAwesomeIcons.signOutAlt,
+                                        color: const Color(0xffffffff),
+                                      ),
+                                      onPressed: () async {
+                                        try {
+                                          final result =
+                                              await InternetAddress.lookup(
+                                                  'google.com');
+                                          if (result.isNotEmpty &&
+                                              result[0].rawAddress.isNotEmpty) {
+                                            String desc;
+                                            if (widget.parentData[0]
+                                                    .parent_gender ==
+                                                'M')
+                                              desc = widget
+                                                      .parentData[0].username +
+                                                  ' has log out from his account';
+                                            else
+                                              desc = widget
+                                                      .parentData[0].username +
+                                                  ' has log out from her account';
 
-                                        http.post(
-                                            url + "addLogParent(Reader).php",
-                                            body: {
-                                              'parent_username': widget
-                                                  .parentData[0]
-                                                  .username,
-                                              'title': 'Account Logout',
-                                              'description': desc,
-                                            });
-                                      }
-                                    } on SocketException catch (_) {}
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    var db = DBHelper();
-                                    db.deleteParent(prefs.getString('loginID'));
-                                    prefs.clear();
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) => LoginPage()),
-                                        (Route<dynamic> route) => false);
-                                  }),
-                              message: "Log Out",
+                                            http.post(
+                                                url +
+                                                    "addLogParent(Reader).php",
+                                                body: {
+                                                  'parent_username': widget
+                                                      .parentData[0].username,
+                                                  'title': 'Account Logout',
+                                                  'description': desc,
+                                                });
+                                          }
+                                        } on SocketException catch (_) {}
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        var db = DBHelper();
+                                        db.deleteParent(
+                                            prefs.getString('loginID'));
+                                        prefs.clear();
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        LoginPage()),
+                                                (Route<dynamic> route) =>
+                                                    false);
+                                      }),
+                                  message: "Log Out",
+                                ),
+                              ),
+                            ],
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.parentData[0].parent_name,
+                              style: TextStyle(
+                                letterSpacing: 1,
+                                fontFamily: 'SourceSansLight',
+                                fontSize: 25,
+                                color: const Color(0xffffffff),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          widget.parentData[0].parent_name,
-                          style: TextStyle(
-                            letterSpacing: 1,
-                            fontFamily: 'SourceSansLight',
-                            fontSize: 25,
-                            color: const Color(0xffffffff),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                //Content
-                _buildSwiper(context),
-              ],
+                    //Content
+                    _buildSwiper(context),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -798,12 +807,11 @@ class AddChildren_State extends State<_AddChildren> {
       });
 
       http.post(url + "addLogChildren(Reader).php", body: {
-                            'children_id': children_id,
-                            'title': 'Add Children Account',
-                            'description': parent_username +
-                                ' has created a children account: ' +
-                                children_id,
-                          });
+        'children_id': children_id,
+        'title': 'Add Children Account',
+        'description':
+            parent_username + ' has created a children account: ' + children_id,
+      });
 
       var db = DBHelper();
       var children = Children(children_id, parent_username, nameController.text,
