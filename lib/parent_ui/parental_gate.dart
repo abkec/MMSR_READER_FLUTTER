@@ -379,7 +379,7 @@ class _ParentalGate_State extends State<ParentalGate>
                     children: <Widget>[
                       index == 0
                           ? Card(
-                              margin: EdgeInsets.only(top: 80),
+                              margin: EdgeInsets.only(top: 100),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32),
                               ),
@@ -389,7 +389,7 @@ class _ParentalGate_State extends State<ParentalGate>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    SizedBox(height: 90),
+                                    SizedBox(height: 60),
                                     Text(
                                       "Parent",
                                       style: TextStyle(
@@ -663,8 +663,8 @@ class _ParentalGate_State extends State<ParentalGate>
                   index == 0
                       ? Container(
                           alignment: Alignment.center,
-                          height: 180,
-                          child: Image.asset('assets/img/parents.png'),
+                          height: 250,
+                          child: Image.asset('assets/img/parents_new.png'),
                         )
                       : Container(
                           alignment: Alignment.center,
@@ -1099,7 +1099,7 @@ class AddChildren_State extends State<_AddChildren> {
     DatePicker.showDatePicker(
       context,
       pickerTheme: DateTimePickerTheme(
-        cancel: Text('custom cancel', style: TextStyle(color: Colors.white)),
+        confirm: Text('Confirm', style: TextStyle(color: Colors.black)),
       ),
       minDateTime: DateTime.parse(MIN_DATETIME),
       maxDateTime: DateTime.parse(MAX_DATETIME),

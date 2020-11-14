@@ -541,7 +541,7 @@ class _DetailState extends State<Detail> {
                           children: <Widget>[
                             Container(
                               height: 27,
-                              child: Image.asset("assets/img/like.png"),
+                              child: Image.asset("assets/img/recommend.png"),
                             ),
                             SizedBox(
                               width: 10,

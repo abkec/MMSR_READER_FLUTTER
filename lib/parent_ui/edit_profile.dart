@@ -260,7 +260,7 @@ class _EditProfile_State extends State<EditProfile>
     DatePicker.showDatePicker(
       context,
       pickerTheme: DateTimePickerTheme(
-        cancel: Text('custom cancel', style: TextStyle(color: Colors.white)),
+        confirm: Text('Confirm', style: TextStyle(color: Colors.black)),
       ),
       minDateTime: DateTime.parse(MIN_DATETIME),
       maxDateTime: DateTime.parse(MAX_DATETIME),
