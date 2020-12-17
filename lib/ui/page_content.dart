@@ -458,7 +458,7 @@ class _PageContent_State extends State<PageContent>
                                                       fillColor: Colors.amber,
                                                       borderColor: Colors.amber
                                                           .withAlpha(50),
-                                                      allowHalfRating: true,
+                                                      allowHalfRating: false,
                                                       onRatingUpdate: (rating) {
                                                         rate = rating;
                                                       },
