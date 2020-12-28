@@ -740,7 +740,10 @@ class Book_list_state extends State<Book_list>
                                     padding:
                                         EdgeInsets.only(left: 15, right: 15),
                                     height: 60,
-                                    color: Colors.white,
+                                    decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
                                     child: new Row(children: [
                                       Icon(Icons.search),
                                       Container(
@@ -815,7 +818,6 @@ class Book_list_state extends State<Book_list>
                                             ? false
                                             : true,
                                         scale: 0.5,
-                                        viewportFraction: 0.95,
                                         itemCount: widget.bookDataR == null
                                             ? 0
                                             : widget.bookDataR.length,
@@ -925,6 +927,7 @@ class Book_list_state extends State<Book_list>
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
@@ -1656,7 +1659,7 @@ class Book_list_state extends State<Book_list>
                               Container(
                                 height: 250,
                                 child: Image.asset(
-                                  "assets/img/empty_book.png",
+                                  "assets/img/empty.png",
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -1682,9 +1685,12 @@ class Book_list_state extends State<Book_list>
                             );
                           },
                           child: new Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xFFF1F1F1),
+                            ),
                             padding: EdgeInsets.only(left: 15, right: 15),
                             height: 60,
-                            color: Color(0xFFF1F1F1),
                             child: new Row(children: [
                               Icon(Icons.search),
                               Container(
@@ -1700,7 +1706,10 @@ class Book_list_state extends State<Book_list>
                           )),
                   SizedBox(height: 10),
                   Container(
-                    color: Color(0xFFF1F1F1),
+                    decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xFFF1F1F1),
+                            ),
                     child: MediaQuery.removePadding(
                       context: context,
                       removeTop: true,
@@ -1742,6 +1751,7 @@ class Book_list_state extends State<Book_list>
                               overflow: Overflow.visible,
                               children: <Widget>[
                                 Container(
+                                  
                                   child: GestureDetector(
                                     child: Card(
                                       elevation: 0,
@@ -1974,7 +1984,10 @@ class Book_list_state extends State<Book_list>
                           child: new Container(
                             padding: EdgeInsets.only(left: 15, right: 15),
                             height: 60,
-                            color: Color(0xFFF1F1F1),
+                             decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xFFF1F1F1),
+                            ),
                             child: new Row(children: [
                               Icon(Icons.search),
                               Container(
@@ -2004,7 +2017,7 @@ class Book_list_state extends State<Book_list>
                                   Container(
                                     height: 220,
                                     child: Image.asset(
-                                      "assets/img/message.png",
+                                      "assets/img/empty.png",
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -2018,7 +2031,10 @@ class Book_list_state extends State<Book_list>
                               ),
                             )
                           : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
                               color: Color(0xFFF1F1F1),
+                            ),
                               child: MediaQuery.removePadding(
                                 context: context,
                                 removeTop: true,
@@ -2410,8 +2426,10 @@ class Book_list_state extends State<Book_list>
                             ],
                           )
                         : Row(
-                            mainAxisAlignment: widget.stats[0].num_read >= 5 && widget.stats[0].num_download >= 10 ? 
-                            MainAxisAlignment.spaceEvenly : MainAxisAlignment.center,
+                            mainAxisAlignment: widget.stats[0].num_read >= 5 &&
+                                    widget.stats[0].num_download >= 10
+                                ? MainAxisAlignment.spaceEvenly
+                                : MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               widget.stats[0].num_read >= 5
@@ -2477,61 +2495,64 @@ class Book_list_state extends State<Book_list>
                             widget.stats[0].num_download < 10
                         ? Container()
                         : Row(
-                            mainAxisAlignment: 
-                             widget.stats[0].num_rate >= 5 && widget.stats[0].num_follow >= 5 ? 
-                            MainAxisAlignment.spaceEvenly : MainAxisAlignment.center,
+                            mainAxisAlignment: widget.stats[0].num_rate >= 5 &&
+                                    widget.stats[0].num_follow >= 5
+                                ? MainAxisAlignment.spaceEvenly
+                                : MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              widget.stats[0].num_rate >= 5 ? 
-                              Column(
-                                children: <Widget>[
-                                  Container(
-                                    height: 50,
-                                    child: Image.asset(
-                                      'assets/img/medal_rate.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Container(
-                                    width: 100,
-                                    child: Text(
-                                      'Rate 5 books',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          letterSpacing: -0.5,
-                                          color: Colors.white,
-                                          fontFamily: 'SourceSansLight',
-                                          fontSize: 15),
-                                    ),
-                                  ),
-                                ],
-                              ) : Container(),
-                              widget.stats[0].num_follow >= 5 ?
-                              Column(
-                                children: <Widget>[
-                                  Container(
-                                    height: 50,
-                                    child: Image.asset(
-                                      'assets/img/medal_follow.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Container(
-                                    width: 100,
-                                    child: Text(
-                                      'Follow 5 writers',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          letterSpacing: -0.5,
-                                          color: Colors.white,
-                                          fontFamily: 'SourceSansLight',
-                                          fontSize: 15),
-                                    ),
-                                  ),
-                                ],
-                              ) : Container(),
+                              widget.stats[0].num_rate >= 5
+                                  ? Column(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 50,
+                                          child: Image.asset(
+                                            'assets/img/medal_rate.png',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Container(
+                                          width: 100,
+                                          child: Text(
+                                            'Rate 5 books',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                letterSpacing: -0.5,
+                                                color: Colors.white,
+                                                fontFamily: 'SourceSansLight',
+                                                fontSize: 15),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(),
+                              widget.stats[0].num_follow >= 5
+                                  ? Column(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 50,
+                                          child: Image.asset(
+                                            'assets/img/medal_follow.png',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Container(
+                                          width: 100,
+                                          child: Text(
+                                            'Follow 5 writers',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                letterSpacing: -0.5,
+                                                color: Colors.white,
+                                                fontFamily: 'SourceSansLight',
+                                                fontSize: 15),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(),
                             ],
                           ),
                     SizedBox(

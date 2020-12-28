@@ -4,6 +4,7 @@ description: Reader
 version: 1.0.0+1
 dependencies:
   flutter_swiper: ^1.1.6
+  draggable_scrollbar: ^0.0.4
   rubber: ^0.3.2
   flutter:
     sdk: flutter
@@ -67,7 +68,7 @@ flutter:
     - assets/img/message.png
     - assets/img/empty_image.png
     - assets/img/notification.png
-    - assets/img/parents_new.png
+    - assets/img/parents.png
     - assets/img/gallery_new.png
     - assets/img/following_new.png
     - assets/img/stats_new.png

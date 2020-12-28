@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'dart:developer';
-
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/rendering.dart';
@@ -383,7 +382,7 @@ class _ParentalGate_State extends State<ParentalGate>
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32),
                               ),
-                              color: const Color(0xffe4ff1a),
+                              color: const Color(0xffffff00),
                               child: Padding(
                                 padding: const EdgeInsets.all(32.0),
                                 child: Column(
@@ -411,6 +410,10 @@ class _ParentalGate_State extends State<ParentalGate>
                                                   // A simplified version of dialog.
                                                   child: Container(
                                                       child: AlertDialog(
+                                                        elevation: 0,
+                                                        shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                                                     title: Text(
                                                       'Enter Password',
                                                       style: TextStyle(
@@ -663,8 +666,14 @@ class _ParentalGate_State extends State<ParentalGate>
                   index == 0
                       ? Container(
                           alignment: Alignment.center,
-                          height: 250,
-                          child: Image.asset('assets/img/parents_new.png'),
+                          height: 170,
+                          child: Card(
+                            color: Colors.transparent,
+                            clipBehavior: Clip.antiAlias,
+                            shape: CircleBorder(
+                                side: BorderSide(color: Colors.grey.shade200)),
+                            child: Image.asset('assets/img/parents.png'),
+                          ),
                         )
                       : Container(
                           alignment: Alignment.center,
@@ -728,6 +737,7 @@ class AddChildren_State extends State<_AddChildren> {
   Color picColor = Colors.white;
   String textColor = 'black54';
   TextEditingController nameController = new TextEditingController();
+  ScrollController myScrollController = new ScrollController();
   int groupValue;
   List<String> animals = [
     'assets/img/bear.png',
@@ -864,6 +874,8 @@ class AddChildren_State extends State<_AddChildren> {
     return SingleChildScrollView(
         child: Container(
       child: AlertDialog(
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         contentPadding: EdgeInsets.only(top: 0, left: 25, right: 25),
         title: Text("Add Children Account"),
         content: Form(
@@ -955,35 +967,42 @@ class AddChildren_State extends State<_AddChildren> {
                 height: 8.0,
               ),
               Container(
-                height: 100,
+                height: 120,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(color: Colors.grey),
                 ),
                 child: Stack(
                   alignment: Alignment.topCenter,
                   children: <Widget>[
                     Card(
-                      elevation: 9.0,
                       color: Colors.white,
+                      elevation: 0,
                       child: Container(
                         width: 300,
-                        child: ListView.builder(
-                            itemCount: widget.languageData == null
-                                ? 0
-                                : widget.languageData.length,
-                            itemBuilder: (context, i) {
-                              return Container(
-                                  child: CheckboxListTile(
-                                title: Text(
-                                    widget.languageData[i]['languageDesc']),
-                                value: checkBox[i],
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    checkBox[i] = value;
-                                  });
-                                },
-                              ));
-                            }),
+                        child: DraggableScrollbar.rrect(
+                          controller: myScrollController,
+                          alwaysVisibleScrollThumb: true,
+                          heightScrollThumb: 40,
+                          backgroundColor: Color(0xFF2196F3),
+                          child: ListView.builder(
+                              controller: myScrollController,
+                              itemCount: widget.languageData == null
+                                  ? 0
+                                  : widget.languageData.length,
+                              itemBuilder: (context, i) {
+                                return Container(
+                                    child: CheckboxListTile(
+                                  title: Text(
+                                      widget.languageData[i]['languageDesc']),
+                                  value: checkBox[i],
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      checkBox[i] = value;
+                                    });
+                                  },
+                                ));
+                              }),
+                        ),
                       ),
                     ),
                   ],

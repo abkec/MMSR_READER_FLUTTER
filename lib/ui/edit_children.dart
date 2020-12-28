@@ -154,8 +154,13 @@ class _EditChildrenAccount_State extends State<EditChildrenAccount>
               'Gender',
               style: TextStyle(fontFamily: "WorkSansBold", fontSize: 20),
             ),
-            subtitle: Text(widget.childData[0].children_gender,
-                style: TextStyle(fontSize: 18, fontFamily: "WorkSansMedium")),
+            subtitle: widget.childData[0].children_gender == 'M'
+                ? Text('Boy',
+                    style:
+                        TextStyle(fontSize: 18, fontFamily: "WorkSansMedium"))
+                : Text('Girl',
+                    style:
+                        TextStyle(fontSize: 18, fontFamily: "WorkSansMedium")),
             onTap: () {
               Navigator.push(
                 context,
@@ -323,12 +328,11 @@ class _ChangeProfilePicState extends State<ChangeProfilePic> {
                             }
 
                             updateImage();
-                            Navigator.of(context).pop();    
+                            Navigator.of(context).pop();
                           });
                         } else if (connection == false) {
                           showInSnackBar('No internet connection');
                         }
-                        
                       },
                       child: Text('Submit'))
                 ],
