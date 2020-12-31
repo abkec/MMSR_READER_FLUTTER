@@ -1657,7 +1657,7 @@ class Book_list_state extends State<Book_list>
                                   height:
                                       MediaQuery.of(context).size.height / 8),
                               Container(
-                                height: 250,
+                                height: 220,
                                 child: Image.asset(
                                   "assets/img/empty.png",
                                   fit: BoxFit.cover,

@@ -354,10 +354,8 @@ class _DetailState extends State<Detail> {
         ),
         SizedBox(height: 10),
         Table(
-          columnWidths: {
-            0: FlexColumnWidth(1),
-            1: FlexColumnWidth(3),
-          },
+          //Column width is adjusted automatically based on text lengths
+          defaultColumnWidth: IntrinsicColumnWidth(),
           children: [
             TableRow(
               children: [

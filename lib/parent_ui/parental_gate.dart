@@ -246,12 +246,11 @@ class _ParentalGate_State extends State<ParentalGate>
               hasScrollBody: false,
               child: Container(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(
-                          top: 5, bottom: 10, left: 30, right: 30),
+                          top: 50, bottom: 10, left: 30, right: 30),
                       child: Column(
                         children: <Widget>[
                           Row(
@@ -410,10 +409,13 @@ class _ParentalGate_State extends State<ParentalGate>
                                                   // A simplified version of dialog.
                                                   child: Container(
                                                       child: AlertDialog(
-                                                        elevation: 0,
-                                                        shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                                                    elevation: 0,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
                                                     title: Text(
                                                       'Enter Password',
                                                       style: TextStyle(
@@ -668,6 +670,7 @@ class _ParentalGate_State extends State<ParentalGate>
                           alignment: Alignment.center,
                           height: 170,
                           child: Card(
+                            elevation: 25,
                             color: Colors.transparent,
                             clipBehavior: Clip.antiAlias,
                             shape: CircleBorder(
